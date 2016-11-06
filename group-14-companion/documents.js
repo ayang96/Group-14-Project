@@ -1,6 +1,7 @@
 /*
 * 	Documents Screen 
 *	For viewing documents filesystem
+*	Simulate on iap140: 640x960 / 2 (iPhone 4)
 *   Sections Organization:
 * 	1) Export Screen- this screen as a container template
 *	2) Imports
@@ -22,17 +23,19 @@ import {    VerticalScroller,    VerticalScrollbar,    TopScrollerShadow,   
 /************ 3) ASSETS ******************************************************/
 
 // Format standards. Edit here if necessary
-let labelWidth = 25;		// width of a label tag
-let labelHeight = 30;		// height of a label tag
-let docIconSize = 30;		// width and height of a document and folder icon
-let lineHeight = 50;		// height of a document listing
-let sideMargin = 20;		// left and right margin of a document listing
-let spacing = 10;			// spacing left and right of items
-let docNameWidth = 200;		// width of a doc name listing before cutoff
-let headingTextHeight = 16;	// height of a heading bold text
-let subTextHeight = 14;		// height of a standard sub text
-let directoryHeight = 32;	// height of a directory text
-let directoryWidth = 250;	// width of a directory before cutoff
+const labelWidth = 25;		// width of a label tag
+const labelHeight = 30;		// height of a label tag
+const docIconSize = 30;		// width and height of a document and folder icon
+const lineHeight = 50;		// height of a document listing
+const sideMargin = 20;		// left and right margin of a document listing
+const spacing = 10;			// spacing left and right of items
+const docNameWidth = 200;		// width of a doc name listing before cutoff
+const headingTextHeight = 16;	// height of a heading bold text
+const subTextHeight = 14;		// height of a standard sub text
+const directoryHeight = 32;	// height of a directory text
+const directoryWidth = 350;	// width of a directory before cutoff
+const plusButtonSize = 60;	// width and height of the plus add button
+const plusTopOffset = 570;	// top offset of the plus add button
 
 
 
@@ -74,27 +77,37 @@ let docOutYouIcon = Picture.template($ => ({		// icon for document out by you
 	aspect: 'fit'
 }));
 
+let plusIcon = Picture.template($ => ({				// plus button
+	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
+	width: plusButtonSize, height: plusButtonSize,
+	url: 'assets/icon_plus_button_60x60.png',
+	aspect: 'fit'
+}));
+
 // Text Labels
 let tagLabel = Label.template($ => ({				// for a label tag
 	width: labelWidth, height: labelHeight,
+	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
 	style: new Style({font: "16px Roboto", color: "white", horizontal: "center"}),
 	string: $.string
 }));
 
 let docNameLabel = Label.template($ => ({			// for a document's name
 	height: headingTextHeight, width: docNameWidth,
+	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
 	style: new Style({font: "16px Roboto Medium", color: "black", horizontal: "left"}),
 	string: $.string
 }));
 
 let docTierLabel = Label.template($ => ({			// for a document's tier
 	height: headingTextHeight, width: docNameWidth,
+	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
 	style: new Style({font: "12px Roboto Medium", color: "black", horizontal: "left"}),
 	string: $.string
 }));
 
 let directoryLabel = Label.template($ => ({			// for the directory on top
-	left: sideMargin,
+	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
 	height: directoryHeight, width: directoryWidth,
 	style: new Style({font: "16 px Roboto Regular", color: "black", horizontal: "left"}),
 	string: $.string
@@ -131,6 +144,9 @@ class screenBehavior extends Behavior {
 				));
 			}		let mainScroller = new MainScroller({contentToScrollVertically});
 		
+		// Add plus button
+		let plusButton = new PlusButton();
+		
 		// Add to screen
 		let screenColumn = new Column({
 			top: 0, left: 0, right: 0, bottom: 0,
@@ -139,6 +155,7 @@ class screenBehavior extends Behavior {
 		screenColumn.add(directoryHeading);
 		screenColumn.add(mainScroller);
 		screen.add(screenColumn);
+		screen.add(plusButton);
 		
 	}
 };
@@ -195,19 +212,19 @@ class documentBehavior extends Behavior {
 		// Add document icon
 		switch (this.out) {
 			case 'in':
-				document.add(new docInIcon({left: sideMargin, right: spacing}));
+				document.add(new docInIcon({left: sideMargin}));
 				break;
 			case 'other':
-				document.add(new docOutOtherIcon({left: sideMargin, right: spacing}));
+				document.add(new docOutOtherIcon({left: sideMargin}));
 				break;
 			case 'you':
-				document.add(new docOutYouIcon({left: sideMargin, right: spacing}));
+				document.add(new docOutYouIcon({left: sideMargin}));
 				break;
 		}
 		
 		// Add document name and tier
 		document.add(new Column({
-			width: docNameWidth,
+			width: docNameWidth, left: spacing,
 			contents: [
 				new docNameLabel({string: this.name}),
 				new docTierLabel({string: this.tier})
@@ -217,8 +234,9 @@ class documentBehavior extends Behavior {
 		// Add document labels
 		for (let i = 0; i < this.labels.length; i++) {
 			document.add(new LabelTag({text: this.labels[i][0], color: this.labels[i][1]}));
-		}
-	
+		}	
+		// Add right margin
+		document.add(new Container({width: sideMargin, right: 0}));
 	}
 };
 
@@ -232,19 +250,29 @@ class directoryLineBehavior extends Behavior {
 		this.name = data
 		
 		// Add directory listing
-		line.add(new directoryLabel({string: this.name }));
+		line.add(new directoryLabel({left: sideMargin, top: 10, string: this.name }));
 		
 		// Add Sort function TODO
 	}
 };
 
-
+class plusButtonBehavior extends Behavior {
+	onCreate(button) {
+		button.add(new plusIcon({top:0, bottom:0, left:0, right:0}));
+	}
+	onTouchStart(button) {
+		//TODO
+	}
+	onTouchEnded(button) {
+		//TODO
+	}
+};
 
 /**************** 5) TEMPLATES *******************************************/
 // Label or tag icon. Define data = {text = label name, color = label color}
 // When instantiating, call new LabelTag(data)
 let LabelTag = Container.template($ => ({
-	width: labelWidth, height: labelHeight, right: spacing,
+	width: labelWidth, height: labelHeight, right: 0,
 	Behavior: labelBehavior,
 	contents: []
 }));
@@ -269,6 +297,13 @@ let DirectoryLine = Line.template($ => ({
 	height: directoryHeight, 
 	skin: lineSkin,
 	Behavior: directoryLineBehavior,
+	contents: []
+}));
+
+// Plus Add button template.
+let PlusButton = Container.template($ => ({
+	top: plusTopOffset,
+	Behavior: plusButtonBehavior,
 	contents: []
 }));
 

@@ -1,6 +1,7 @@
 /*
 * 	Main Screen 
-*	For viewing documents filesystem
+*	Runs everything at start
+*	Simulate on iap140: 640x960 / 2 (iPhone 4)
 *   Sections Organization:
 * 	1) Imports- import each screen
 *	2) Assets- common stuff from Figma and our own icons
@@ -21,28 +22,6 @@ let skySkin = new Skin({ fill: '#56CCF2' });		// = "sky"
 let blueSkin = new Skin({ fill: '#2F80ED' });		// = "blue"
 let purpleSkin = new Skin({ fill: '#9B51E0'});		// = "purple"
 let greySkin = new Skin({ fill: '#828282'});		// = "grey"
-
-// Source Images
-let docInIcon = Picture.template($ => ({			// icon for a in document
-	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
-	width: docIconSize, height: docIconSize,
-	url: 'assets/icon_document.png',
-	aspect: 'fit'
-}));
-
-let docOutOtherIcon = Picture.template($ => ({		// icon for document out by other
-	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
-	width: docIconSize, height: docIconSize,
-	url: 'assets/icon_document_out_other.png',
-	aspect: 'fit'
-}));
-
-let docOutYouIcon = Picture.template($ => ({		// icon for document out by you
-	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
-	width: docIconSize, height: docIconSize,
-	url: 'assets/icon_document_out_you.png',
-	aspect: 'fit'
-}));
 
 
 /***************** 3) APPLICATION AND APPLICATION DATA ******************/
