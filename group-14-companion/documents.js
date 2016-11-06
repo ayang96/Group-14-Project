@@ -11,7 +11,8 @@
 
 /************ 1) EXPORT SCREEN **********************************************/
 export var DocumentsScreen = Container.template($ => ({
-	top: 0, left: 0, right: 0, bottom: 0,	contents: [],
+	top: 0, left: 0, right: 0, bottom: 0,
+	skin: lineSkin,	contents: [],
 	screenData: $.screenData,
 	Behavior: screenBehavior}));
 
@@ -25,7 +26,8 @@ let labelWidth = 25;		// width of a label tag
 let labelHeight = 30;		// height of a label tag
 let docIconSize = 30;		// width and height of a document and folder icon
 let lineHeight = 50;		// height of a document listing
-let sideMargin = 30;		// left and right margin of a document listing
+let sideMargin = 20;		// left and right margin of a document listing
+let spacing = 10;			// spacing left and right of items
 let docNameWidth = 200;		// width of a doc name listing before cutoff
 let headingTextHeight = 16;	// height of a heading bold text
 let subTextHeight = 14;		// height of a standard sub text
@@ -44,25 +46,31 @@ let blueSkin = new Skin({ fill: '#2F80ED' });		// = "blue"
 let purpleSkin = new Skin({ fill: '#9B51E0'});		// = "purple"
 let greySkin = new Skin({ fill: '#828282'});		// = "grey"
 
-let lineSkin = new Skin({fill: 'white', stroke: 'silver'});	//stroked skin of a document listing
-
+let lineSkin = new Skin({							//stroked skin of a document listing
+		fill: 'white', 			
+		stroke: 'silver',
+		borders: {left: 0, right: 0, top: 1, bottom: 1}
+});	
+		
 // Source Images
 let docInIcon = Picture.template($ => ({			// icon for a in document
-	left: sideMargin,
+	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
 	width: docIconSize, height: docIconSize,
-	url: new Texture('assets/icon_document.png'),
+	url: 'assets/icon_document.png',
 	aspect: 'fit'
 }));
 
 let docOutOtherIcon = Picture.template($ => ({		// icon for document out by other
+	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
 	width: docIconSize, height: docIconSize,
-	url: new Texture('assets/icon_document_out_other.png'),
+	url: 'assets/icon_document_out_other.png',
 	aspect: 'fit'
 }));
 
 let docOutYouIcon = Picture.template($ => ({		// icon for document out by you
+	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
 	width: docIconSize, height: docIconSize,
-	url: new Texture('assets/icon_document_out_you.png'),
+	url: 'assets/icon_document_out_you.png',
 	aspect: 'fit'
 }));
 
@@ -86,6 +94,7 @@ let docTierLabel = Label.template($ => ({			// for a document's tier
 }));
 
 let directoryLabel = Label.template($ => ({			// for the directory on top
+	left: sideMargin,
 	height: directoryHeight, width: directoryWidth,
 	style: new Style({font: "16 px Roboto Regular", color: "black", horizontal: "left"}),
 	string: $.string
@@ -97,8 +106,14 @@ let directoryLabel = Label.template($ => ({			// for the directory on top
 // Main screen behavior
 class screenBehavior extends Behavior {
 	onCreate(screen, data) {
+		// Extract given data
+		this.data = data;
+		this.directory = data.directory;
+		this.documents = data.documents;
+		this.folders = data.folders;
+		
 		// Add directory bar line
-		let directoryHeading = new DirectoryLine({name: data.directory});
+		let directoryHeading = new DirectoryLine(this.data.directory);
 		
 		// Add scroller 
 		let contentToScrollVertically = new Column({
@@ -108,12 +123,12 @@ class screenBehavior extends Behavior {
 			
 			// Add documents
 			for (let i = 0; i < data.documents.length; i++) {
-				contentToScrollVertically.add(new DocumentLine({
-						name: data.documents[i].name,
+				contentToScrollVertically.add(new DocumentLine(
+						{name: data.documents[i].name,
 						tier: data.documents[i].tier,
 						labels: data.documents[i].labels,
-						out: data.documents[i].out,
-				}));
+						out: data.documents[i].out}
+				));
 			}		let mainScroller = new MainScroller({contentToScrollVertically});
 		
 		// Add to screen
@@ -130,12 +145,16 @@ class screenBehavior extends Behavior {
 
 // Auto-generates skin and text of a label or tag icon
 class labelBehavior extends Behavior {
-	onCreate(label) {
+	onCreate(label, data) {
+		// Extract given data
+		this.text = data.text;
+		this.color = data.color;
+		
 		// Add initial to label
-		contents.add(new tagLabel({string: label.text.slice(0, 1)}));
+		label.add(new tagLabel({string: this.text.slice(0, 1)}));
 		
 		// Color label
-		switch (label.color) {
+		switch (this.color) {
 			case 'red':
 				label.skin = redSkin;
 				break;
@@ -166,17 +185,23 @@ class labelBehavior extends Behavior {
 
 // Auto-generates icon, name, label, and tier of a document
 class documentBehavior extends Behavior {
-	onCreate(document) {
+	onCreate(document, data) {
+		// Extract given data
+		this.name = data.name;
+		this.tier = data.tier;
+		this.labels = data.labels; 
+		this.out = data.out;
+		
 		// Add document icon
-		switch (document.out) {
+		switch (this.out) {
 			case 'in':
-				document.add(new docInIcon());
+				document.add(new docInIcon({left: sideMargin, right: spacing}));
 				break;
 			case 'other':
-				document.add(new docOutOtherIcon());
+				document.add(new docOutOtherIcon({left: sideMargin, right: spacing}));
 				break;
 			case 'you':
-				document.add(new docOutYouIcon());
+				document.add(new docOutYouIcon({left: sideMargin, right: spacing}));
 				break;
 		}
 		
@@ -184,14 +209,14 @@ class documentBehavior extends Behavior {
 		document.add(new Column({
 			width: docNameWidth,
 			contents: [
-				new docNameLabel({string: document.name}),
-				new docTierLabel({string: document.tier})
+				new docNameLabel({string: this.name}),
+				new docTierLabel({string: this.tier})
 			]
 		}));
 		
 		// Add document labels
-		for (let i = 0; i < document.labels.length; i++) {
-			document.add(new LabelTag({text: documents.labels[i][0], color: documents.labels[i][1]}));
+		for (let i = 0; i < this.labels.length; i++) {
+			document.add(new LabelTag({text: this.labels[i][0], color: this.labels[i][1]}));
 		}
 	
 	}
@@ -202,9 +227,12 @@ class folderBehavior extends Behavior {
 };
 
 class directoryLineBehavior extends Behavior {
-	onCreate(line) {
+	onCreate(line, data) {
+		// Extract given data
+		this.name = data
+		
 		// Add directory listing
-		line.add(new directoryLabel({string: line.name }));
+		line.add(new directoryLabel({string: this.name }));
 		
 		// Add Sort function TODO
 	}
@@ -213,23 +241,19 @@ class directoryLineBehavior extends Behavior {
 
 
 /**************** 5) TEMPLATES *******************************************/
-// Label or tag icon. Define text = label name, color = label color
+// Label or tag icon. Define data = {text = label name, color = label color}
+// When instantiating, call new LabelTag(data)
 let LabelTag = Container.template($ => ({
-	width: labelWidth, height: labelHeight, right: sideMargin,
-	text: $.text,
-	color: $.color,
+	width: labelWidth, height: labelHeight, right: spacing,
 	Behavior: labelBehavior,
 	contents: []
 }));
 
-// Listing for a document. Define name = docName, tier, labels list, 
-//									out = 'in', 'other', or 'you'
+// Listing for a document. Define data = {name = docName, tier, labels list, 
+//									out = 'in', 'other', or 'you'}
+// When instantiating, call new DocumentLine(data)
 let DocumentLine = Line.template($ => ({
 	top: 0, left: 0, right: 0, height: lineHeight,
-	name: $.name,
-	tier: $.tier,
-	labels: $.labels,
-	out: $.out,
 	skin: lineSkin,
 	Behavior: documentBehavior,
 	contents: []
@@ -240,9 +264,9 @@ let FolderLine = Line.template($ => ({
 }));
 
 // Line on top for a directory. Define name = directory
+// When instantiating, call DirectoryLine(name)
 let DirectoryLine = Line.template($ => ({
-	height: directoryHeight, left: sideMargin, right: sideMargin,
-	name: $.name,
+	height: directoryHeight, 
 	skin: lineSkin,
 	Behavior: directoryLineBehavior,
 	contents: []
