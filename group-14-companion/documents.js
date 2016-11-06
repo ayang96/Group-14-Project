@@ -7,11 +7,11 @@
 *	3) Assets- format standard sizes, colors, images, text fonts
 *	4) Behaviors
 *	5) Templates
-*	6) Application and Application Data- example data, display test code
 */
 
 /************ 1) EXPORT SCREEN **********************************************/
-export var DocumentsScreen = Container.template($ => ({	contents: [],
+export var DocumentsScreen = Container.template($ => ({
+	top: 0, left: 0, right: 0, bottom: 0,	contents: [],
 	screenData: $.screenData,
 	Behavior: screenBehavior}));
 
@@ -29,7 +29,7 @@ let sideMargin = 30;		// left and right margin of a document listing
 let docNameWidth = 200;		// width of a doc name listing before cutoff
 let headingTextHeight = 16;	// height of a heading bold text
 let subTextHeight = 14;		// height of a standard sub text
-let directoryHeight = 16;	// height of a directory text
+let directoryHeight = 32;	// height of a directory text
 let directoryWidth = 250;	// width of a directory before cutoff
 
 
@@ -96,11 +96,34 @@ let directoryLabel = Label.template($ => ({			// for the directory on top
 
 // Main screen behavior
 class screenBehavior extends Behavior {
-	onCreate(screen) {
-		// Add scroller TODO
-			// Add directory
-			// Add folders
+	onCreate(screen, data) {
+		// Add directory bar line
+		let directoryHeading = new DirectoryLine({name: data.directory});
+		
+		// Add scroller 
+		let contentToScrollVertically = new Column({
+			top: 0, left: 0, right: 0, 
+			contents: []});
+			// Add folders TODO
+			
 			// Add documents
+			for (let i = 0; i < data.documents.length; i++) {
+				contentToScrollVertically.add(new DocumentLine({
+						name: data.documents[i].name,
+						tier: data.documents[i].tier,
+						labels: data.documents[i].labels,
+						out: data.documents[i].out,
+				}));
+			}		let mainScroller = new MainScroller({contentToScrollVertically});
+		
+		// Add to screen
+		let screenColumn = new Column({
+			top: 0, left: 0, right: 0, bottom: 0,
+			contents: []
+		});
+		screenColumn.add(directoryHeading);
+		screenColumn.add(mainScroller);
+		screen.add(screenColumn);
 		
 	}
 };
@@ -167,7 +190,7 @@ class documentBehavior extends Behavior {
 		}));
 		
 		// Add document labels
-		for (i = 0; i < document.labels.length; i++) {
+		for (let i = 0; i < document.labels.length; i++) {
 			document.add(new LabelTag({text: documents.labels[i][0], color: documents.labels[i][1]}));
 		}
 	
@@ -178,7 +201,18 @@ class folderBehavior extends Behavior {
 	// TODO
 };
 
-/**************** TEMPLATES *******************************************/
+class directoryLineBehavior extends Behavior {
+	onCreate(line) {
+		// Add directory listing
+		line.add(new directoryLabel({string: line.name }));
+		
+		// Add Sort function TODO
+	}
+};
+
+
+
+/**************** 5) TEMPLATES *******************************************/
 // Label or tag icon. Define text = label name, color = label color
 let LabelTag = Container.template($ => ({
 	width: labelWidth, height: labelHeight, right: sideMargin,
@@ -205,23 +239,24 @@ let FolderLine = Line.template($ => ({
 	// TODO
 }));
 
-/***************** APPLICATION AND APPLICATION DATA ******************/
+// Line on top for a directory. Define name = directory
+let DirectoryLine = Line.template($ => ({
+	height: directoryHeight, left: sideMargin, right: sideMargin,
+	name: $.name,
+	skin: lineSkin,
+	Behavior: directoryLineBehavior,
+	contents: []
+}));
 
-// For testing. Example data
-let directory = '/My Cabinet/';
+// Scroller template
+let MainScroller = Column.template($ => ({    left: 0, right: 0, top: 0, bottom: 0,     contents: [
+      VerticalScroller($, {
+      	active: true,
+      	top: 0,
+      	contents: [ $.contentToScrollVertically,
+      		VerticalScrollbar(), TopScrollerShadow(), BottomScrollerShadow(),
+      	]
+      }),      ]}));
 
-let documents = {
-	document1: { labels:[('F', 'red'), ('P', 'orange')], name:'Document#1', tier:'Tier 1', out: 'in'},	document2: { labels:[('C', 'green')], name:'Document#2', tier:'Tier 1', out: 'other'}};
 
-let folders = {
-	folder1: { labels: [], name:'Folder#1', tier:['Tier 1', 'Tier 2']}
-};
 
-let screenData = {
-	directory: directory,
-	documents: documents,
-	folders: folders
-};
-
-// For Testing/Display. Comment out
-application.add(new DocumentsScreen(screenData));
