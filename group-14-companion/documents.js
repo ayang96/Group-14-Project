@@ -23,20 +23,21 @@ import {    VerticalScroller,    VerticalScrollbar,    TopScrollerShadow,   
 /************ 3) ASSETS ******************************************************/
 
 // Format standards. Edit here if necessary
-const screenWidth = 320;	// width of screen / 2
-const screenHeight = 480;	// height of screen / 2
-const labelWidth = 25;		// width of a label tag
-const labelHeight = 30;		// height of a label tag
-const docIconSize = 30;		// width and height of a document and folder icon
-const lineHeight = 50;		// height of a document listing
-const sideMargin = 15;		// left and right margin of a document listing
-const spacing = 10;			// spacing left and right of items
+const screenWidth = 320;		// width of screen / 2
+const screenHeight = 480;		// height of screen / 2
+const labelWidth = 25;			// width of a label tag
+const labelHeight = 30;			// height of a label tag
+const docIconSize = 30;			// width and height of a document and folder icon
+const lineHeight = 50;			// height of a document listing
+const sideMargin = 15;			// left and right margin of a document listing
+const spacing = 10;				// spacing left and right of items
 const docNameWidth = 150;		// width of a doc name listing before cutoff
 const headingTextHeight = 16;	// height of a heading bold text
 const subTextHeight = 14;		// height of a standard sub text
-const directoryHeight = 32;	// height of a directory text
-const directoryWidth = 250;	// width of a directory before cutoff
-const plusButtonSize = 60;	// width and height of the plus add button
+const directoryHeight = 32;		// height of a directory text
+const directoryWidth = 250;		// width of a directory before cutoff
+const levelWidth = 20;			// width of a directory level before cutoff
+const plusButtonSize = 60;		// width and height of the plus add button
 const plusBottomOffset = 15;	// bottom offset of the plus add button
 
 
@@ -180,9 +181,10 @@ class screenBehavior extends Behavior {
 			top: 0, left: 0, right: 0, bottom: 0,
 			contents: []
 		});
-		screenColumn.add(directoryHeading);
+		screenColumn.add(new Container({left: 0, right:0, top: 0, height: directoryHeight}));
 		screenColumn.add(mainScroller);
 		screen.add(screenColumn);
+		screen.add(directoryHeading);
 		screen.add(plusButton);
 		
 	}
@@ -263,7 +265,7 @@ class documentBehavior extends Behavior {
 		}));
 		
 		// Add document labels
-		for (let i = 0; i < this.labels.length; i++) {
+		for (let i = 0; i < Math.min(4, this.labels.length); i++) {
 			docLine.add(new LabelTag({text: this.labels[i][0], color: this.labels[i][1],
 										right: 0, top: 0}));
 		}	
@@ -322,7 +324,7 @@ class folderBehavior extends Behavior {
 		
 		
 		// Add folder labels
-		for (let i = 0; i < this.labels.length; i++) {
+		for (let i = 0; i < Math.min(4, this.labels.length); i++) {
 			folderLine.add(new LabelTag({text: this.labels[i][0], color: this.labels[i][1], 
 										right: 0, top: 0}));
 		}	
@@ -346,8 +348,9 @@ class folderBehavior extends Behavior {
 };
 
 class directoryLevelBehavior extends Behavior {
-	onCreate(level) {
+	onCreate(level, data) {
 		//TODO navigation
+		this.folder = data.string.split("/")[0];
 	}
 	onTouchBegan(level) {
 		//TODO
@@ -364,12 +367,14 @@ class directoryLineBehavior extends Behavior {
 		this.levels = data.split("/");
 		
 		// Add directory listing
-		let hierarchy = new Line({left: 0, width: directoryWidth, top: 0, bottom: 0, contents: []});
+		let hierarchy = new Line({left: 0, skin: lineSkin, width: directoryWidth, top: 0, bottom: 0, contents: []});
 		for (let i = 0; i < this.levels.length; i++) {
 			if (i == 0) {
-				hierarchy.add(new directoryLabel({left: sideMargin, right: 0, top: 10, string: this.levels[i] + "/" }));
+				hierarchy.add(new directoryLabel({left: sideMargin, right: 0, top: 10, width: levelWidth,
+								string: this.levels[i] + "/" }));
 			} else {
-				hierarchy.add(new directoryLabel({left: 0, right: 0, top: 10, string: this.levels[i] + "/" }));
+				hierarchy.add(new directoryLabel({left: 0, right: 0, top: 10, width: levelWidth,
+								string: this.levels[i] + "/" }));
 			}
 		}
 		line.add(hierarchy);
@@ -398,8 +403,8 @@ class plusButtonBehavior extends Behavior {
 // For each directory level in the top bar
 let directoryLabel = Label.template($ => ({		
 	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
-	height: directoryHeight, 
-	style: new Style({font: "16 px Roboto Regular", color: "black", horizontal: "left"}),
+	height: directoryHeight, width: $.width,
+	style: new Style({font: "16 px Roboto Regular", color: "#2F80ED", horizontal: "left"}),
 	string: $.string,
 	Behavior: directoryLevelBehavior
 }));
@@ -437,8 +442,9 @@ let FolderLine = Container.template($ => ({
 // When instantiating, call DirectoryLine(name)
 let DirectoryLine = Line.template($ => ({
 	height: directoryHeight, width: screenWidth,
+	top: 0, left: 0, right: 0,
 	//skin: lineSkin,
-	skin: redSkin,
+	skin: skySkin,
 	Behavior: directoryLineBehavior,
 	contents: []
 }));

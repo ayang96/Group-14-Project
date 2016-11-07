@@ -30,7 +30,8 @@ let greySkin = new Skin({ fill: '#828282'});		// = "grey"
 let directory = 'My Cabinet/';
 
 let documents = [
-	{ name:'Document#1', labels:[['F', 'red'], ['P', 'orange'], ['D', 'purple']], tier:'Tier 1', out: 'in'},	{ name:'Document#2', labels:[['C', 'green']], tier:'Tier 1', out: 'other'}];
+	{ name:'Document#1', labels:[['F', 'red'], ['P', 'orange']], tier:'Tier 1', out: 'in'},	{ name:'Document#2', labels:[['C', 'green']], tier:'Tier 1', out: 'other'},
+	{ name:'Document#3', labels: [['D', 'purple']], tier: 'Tier 2', out: 'you'}];
 
 let folders = [
 	{ name:'Folder#1', labels: [], tier:['Tier 1', 'Tier 2']}
