@@ -9,7 +9,10 @@
 */
 
 /***************** 1) IMPORTS *******************************************/
-import {    DocumentsScreen} from "documents";
+import {
+    DocumentsScreen
+} from "documents";
+import * as common from "common";
 
 /***************** 2) ASSETS ********************************************/
 
@@ -30,8 +33,10 @@ let greySkin = new Skin({ fill: '#828282'});		// = "grey"
 let directory = 'My Cabinet/';
 
 let documents = [
-	{ name:'Document#1', labels:[['F', 'red'], ['P', 'orange']], tier:'Tier 1', out: 'in'},	{ name:'Document#2', labels:[['C', 'green']], tier:'Tier 1', out: 'other'},
-	{ name:'Document#3', labels: [['D', 'purple']], tier: 'Tier 2', out: 'you'}];
+	{ name:'Document#1', labels:[['F', 'red'], ['P', 'orange']], tier:'Tier 1', out: 'in'},
+	{ name:'Document#2', labels:[['C', 'green']], tier:'Tier 1', out: 'other'},
+	{ name:'Document#3', labels: [['D', 'purple']], tier: 'Tier 2', out: 'you'}
+];
 
 let folders = [
 	{ name:'Folder#1', labels: [], tier:['Tier 1', 'Tier 2']}
@@ -43,4 +48,5 @@ let screenData = {
 	folders: folders
 };
 
-// DOCUMENTSSCREEN For Display of testing. Comment out laterapplication.add(new DocumentsScreen(screenData));
+// DOCUMENTSSCREEN For Display of testing. Comment out later
+application.add(new DocumentsScreen(screenData));
