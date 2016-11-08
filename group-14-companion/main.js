@@ -5,7 +5,9 @@
 *   Sections Organization:
 * 	1) Imports- import each screen
 *	2) Assets- common stuff from Figma and our own icons
-*	3) Application and Application Data- display and testing, example data here
+*	3) Behaviors
+*	4) Templates
+*	5) Application and Application Data- display and testing, example data here
 */
 
 /***************** 1) IMPORTS *******************************************/
@@ -16,31 +18,46 @@ import { DocumentHistoryScreen } from "documenthistory";
 import * as common from "common";
 
 /***************** 2) ASSETS ********************************************/
+const applicationHeight = 480;
+const menuBarHeight = 30;
 
-// Solid Fill Skins from Figma
-let redSkin = new Skin({ fill:'#EB5757' }); 		// = "red"
-let orangeSkin = new Skin({ fill:'#F2994A' }); 		// = "orange"
-let yellowSkin = new Skin({ fill: '#F2C94C' }); 	// = "yellow"
-let greenSkin = new Skin({ fill: '#219653' }); 		// = "green"
-let skySkin = new Skin({ fill: '#56CCF2' });		// = "sky"
-let blueSkin = new Skin({ fill: '#2F80ED' });		// = "blue"
-let purpleSkin = new Skin({ fill: '#9B51E0'});		// = "purple"
-let greySkin = new Skin({ fill: '#828282'});		// = "grey"
+/***************** 3) BEHAVIORS ********************************************/
 
+/***************** 4) TEMPLATES ********************************************/
 
-/***************** 3) APPLICATION AND APPLICATION DATA ******************/
+// Template for adding a menu bar placeholder above and on top of screen.
+// Instantiate as new screenWithMenubar({screen: [ScreenObject]})
+let screenWithMenubar = Container.template($ => ({
+	top:0, left:0, bottom:0, right:0,
+	contents: [
+		new Container({height: applicationHeight - menuBarHeight, 
+						left:0, right:0, bottom:0, contents: $.screen}),
+		new Container({top: 0, left:0, right:0, height: menuBarHeight, skin: common.greySkin}),
+			//menu bar placeholder. TODO
+		]
+}));
+
+/***************** 5) APPLICATION AND APPLICATION DATA ******************/
 
 // DOCUMENTSSCREEN For testing. Example data 
-let directory = 'My Cabinet/';
+let directory = 'My Cabinet/AFolder/BFolder/CFolder/DFolder/CurrentFolder';
 
 let documents = [
 	{ name:'Document#1', labels:[['F', 'red'], ['P', 'orange']], tier:'Tier 1', out: 'in'},
 	{ name:'Document#2', labels:[['C', 'green']], tier:'Tier 1', out: 'other'},
-	{ name:'Document#3', labels: [['D', 'purple']], tier: 'Tier 2', out: 'you'}
+	{ name:'Document#3', labels: [['D', 'purple']], tier: 'Tier 2', out: 'in'},
+	{ name:'Document#4', labels: [], tier: 'Tier 1', out: 'you'},
+	{ name:'Document#5', labels: [['F', 'red']], tier: 'Tier 1', out: 'in'},
+	{ name:'Document#6', labels: [], tier: 'Tier 2', out: 'in'},
+	{ name:'Document#7', labels: [['D', 'purple']], tier: 'Tier 2', out: 'in'},
+	{ name:'Document#8', labels: [['C', 'green']], tier: 'Tier 1', out: 'other'},
+	{ name:'Document#9', labels: [], tier: 'Tier 1', out: 'in'},
 ];
 
 let folders = [
-	{ name:'Folder#1', labels: [], tier:['Tier 1', 'Tier 2']}
+	{ name:'Folder#1', labels: [['P', 'orange']], tier:['Tier 1', 'Tier 2']},
+	{ name:'Folder#2', labels: [], tier:['Tier 1']},
+	{ name:'Folder#3', labels: [], tier:['Tier 1']}
 ];
 
 let screenData = {
@@ -121,3 +138,5 @@ var data = {
 }
 
 application.add(new DocumentHistoryScreen({ document: "3e6f5707", data: data }));
+
+//application.add(new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}));

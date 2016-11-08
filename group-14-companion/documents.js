@@ -18,6 +18,8 @@ export var DocumentsScreen = Container.template($ => ({
 	Behavior: screenBehavior}));
 
 /************ 2) IMPORTS *****************************************************/
+import * as common from "common";
+
 import {    VerticalScroller,    VerticalScrollbar,    TopScrollerShadow,    BottomScrollerShadow} from 'src/scroller';
 
 /************ 3) ASSETS ******************************************************/
@@ -35,8 +37,11 @@ const docNameWidth = 150;		// width of a doc name listing before cutoff
 const headingTextHeight = 16;	// height of a heading bold text
 const subTextHeight = 14;		// height of a standard sub text
 const directoryHeight = 32;		// height of a directory text
-const directoryWidth = 250;		// width of a directory before cutoff
-const levelWidth = 20;			// width of a directory level before cutoff
+const directoryWidth = 275;		// width of a directory before cutoff
+let	  levelWidth = undefined;	// will change to truncLevelWidth if truncating
+const truncLevelWidth = 18;		// will shrink previous levels to this width
+const truncChars = 36;			// minimum # of chars threshold to start truncating
+const truncLevels = 4;			// show only this # of levels at a time
 const plusButtonSize = 60;		// width and height of the plus add button
 const plusBottomOffset = 15;	// bottom offset of the plus add button
 
@@ -114,6 +119,14 @@ let tagWhiteout = Picture.template($ => ({		// hardcoded white cutouts over tags
 }));
 
 // Text Labels
+// For clickable text
+let clickableStyle = common.bodyLinkStyle;
+//new Style({font: "16px Roboto Regular", color: "#2F80ED", horizontal: "left"});
+
+// For nonclickable text
+let nonClickableStyle = common.bodyStyle;
+//new Style({font: "16px Roboto Regular", color: "black", horizontal: "left"});
+
 let tagLabel = Label.template($ => ({				// for a label tag
 	width: labelWidth, height: labelHeight,
 	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
@@ -243,17 +256,22 @@ class documentBehavior extends Behavior {
 		let docLine = new Line({top: 0, bottom: 0, left: 0, right: 0, contents: []});
 		
 		// Add document icon
+		let validOut = false;
 		switch (this.out) {
 			case 'in':
 				docLine.add(new docInIcon({left: sideMargin}));
+				validOut = true;
 				break;
 			case 'other':
 				docLine.add(new docOutOtherIcon({left: sideMargin}));
+				validOut = true;
 				break;
 			case 'you':
 				docLine.add(new docOutYouIcon({left: sideMargin}));
+				validOut = true;
 				break;
 		}
+		if (!validOut) docLine.add(new docInIcon({left: sideMargin})); // Assume in
 		
 		// Add document name and tier
 		docLine.add(new Column({
@@ -264,15 +282,17 @@ class documentBehavior extends Behavior {
 			]
 		}));
 		
+		// Add empty label slots
+		for (let i = this.labels.length; i < 4; i++) {
+			docLine.add(new emptyTagIcon({right:0, top: 0}));
+		}
+		
 		// Add document labels
 		for (let i = 0; i < Math.min(4, this.labels.length); i++) {
 			docLine.add(new LabelTag({text: this.labels[i][0], color: this.labels[i][1],
 										right: 0, top: 0}));
 		}	
-		// Add empty label slots
-		for (let i = this.labels.length; i < 4; i++) {
-			docLine.add(new emptyTagIcon({right:0, top: 0}));
-		}
+		
 		// Add right margin
 		docLine.add(new Container({width: sideMargin, right: 0}));
 		
@@ -322,16 +342,17 @@ class folderBehavior extends Behavior {
 		folderName.add(new docTierLabel({string: tierString}));
 		folderLine.add(folderName);
 		
+		// Add empty label slots
+		for (let i = this.labels.length; i < 4; i++) {
+			folderLine.add(new emptyTagIcon({right:0, top: 0}));
+		}
 		
 		// Add folder labels
 		for (let i = 0; i < Math.min(4, this.labels.length); i++) {
 			folderLine.add(new LabelTag({text: this.labels[i][0], color: this.labels[i][1], 
 										right: 0, top: 0}));
 		}	
-		// Add empty label slots
-		for (let i = this.labels.length; i < 4; i++) {
-			folderLine.add(new emptyTagIcon({right:0, top: 0}));
-		}
+		
 		// Add right margin
 		folderLine.add(new Container({width: sideMargin, right: 0}));
 		
@@ -349,8 +370,12 @@ class folderBehavior extends Behavior {
 
 class directoryLevelBehavior extends Behavior {
 	onCreate(level, data) {
-		//TODO navigation
 		this.folder = data.string.split("/")[0];
+		level.string = this.folder;
+		
+		level.style = clickableStyle;
+		this.clickable = data.clickable;
+		if (!data.clickable) { level.style = nonClickableStyle; }
 	}
 	onTouchBegan(level) {
 		//TODO
@@ -366,20 +391,51 @@ class directoryLineBehavior extends Behavior {
 		this.name = data;
 		this.levels = data.split("/");
 		
+		// Truncate width of level text based on # of chars, 
+		// show only truncLevels levels at a time
+		let hierarchy = new Line({left: 0, width: directoryWidth, height: line.height, top: 0, bottom: 0, contents: []});
+		hierarchy.add(new Container({width: sideMargin, top: 0, bottom: 0, left: 0}));
+		let levelStart = 0;
+		if (this.name.length >= truncChars) { 
+			levelWidth = truncLevelWidth;
+			if (this.levels.length >= truncLevels) {
+				levelStart = this.levels.length - truncLevels;
+				hierarchy.add(new Label({style: nonClickableStyle, string: '/ ', left: 0}));
+			}
+		}
+		
 		// Add directory listing
-		let hierarchy = new Line({left: 0, skin: lineSkin, width: directoryWidth, top: 0, bottom: 0, contents: []});
-		for (let i = 0; i < this.levels.length; i++) {
-			if (i == 0) {
-				hierarchy.add(new directoryLabel({left: sideMargin, right: 0, top: 10, width: levelWidth,
-								string: this.levels[i] + "/" }));
-			} else {
-				hierarchy.add(new directoryLabel({left: 0, right: 0, top: 10, width: levelWidth,
-								string: this.levels[i] + "/" }));
+		for (; levelStart < this.levels.length - 2; levelStart++) {
+			if (this.levels[levelStart]) {
+				hierarchy.add(new directoryLabel({showFull: false, 
+						clickable: true, string: this.levels[levelStart]}));
+				hierarchy.add(new Label({style: nonClickableStyle, string: '/ ', left: 0}));
+			}
+		}
+		levelWidth = undefined;
+		for (let i = this.levels.length - 2; i < this.levels.length; i++) {
+			if (this.levels[i]) {
+				let click = true;
+				if (i == this.levels.length-1) { click = false; }
+				hierarchy.add(new directoryLabel({showFull: true, 
+							clickable: click, string: this.levels[i] }));
+				hierarchy.add(new Label({style: nonClickableStyle, string: '/ ', left: 0}));
 			}
 		}
 		line.add(hierarchy);
 		
-		// Add Sort function TODO
+		// Add Sort function 
+		line.add(new sortButton());
+	}
+};
+
+class sortButtonBehavior extends Behavior {
+	onCreate(button) {
+		//TODO
+	}
+	onTouchBegan(button) {
+	}
+	onTouchEnded(button) {
 	}
 };
 
@@ -401,12 +457,19 @@ class plusButtonBehavior extends Behavior {
 
 /**************** 5) TEMPLATES *******************************************/
 // For each directory level in the top bar
-let directoryLabel = Label.template($ => ({		
-	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
-	height: directoryHeight, width: $.width,
-	style: new Style({font: "16 px Roboto Regular", color: "#2F80ED", horizontal: "left"}),
-	string: $.string,
+// When instantiating, call new directoryLabel({showFull: disallow truncation, 
+//								clickable: link style or not, string: text here})
+let directoryLabel = Label.template($ => ({	
+	left: 0, width: levelWidth,
+	style: clickableStyle,
 	Behavior: directoryLevelBehavior
+}));
+
+// Sort button on upper right
+let sortButton = Label.template($ => ({
+	string: 'Sort v',  right: sideMargin, 
+	style: common.bodyLinkStyleRight,
+	Behavior: sortButtonBehavior
 }));
 
 
@@ -423,7 +486,7 @@ let LabelTag = Container.template($ => ({
 //									out = 'in', 'other', or 'you'}
 // When instantiating, call new DocumentLine(data)
 let DocumentLine = Container.template($ => ({
-	top: 0, left: 0, right: 0, height: lineHeight,
+	top: 0, left: 0, right: 0, height: lineHeight, width: screenWidth,
 	skin: lineSkin,
 	Behavior: documentBehavior,
 	contents: []
@@ -443,8 +506,7 @@ let FolderLine = Container.template($ => ({
 let DirectoryLine = Line.template($ => ({
 	height: directoryHeight, width: screenWidth,
 	top: 0, left: 0, right: 0,
-	//skin: lineSkin,
-	skin: skySkin,
+	skin: lineSkin,
 	Behavior: directoryLineBehavior,
 	contents: []
 }));
@@ -460,7 +522,7 @@ let PlusButton = Container.template($ => ({
 let MainScroller = Column.template($ => ({    left: 0, right: 0, top: 0, bottom: 0,     contents: [
       VerticalScroller($, {
       	active: true,
-      	top: 0,
+      	top: 0, left: 0, right: 0,
       	contents: [ $.contentToScrollVertically,
       		VerticalScrollbar(), TopScrollerShadow(), BottomScrollerShadow(),
       	]
