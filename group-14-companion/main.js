@@ -24,12 +24,12 @@ import {
    FileHistoryTemplate
 } from "FileHistory";
 import { DocumentHistoryScreen } from "documenthistory";
-//>>>>>>> 29477eed05eea6b2bf20a6909835d1d3350b738d
+import { Menu } from "Menu";
 import * as common from "common";
 
 /***************** 2) ASSETS ********************************************/
 const applicationHeight = 480;
-const menuBarHeight = 30;
+const menuBarHeight = 35;
 
 /***************** 3) BEHAVIORS ********************************************/
 
@@ -40,14 +40,34 @@ const menuBarHeight = 30;
 let screenWithMenubar = Container.template($ => ({
 	top:0, left:0, bottom:0, right:0,
 	contents: [
+	
+		//new Picture({left:-40, url: "Assets/UserProfileIcon.png"}),
 		new Container({height: applicationHeight - menuBarHeight, 
 						left:0, right:0, bottom:0, contents: $.screen}),
-		new Container({top: 0, left:0, right:0, height: menuBarHeight, skin: common.greySkin}),
+		new Container({top: 0, left:0, right:0, height: menuBarHeight, skin: new Skin({fill:"#e6e6e6"}),
+			contents:[
+			new Picture({height: 26,top: 5,left:14, url: "Assets/MenuIcon.png", active: true,
+			behavior: Behavior({
+				onTouchEnded: function(content){
+					application.distribute("showMenu");
+				}
+				})}),
+			new Picture({height: 21 ,top: 8,left:64, url: "Assets/SearchIcon.png"}),
+			new Label({ top: 7, left: 100,height:25 ,
+            		style: new Style({ font: "13px Roboto Regular", color: "gray" }), 
+            		string: "Search Documents" }),
+			
+			new Label({ top: 7, right: 10,height:25 ,
+            		style: new Style({ font: "13px Roboto Regular", color: common.blue }), 
+            		string: "Select" }),
+			]
+			}),
 			//menu bar placeholder. TODO
 		]
 }));
 
 /***************** 5) APPLICATION AND APPLICATION DATA ******************/
+
 
 // DOCUMENTSSCREEN For testing. Example data 
 let directory = 'My Cabinet/AFolder/BFolder/CFolder/DFolder/CurrentFolder';
@@ -173,14 +193,47 @@ let HistoryData = {
 };
 
 
+
 /*Testing Part*/
 let sampleDocHis = new FileHistoryTemplate(HistoryData);
 let sampleUser = new ProfileScreenTemplate(PersonData);
 let sampleDoc = new FileScreenTemplate(FileData);
-application.add(sampleDocHis);
+//application.add(sampleDocHis);
 //application.add(new DocumentsScreen(screenData));
 //application.add(sampleUser);
 //application.add(new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}));
+var screens = {
+	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}),
+	"documentHistoryScreen" : new DocumentHistoryScreen({ document: "3e6f5707", data: data }),
+	"documentInfoScreen" : sampleDoc,
+	"userProfileScreen": sampleUser,
+	"test" : new Container({
+		left: 0, right: 0, top: 0, bottom: 0,
+		skin: new Skin({ fill: "white" }),
+		contents: [
+			new Container({
+				left: 10, top: 10, width: 50, height: 50, skin: new Skin({ fill: "blue" }), active: true,
+				Behavior: class extends common.ButtonBehavior {
+					onTap(content) {
+						application.distribute("showMenu");
+					}
+				}
+			}),
+			new Container({
+				left: 10, top: 100, width: 50, height: 50, skin: new Skin({ fill: "red" }), active: true,
+				Behavior: class extends common.ButtonBehavior {
+					onTap(content) {
+						application.distribute("dispatch", "documentsScreen");
+					}
+				}
+			}),
+		]
+	})
+}
+
+var dispatcher = new common.Dispatcher({ menuHolder: new common.MenuHolder({ menu: new Menu() }), screens: screens });
+application.add(dispatcher);
+application.distribute("dispatch", "test");
 //application.add(new DocumentHistoryScreen({ document: "3e6f5707", data: data }));
+
 // DOCUMENTSSCREEN For Display of testing. Comment out if necessary
-//application.add(new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}));

@@ -42,8 +42,8 @@ export var buttonStyleBlue = new Style({font: "16px Roboto Regular", color: 'whi
 export var bodyStyle 			= new Style({ font: "16px Roboto Regular", color: black, horizontal: "left" });
 export var bodyBoldStyle 		= new Style({ font: "16px Roboto Medium", color: black, horizontal: "left" });
 export var bodyLightStyle 		= new Style({ font: "16px Roboto Regular", color: grey, horizontal: "left" });
-export var bodyLinkStyle 		= new Style({ font: "16px Roboto Regular", color: [blue, darkerBlue], horizontal: "left" });
-export var smallStyle 			= new Style({ font: "14px Roboto Regular", color: black, horizontal: "left" });
+export var bodyLinkStyle 		= new Style({ font: "13px Roboto Regular", color: [blue, darkerBlue], horizontal: "left" });
+export var smallStyle 			= new Style({ font: "13px Roboto Regular", color: black, horizontal: "left" });
 export var smallLightStyle 		= new Style({ font: "14px Roboto Regular", color: grey, horizontal: "left" });
 export var smallLinkStyle		= new Style({ font: "14px Roboto Regular", color: [blue, darkerBlue], horizontal: "left" });
 export var titleStyle 			= new Style({ font: "18px Roboto Regular", color: black, horizontal: "left" });
@@ -62,7 +62,7 @@ export var titleStyleCenter			= new Style({ font: "18px Roboto Regular", color: 
 export var bodyStyleRight			= new Style({ font: "16px Roboto Regular", color: black, horizontal: "right" });
 export var bodyBoldStyleRight		= new Style({ font: "16px Roboto Medium", color: black, horizontal: "right" });
 export var bodyLightStyleRight		= new Style({ font: "16px Roboto Regular", color: grey, horizontal: "right" });
-export var bodyLinkStyleRight		= new Style({ font: "16px Roboto Regular", color: [blue, darkerBlue], horizontal: "right" });
+export var bodyLinkStyleRight		= new Style({ font: "13px Roboto Regular", color: [blue, darkerBlue], horizontal: "right" });
 export var smallStyleRight			= new Style({ font: "14px Roboto Regular", color: black, horizontal: "right" });
 export var smallLightStyleRight		= new Style({ font: "14px Roboto Regular", color: grey, horizontal: "right" });
 export var smallLinkStyleRight		= new Style({ font: "14px Roboto Regular", color: [blue, darkerBlue], horizontal: "right" });
@@ -81,7 +81,53 @@ export var plusIconDown = 'assets/icon_plus_button_pressed_60x60.png';
 
 /************ UI Elements **********************************************/
 
-// More to come
+export var MenuHolder = Container.template($ => ({
+	left: 0, right: 0, top: 0, bottom: 0, active: true,
+	name: "holder",
+	contents: [ $.menu ],
+	Behavior: class extends ButtonBehavior {
+		onTap(content) {
+			application.distribute("hideMenu");
+		}
+	}
+}));
+
+export var Dispatcher = Container.template($ => ({
+	left: 0, right: 0, top: 0, bottom: 0,
+	contents: [
+		new Container({
+			left: 0, right: 0, top: 0, bottom: 0,
+			name: "page",
+		}),
+		$.menuHolder,
+	],
+	Behavior: class extends Behavior {
+		onDisplayed(content) {
+			this.hideMenu(content);
+		}
+		dispatch(content, screenName) {
+			if (screenName) {
+				let screen = $.screens[screenName];
+				if (screen) {
+					content.page.empty();
+					content.page.add(screen);
+				}
+			}
+			this.hideMenu(content);
+		}
+		showMenu(content) {
+			// Can change how this works
+			if (! content.holder) {
+				content.add($.menuHolder);
+			}
+		}
+		hideMenu(content) {
+			if (content.holder) {
+				content.remove($.menuHolder);
+			}
+		}
+	}
+}))
 
 
 // Plus Add button template. See its behavior below
