@@ -15,6 +15,7 @@ import {
     DocumentsScreen
 } from "documents";
 import { DocumentHistoryScreen } from "documenthistory";
+import { Menu } from "Menu";
 import * as common from "common";
 
 /***************** 2) ASSETS ********************************************/
@@ -38,6 +39,7 @@ let screenWithMenubar = Container.template($ => ({
 }));
 
 /***************** 5) APPLICATION AND APPLICATION DATA ******************/
+
 
 // DOCUMENTSSCREEN For testing. Example data 
 let directory = 'My Cabinet/AFolder/BFolder/CFolder/DFolder/CurrentFolder';
@@ -137,6 +139,33 @@ var data = {
 	lockers: {},
 }
 
-application.add(new DocumentHistoryScreen({ document: "3e6f5707", data: data }));
+var screens = {
+	"documentsScreen" : new DocumentsScreen(screenData),
+	"documentHistoryScreen" : new DocumentHistoryScreen({ document: "3e6f5707", data: data }),
+	"test" : new Container({
+		left: 0, right: 0, top: 0, bottom: 0,
+		skin: new Skin({ fill: "white" }),
+		contents: [
+			new Container({
+				left: 10, top: 10, width: 50, height: 50, skin: new Skin({ fill: "blue" }), active: true,
+				Behavior: class extends common.ButtonBehavior {
+					onTap(content) {
+						application.distribute("showMenu");
+					}
+				}
+			}),
+			new Container({
+				left: 10, top: 100, width: 50, height: 50, skin: new Skin({ fill: "red" }), active: true,
+				Behavior: class extends common.ButtonBehavior {
+					onTap(content) {
+						application.distribute("dispatch", "documentsScreen");
+					}
+				}
+			}),
+		]
+	})
+}
 
-//application.add(new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}));
+var dispatcher = new common.Dispatcher({ menuHolder: new common.MenuHolder({ menu: new Menu() }), screens: screens });
+application.add(dispatcher);
+application.distribute("dispatch", "test");

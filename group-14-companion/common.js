@@ -70,7 +70,53 @@ export var titleStyleRight			= new Style({ font: "18px Roboto Regular", color: b
 
 /************ UI Elements **********************************************/
 
-// More to come
+export var MenuHolder = Container.template($ => ({
+	left: 0, right: 0, top: 0, bottom: 0, active: true,
+	name: "holder",
+	contents: [ $.menu ],
+	Behavior: class extends ButtonBehavior {
+		onTap(content) {
+			application.distribute("hideMenu");
+		}
+	}
+}));
+
+export var Dispatcher = Container.template($ => ({
+	left: 0, right: 0, top: 0, bottom: 0,
+	contents: [
+		new Container({
+			left: 0, right: 0, top: 0, bottom: 0,
+			name: "page",
+		}),
+		$.menuHolder,
+	],
+	Behavior: class extends Behavior {
+		onDisplayed(content) {
+			this.hideMenu(content);
+		}
+		dispatch(content, screenName) {
+			if (screenName) {
+				let screen = $.screens[screenName];
+				if (screen) {
+					content.page.empty();
+					content.page.add(screen);
+				}
+			}
+			this.hideMenu(content);
+		}
+		showMenu(content) {
+			// Can change how this works
+			if (! content.holder) {
+				content.add($.menuHolder);
+			}
+		}
+		hideMenu(content) {
+			if (content.holder) {
+				content.remove($.menuHolder);
+			}
+		}
+	}
+}))
 
 
 /************ Behaviors **********************************************/
