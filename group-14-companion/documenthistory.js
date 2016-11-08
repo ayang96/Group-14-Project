@@ -8,7 +8,7 @@ NOTE: The wierd "Container.template($={}) => Object.assign($, {"
 import * as common from "common";
 import { VerticalScroller, VerticalScrollbar } from "src/scroller";
 
-var fileHistoryItemSkin = new Skin({
+var documentHistoryItemSkin = new Skin({
 	stroke: common.grey,
 	borders: {bottom: 1},
 });
@@ -84,17 +84,17 @@ var data = {
 }
 
 */
-export var FileHistoryScreen = Container.template($ => ({
+export var DocumentHistoryScreen = Container.template($ => ({
 	left: 0, right: 0, top: 0, bottom: 0,
 	contents: [
-		new FileHistoryList({
+		new DocumentHistoryList({
 			left: 10, right: 10, top: 200, bottom: 10,
 			history: $.document.history, data: $.data
 		})
 	]
 }));
 
-var FileHistoryList = Container.template(($={}) => Object.assign($, {
+var DocumentHistoryList = Container.template(($={}) => Object.assign($, {
 	contents: [
 		new VerticalScroller({
 			left: 0, right: 0, top: 0, bottom: 0, active: true,
@@ -112,14 +112,14 @@ var FileHistoryList = Container.template(($={}) => Object.assign($, {
 			let column = content.first.first;
 			column.clear();
 			for (let event of $.history) {
-				column.add(new FileHistoryItem({ event: event, data: $.data));
+				column.add(new DocumentHistoryItem({ event: event, data: $.data));
 			}
 		}
 	}
 }));
 
-var FileHistoryItem = Container.template($ => ({
-	left: 0, right: 0, top: 0, height: 20, skin: fileHistoryItemSkin,
+var DocumentHistoryItem = Container.template($ => ({
+	left: 0, right: 0, top: 0, height: 20, skin: documentHistoryItemSkin,
 	contents: [
 		new Label({
 			left: 5, top: 5, style: common.smallLightStyle,
