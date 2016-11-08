@@ -20,6 +20,9 @@ import {
 import {
    ProfileScreenTemplate
 } from "ProfileScreen";
+import {
+   FileHistoryTemplate
+} from "FileHistory";
 import { DocumentHistoryScreen } from "documenthistory";
 //>>>>>>> 29477eed05eea6b2bf20a6909835d1d3350b738d
 import * as common from "common";
@@ -91,14 +94,12 @@ let PersonData = {
    Email: 'brain.c@gmail.com',
    AccessTier: 'Tier 1',
 };
-// DOCUMENTSSCREEN For Display of testing. Comment out later
-//application.add(new DocumentsScreen(screenData));
-let sampleUser = new ProfileScreenTemplate(PersonData);
-let sampleDoc = new FileScreenTemplate(FileData);
-//application.add(new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}));
 
 
-var data = {
+var docName = "3e6f5707";
+
+
+var docData = {
 	documents: {
 		"3e6f5707": {
 			name: 'Document#1',
@@ -166,7 +167,20 @@ var data = {
 	lockers: {},
 }
 
-//application.add(new DocumentHistoryScreen({ document: "3e6f5707", data: data }));
+let HistoryData = {
+	docName: docName,
+	docData: docData,
+};
 
+
+/*Testing Part*/
+let sampleDocHis = new FileHistoryTemplate(HistoryData);
+let sampleUser = new ProfileScreenTemplate(PersonData);
+let sampleDoc = new FileScreenTemplate(FileData);
+application.add(sampleDocHis);
+//application.add(new DocumentsScreen(screenData));
+//application.add(sampleUser);
+//application.add(new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}));
+//application.add(new DocumentHistoryScreen({ document: "3e6f5707", data: data }));
 // DOCUMENTSSCREEN For Display of testing. Comment out if necessary
-application.add(new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}));
+//application.add(new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}));

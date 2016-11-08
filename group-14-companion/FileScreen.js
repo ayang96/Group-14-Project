@@ -98,17 +98,6 @@ let Description = Container.template($ => ({
    ]
 }));
 
-// let FileTitle = new LabelTemp([new LeftTitle('Tag'),  
-//                                new RightTitle('T1, T2')]);
-// let LastUsed = new LabelTemp([new LeftTitle('Last Used'), 
-//                               new RightTitle('Feb. 29 2016 by Gabrielle')]);
-// let DateCreated = new LabelTemp([new LeftTitle('Date Created'), 
-//                               new RightTitle('Sep 15th 2014')]);
-// let AccessTier = new LabelTemp([new LeftTitle('Access Tier'), 
-//                               new RightTitle('Tier 1')]);
-// let Des = new LabelTemp([new LeftTitle('Description'), 
-//                               new RightTitle('')]);
-// let DetailDes = new Description('This is the Description for file #1');
 /*========================*/
 /*Scetions*/
 /*========================*/
@@ -173,7 +162,7 @@ class screenBehavior extends Behavior {
       let DocIcon = new Line({
          height: 80, width: 320, skin: whiteSkin,
          contents:[
-            new Picture({height: 50, width: 80, align:'middle', url:'./assets/circle_doc.png'}),
+            new Picture({height: 50, width: 80, align:'middle', url:'./assets/icon_document_in_ring_70x70.png'}),
             new Column({height: 80, width: 240, 
                contents:[
                   //Label($, {height: 29, top: 25, width: 240, string: $[0], style: textStyle, skin:whiteSkin}),
