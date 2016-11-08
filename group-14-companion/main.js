@@ -170,6 +170,7 @@ var data = {
 var screens = {
 	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}),
 	"documentHistoryScreen" : new DocumentHistoryScreen({ document: "3e6f5707", data: data }),
+	"userProfileScreen": sampleUser,
 	"test" : new Container({
 		left: 0, right: 0, top: 0, bottom: 0,
 		skin: new Skin({ fill: "white" }),
