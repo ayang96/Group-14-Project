@@ -66,8 +66,6 @@ let screenData = {
 	folders: folders
 };
 
-// DOCUMENTSSCREEN For Display of testing. Comment out later
-//application.add(new DocumentsScreen(screenData));
 
 var data = {
 	documents: {
@@ -137,6 +135,7 @@ var data = {
 	lockers: {},
 }
 
-application.add(new DocumentHistoryScreen({ document: "3e6f5707", data: data }));
+//application.add(new DocumentHistoryScreen({ document: "3e6f5707", data: data }));
 
-//application.add(new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}));
+// DOCUMENTSSCREEN For Display of testing. Comment out if necessary
+application.add(new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}));

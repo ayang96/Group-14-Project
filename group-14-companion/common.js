@@ -26,11 +26,11 @@ export var darkerBlue = "#0455C2"; // for second state of buttons and links
 
 // Solid Fill Skins
 export var redSkin = new Skin({ fill: red }); 			// = "red"
-export var orangeSkin = new Skin({ fill: orange }); 		// = "orange"
-export var yellowSkin = new Skin({ fill: yellow }); 		// = "yellow"
+export var orangeSkin = new Skin({ fill: orange }); 	// = "orange"
+export var yellowSkin = new Skin({ fill: yellow }); 	// = "yellow"
 export var greenSkin = new Skin({ fill: green }); 		// = "green"
 export var skySkin = new Skin({ fill: sky });			// = "sky"
-export var blueSkin = new Skin({ fill: blue });		// = "blue"
+export var blueSkin = new Skin({ fill: blue });			// = "blue"
 export var purpleSkin = new Skin({ fill: purple });		// = "purple"
 export var greySkin = new Skin({ fill: grey });			// = "grey"
 
@@ -67,10 +67,28 @@ export var smallLightStyleRight		= new Style({ font: "14px Roboto Regular", colo
 export var smallLinkStyleRight		= new Style({ font: "14px Roboto Regular", color: [blue, darkerBlue], horizontal: "right" });
 export var titleStyleRight			= new Style({ font: "18px Roboto Regular", color: black, horizontal: "right" });
 
+// Layout constants/parameters
+export const screenWidth = 320;		// width of screen / 2
+export const screenHeight = 480;		// height of screen / 2
+export const plusButtonSize = 60;		// width and height of the plus add button
+export const plusBottomOffset = 15;	// bottom offset of the plus add button
+
+// Images
+export var plusIconUp = 'assets/icon_plus_button_60x60.png';
+
+export var plusIconDown = 'assets/icon_plus_button_pressed_60x60.png';
 
 /************ UI Elements **********************************************/
 
 // More to come
+
+
+// Plus Add button template. See its behavior below
+export var PlusButton = Container.template($ => ({
+	bottom: plusBottomOffset, width: plusButtonSize, height: plusButtonSize,
+	Behavior: plusButtonBehavior, active: true,
+	contents: []
+}));
 
 
 /************ Behaviors **********************************************/
@@ -102,6 +120,26 @@ export class ButtonBehavior extends Behavior {
 		this.onTap(content);
 	}
 }
+
+export class plusButtonBehavior extends Behavior {
+	onCreate(button) {
+		this.upSkin = plusIconUp;
+		this.downSkin = plusIconDown;
+		this.buttonImage = new Picture({width: plusButtonSize, height: plusButtonSize,
+										aspect: 'fit', url: this.upSkin}); 
+		button.add(this.buttonImage);
+	}
+	onTouchBegan(button) {
+		//TODO navigation
+		this.buttonImage.url = this.downSkin;
+		trace('down\n');
+	}
+	onTouchEnded(button) {
+		//TODO
+		this.buttonImage.url = this.upSkin;
+		trace('up\n');
+	}
+};
 
 
 /************ Miscellaneous **********************************************/
