@@ -42,8 +42,7 @@ let	  levelWidth = undefined;	// will change to truncLevelWidth if truncating
 const truncLevelWidth = 18;		// will shrink previous levels to this width
 const truncChars = 36;			// minimum # of chars threshold to start truncating
 const truncLevels = 4;			// show only this # of levels at a time
-const plusButtonSize = 60;		// width and height of the plus add button
-const plusBottomOffset = 15;	// bottom offset of the plus add button
+
 
 
 
@@ -64,18 +63,6 @@ let lineSkin = new Skin({							//stroked skin of a document listing
 });	
 		
 // Source Images
-let plusIconUp = new Skin({							// plus button unselected
-	width: plusButtonSize, height: plusButtonSize,
-	texture: new Texture('assets/icon_plus_button_60x60.png'),
-	aspect: 'fit'
-});
-
-let plusIconDown = new Skin({						// plus button selected
-	width: plusButtonSize, height: plusButtonSize,
-	texture: new Texture('assets/icon_plus_button_60x60.png'), // TODO- change to downskin
-	aspect: 'fit'
-});
-
 let docInIcon = Picture.template($ => ({			// icon for a in document
 	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
 	width: docIconSize, height: docIconSize,
@@ -149,6 +136,7 @@ let docTierLabel = Label.template($ => ({			// for a document's tier
 }));
 
 
+
 /************* 4) BEHAVIORS ****************************************************/
 
 // Main screen behavior
@@ -187,7 +175,7 @@ class screenBehavior extends Behavior {
 			}		let mainScroller = new MainScroller({contentToScrollVertically});
 		
 		// Add plus button
-		let plusButton = new PlusButton();
+		let plusButton = common.PlusButton();
 		
 		// Add to screen
 		let screenColumn = new Column({
@@ -439,21 +427,7 @@ class sortButtonBehavior extends Behavior {
 	}
 };
 
-class plusButtonBehavior extends Behavior {
-	onCreate(button) {
-		this.upSkin = plusIconUp;
-		this.downSkin = plusIconDown;
-		button.skin = this.upSkin;
-	}
-	onTouchBegan(button) {
-		//TODO navigation
-		button.skin = this.downSkin;
-	}
-	onTouchEnded(button) {
-		//TODO
-		button.skin = this.upSkin;
-	}
-};
+
 
 /**************** 5) TEMPLATES *******************************************/
 // For each directory level in the top bar
@@ -511,12 +485,7 @@ let DirectoryLine = Line.template($ => ({
 	contents: []
 }));
 
-// Plus Add button template.
-let PlusButton = Container.template($ => ({
-	bottom: plusBottomOffset, width: plusButtonSize, height: plusButtonSize,
-	Behavior: plusButtonBehavior,
-	contents: []
-}));
+
 
 // Scroller template
 let MainScroller = Column.template($ => ({    left: 0, right: 0, top: 0, bottom: 0,     contents: [

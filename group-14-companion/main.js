@@ -14,6 +14,12 @@
 import {
     DocumentsScreen
 } from "documents";
+import {
+   FileScreenTemplate
+} from "FileScreen";
+import {
+   ProfileScreenTemplate
+} from "ProfileScreen";
 import { DocumentHistoryScreen } from "documenthistory";
 import { Menu } from "Menu";
 import * as common from "common";
@@ -68,8 +74,30 @@ let screenData = {
 	folders: folders
 };
 
+
+let FileData = {
+   docName: 'Document #1',
+   Tag: 'Tag 1',
+   LastUsed: 'Sep 20th 2016 by Jessica',
+   DateCreated: 'Aug 21st 2016',
+   Description: 'This is the description for Doc 1',
+   AccessTier: 'Tier 1',
+   InOut: 'IN',
+};
+
+
+let PersonData = {
+   firstName: 'Brain',
+   lastName: 'Chen',
+   Email: 'brain.c@gmail.com',
+   AccessTier: 'Tier 1',
+};
 // DOCUMENTSSCREEN For Display of testing. Comment out later
 //application.add(new DocumentsScreen(screenData));
+let sampleUser = new ProfileScreenTemplate(PersonData);
+let sampleDoc = new FileScreenTemplate(FileData);
+//application.add(new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}));
+
 
 var data = {
 	documents: {
@@ -140,7 +168,7 @@ var data = {
 }
 
 var screens = {
-	"documentsScreen" : new DocumentsScreen(screenData),
+	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}),
 	"documentHistoryScreen" : new DocumentHistoryScreen({ document: "3e6f5707", data: data }),
 	"test" : new Container({
 		left: 0, right: 0, top: 0, bottom: 0,
@@ -169,3 +197,6 @@ var screens = {
 var dispatcher = new common.Dispatcher({ menuHolder: new common.MenuHolder({ menu: new Menu() }), screens: screens });
 application.add(dispatcher);
 application.distribute("dispatch", "test");
+//application.add(new DocumentHistoryScreen({ document: "3e6f5707", data: data }));
+
+// DOCUMENTSSCREEN For Display of testing. Comment out if necessary
