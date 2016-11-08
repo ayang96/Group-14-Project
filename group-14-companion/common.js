@@ -38,34 +38,34 @@ export var buttonSkin = new Skin({ fill: [blue, darkerBlue] });
 
 
 // Text Styles (left aligned by default for convenience)
-export var bodyStyle 			= new Style({ font: "16 px Roboto Regular", color: black, horizontal: "left" });
-export var bodyBoldStyle 		= new Style({ font: "16 px Roboto Medium", color: black, horizontal: "left" });
-export var bodyLightStyle 		= new Style({ font: "16 px Roboto Regular", color: grey, horizontal: "left" });
-export var bodyLinkStyle 		= new Style({ font: "16 px Roboto Regular", color: [blue, darkerBlue], horizontal: "left" });
-export var smallStyle 			= new Style({ font: "14 px Roboto Regular", color: black, horizontal: "left" });
-export var smallLightStyle 		= new Style({ font: "14 px Roboto Regular", color: grey, horizontal: "left" });
-export var smallLinkStyle		= new Style({ font: "14 px Roboto Regular", color: [blue, darkerBlue], horizontal: "left" });
-export var titleStyle 			= new Style({ font: "18 px Roboto Regular", color: black, horizontal: "left" });
+export var bodyStyle 			= new Style({ font: "16px Roboto Regular", color: black, horizontal: "left" });
+export var bodyBoldStyle 		= new Style({ font: "16px Roboto Medium", color: black, horizontal: "left" });
+export var bodyLightStyle 		= new Style({ font: "16px Roboto Regular", color: grey, horizontal: "left" });
+export var bodyLinkStyle 		= new Style({ font: "16px Roboto Regular", color: [blue, darkerBlue], horizontal: "left" });
+export var smallStyle 			= new Style({ font: "14px Roboto Regular", color: black, horizontal: "left" });
+export var smallLightStyle 		= new Style({ font: "14px Roboto Regular", color: grey, horizontal: "left" });
+export var smallLinkStyle		= new Style({ font: "14px Roboto Regular", color: [blue, darkerBlue], horizontal: "left" });
+export var titleStyle 			= new Style({ font: "18px Roboto Regular", color: black, horizontal: "left" });
 
 // center aligned
-export var bodyStyleCenter			= new Style({ font: "16 px Roboto Regular", color: black, horizontal: "center" });
-export var bodyBoldStyleCenter		= new Style({ font: "16 px Roboto Medium", color: black, horizontal: "center" });
-export var bodyLightStyleCenter		= new Style({ font: "16 px Roboto Regular", color: grey, horizontal: "center" });
-export var bodyLinkStyleCenter		= new Style({ font: "16 px Roboto Regular", color: [blue, darkerBlue], horizontal: "center" });
-export var smallStyleCenter			= new Style({ font: "14 px Roboto Regular", color: black, horizontal: "center" });
-export var smallLightStyleCenter	= new Style({ font: "14 px Roboto Regular", color: grey, horizontal: "center" });
-export var smallLinkStyleCenter		= new Style({ font: "14 px Roboto Regular", color: [blue, darkerBlue], horizontal: "center" });
-export var titleStyleCenter			= new Style({ font: "18 px Roboto Regular", color: black, horizontal: "center" });
+export var bodyStyleCenter			= new Style({ font: "16px Roboto Regular", color: black, horizontal: "center" });
+export var bodyBoldStyleCenter		= new Style({ font: "16px Roboto Medium", color: black, horizontal: "center" });
+export var bodyLightStyleCenter		= new Style({ font: "16px Roboto Regular", color: grey, horizontal: "center" });
+export var bodyLinkStyleCenter		= new Style({ font: "16px Roboto Regular", color: [blue, darkerBlue], horizontal: "center" });
+export var smallStyleCenter			= new Style({ font: "14px Roboto Regular", color: black, horizontal: "center" });
+export var smallLightStyleCenter	= new Style({ font: "14px Roboto Regular", color: grey, horizontal: "center" });
+export var smallLinkStyleCenter		= new Style({ font: "14px Roboto Regular", color: [blue, darkerBlue], horizontal: "center" });
+export var titleStyleCenter			= new Style({ font: "18px Roboto Regular", color: black, horizontal: "center" });
 
 // right aligned
-export var bodyStyleRight			= new Style({ font: "16 px Roboto Regular", color: black, horizontal: "right" });
-export var bodyBoldStyleRight		= new Style({ font: "16 px Roboto Medium", color: black, horizontal: "right" });
-export var bodyLightStyleRight		= new Style({ font: "16 px Roboto Regular", color: grey, horizontal: "right" });
-export var bodyLinkStyleRight		= new Style({ font: "16 px Roboto Regular", color: [blue, darkerBlue], horizontal: "right" });
-export var smallStyleRight			= new Style({ font: "14 px Roboto Regular", color: black, horizontal: "right" });
-export var smallLightStyleRight		= new Style({ font: "14 px Roboto Regular", color: grey, horizontal: "right" });
-export var smallLinkStyleRight		= new Style({ font: "14 px Roboto Regular", color: [blue, darkerBlue], horizontal: "right" });
-export var titleStyleRight			= new Style({ font: "18 px Roboto Regular", color: black, horizontal: "right" });
+export var bodyStyleRight			= new Style({ font: "16px Roboto Regular", color: black, horizontal: "right" });
+export var bodyBoldStyleRight		= new Style({ font: "16px Roboto Medium", color: black, horizontal: "right" });
+export var bodyLightStyleRight		= new Style({ font: "16px Roboto Regular", color: grey, horizontal: "right" });
+export var bodyLinkStyleRight		= new Style({ font: "16px Roboto Regular", color: [blue, darkerBlue], horizontal: "right" });
+export var smallStyleRight			= new Style({ font: "14px Roboto Regular", color: black, horizontal: "right" });
+export var smallLightStyleRight		= new Style({ font: "14px Roboto Regular", color: grey, horizontal: "right" });
+export var smallLinkStyleRight		= new Style({ font: "14px Roboto Regular", color: [blue, darkerBlue], horizontal: "right" });
+export var titleStyleRight			= new Style({ font: "18px Roboto Regular", color: black, horizontal: "right" });
 
 
 /************ UI Elements **********************************************/
