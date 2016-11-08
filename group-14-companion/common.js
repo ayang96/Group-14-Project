@@ -35,7 +35,8 @@ export var purpleSkin = new Skin({ fill: purple });		// = "purple"
 export var greySkin = new Skin({ fill: grey });			// = "grey"
 
 export var buttonSkin = new Skin({ fill: [blue, darkerBlue] });
-
+export var buttonStyleWhite = new Style({font: "16px Roboto Regular", color: blue});
+export var buttonStyleBlue = new Style({font: "16px Roboto Regular", color: 'white'});
 
 // Text Styles (left aligned by default for convenience)
 export var bodyStyle 			= new Style({ font: "16px Roboto Regular", color: black, horizontal: "left" });

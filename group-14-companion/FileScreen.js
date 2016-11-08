@@ -1,6 +1,19 @@
+/*
+*  Documents Screen 
+*  For viewing documents filesystem
+*  Simulate on iap140: 640x960 / 2 (iPhone 4)
+*   Sections Organization:
+*  1) Export Screen- this screen as a container template
+*  2) Imports
+*  3) Assets- format standard sizes, colors, images, text fonts
+*  4) Behaviors
+*  5) Templates
+*/
+
 /*========================*/
 /*Exports*/
 /*========================*/
+
 export var FileScreenTemplate = Column.template($ => ({
    left: 0, right: 0, top: 0, bottom: 0,
    skin: whiteSkin,
@@ -8,6 +21,12 @@ export var FileScreenTemplate = Column.template($ => ({
    screenData: $.screenData,
    Behavior: screenBehavior,
 }));
+
+/*========================*/
+/*Imports*/
+/*========================*/
+
+import * as common from "common";
 
 /*========================*/
 /*Skins and Styles*/
@@ -19,10 +38,12 @@ let blue = '#2F80ED';
 let blueSkin = new Skin ({fill: blue});
 let boraderSkin = new Skin ({fill: 'white', stroke:'black', left: 1, right: 1, top: 1, bottom: 1});
 
-let buttonStyle = new Style({font: '15px', color: blue});
-let WbuttonStyle = new Style({font: '15px', color: 'white'});
-let textStyle = new Style({font: '15px', color: 'black',  horizontal:'left'});
-
+// let buttonStyle = new Style({font: '15px', color: blue});
+// let WbuttonStyle = new Style({font: '15px', color: 'white'});
+//let textStyle = new Style({font: '15px', color: 'black',  horizontal:'left'});
+let textStyle = common.bodyStyle;
+let buttonStyle = common.buttonStyleWhite;
+let WbuttonStyle = common.buttonStyleBlue;
 
 
 /*========================*/
@@ -128,6 +149,7 @@ class screenBehavior extends Behavior {
       this.DateCreated = data.DateCreated;
       this.Description = data.Description;
       this.AccessTier = data.AccessTier;
+      this.InOut = data.InOut;
 
       let FileScreen = new Column({
          top: 0, left: 0, right: 0, bottom: 0,
