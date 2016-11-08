@@ -20,6 +20,8 @@ import {
 import {
    ProfileScreenTemplate
 } from "ProfileScreen";
+import { DocumentHistoryScreen } from "documenthistory";
+//>>>>>>> 29477eed05eea6b2bf20a6909835d1d3350b738d
 import * as common from "common";
 
 /***************** 2) ASSETS ********************************************/
@@ -71,6 +73,7 @@ let screenData = {
 	folders: folders
 };
 
+
 let FileData = {
    docName: 'Document #1',
    Tag: 'Tag 1',
@@ -92,4 +95,78 @@ let PersonData = {
 //application.add(new DocumentsScreen(screenData));
 let sampleUser = new ProfileScreenTemplate(PersonData);
 let sampleDoc = new FileScreenTemplate(FileData);
+//application.add(new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}));
+
+
+var data = {
+	documents: {
+		"3e6f5707": {
+			name: 'Document#1',
+			labels: [
+				"0e063425",
+			],
+			tier: "3b2aa2c6",
+			out: 'in',
+			locker: "936420de",
+			history: [
+				"ae97a999",
+			]
+		}
+	},
+	folders: {
+		"8294fdef": {
+			name: "Folder#1",
+			labels: [
+				"0e063425",
+			]
+		}
+	},
+	fileSystem: {
+		"root": {
+			directory: '/',
+			documents: [
+				"3e6f5707",
+			],
+			folders: [
+
+			]
+		}
+	},
+	users: {
+		"46efacaf": {
+			fullName: "Gabrielle Glasner",
+			givenName: "Gabrielle",
+			familyName: "Glasner",
+			avatarColor: "green",
+			avatarInitials: "GG",
+			tier: "3b2aa2c6",
+		}
+	},
+	tiers: {
+		"3b2aa2c6": {
+			name: "Tier 1",
+		}
+	},
+	events: {
+		"ae97a999": {
+			type: "document",
+			document: "3e6f5707",
+			action: "out",
+			date: new Date("Tue Nov 08 2016 02:11:30 GMT-0800 (PST)"),
+			user: "46efacaf",
+		}
+	},
+	labels: {
+		"0e063425": {
+			name: "Finished",
+			initials: "F",
+			color: "red",
+		}
+	},
+	lockers: {},
+}
+
+//application.add(new DocumentHistoryScreen({ document: "3e6f5707", data: data }));
+
+// DOCUMENTSSCREEN For Display of testing. Comment out if necessary
 application.add(new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}));
