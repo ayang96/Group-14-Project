@@ -13,6 +13,11 @@ var documentHistoryItemSkin = new Skin({
 	borders: {bottom: 1},
 });
 
+var documentHistoryListSkin = new Skin({
+	stroke: common.grey,
+	borders: { left: 1, right: 1, top: 1, bottom: 1 }
+});
+
 var screenSkin = new Skin({ fill: "white" });
 
 /* Data object structure:
@@ -90,7 +95,7 @@ export var DocumentHistoryScreen = Container.template($ => ({
 	left: 0, right: 0, top: 0, bottom: 0, skin: screenSkin,
 	contents: [
 		new DocumentHistoryList({
-			left: 10, right: 10, top: 200, bottom: 10,
+			left: 10, right: 10, top: 200, bottom: 10, skin: documentHistoryListSkin,
 			documentData: $.data.documents[$.document], data: $.data,
 		})
 	]
@@ -123,22 +128,22 @@ var DocumentHistoryList = Container.template(($={}) => Object.assign($, {
 }));
 
 var DocumentHistoryItem = Container.template($ => ({
-	left: 0, right: 0, top: 0, height: 20, skin: documentHistoryItemSkin,
+	left: 0, right: 0, top: 0, height: 60, skin: documentHistoryItemSkin,
 	contents: [
 		new Label({
-			left: 5, top: 5, style: common.smallLightStyle,
-			string: "Test" //common.formatDate($.eventData.date),
+			left: 10, top: 10, style: common.smallLightStyle,
+			string: common.formatDate($.eventData.date),
 		}),
 		new Container({
-			left: 5, bottom: 5, width: 5, height: 5,
+			left: 15, bottom: 15, width: 10, height: 10,
 			skin: new Skin({ fill: common[$.userData.avatarColor] }),
 		}),
 		new Label({
-			left: 5, bottom: 5, style: common.bodyBoldStyle,
+			left: 30, bottom: 10, style: common.bodyBoldStyle,
 			string: $.userData.fullName,
 		}),
 		new Label({
-			right: 5, bottom: 5, style: common.smallLightStyle,
+			right: 10, bottom: 10, style: common.smallLightStyle,
 			string: "Document " + $.eventData.action,
 		}),
 	]
