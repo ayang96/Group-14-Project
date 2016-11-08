@@ -36,7 +36,7 @@ const spacing = 10;				// spacing left and right of items
 const docNameWidth = 150;		// width of a doc name listing before cutoff
 const headingTextHeight = 16;	// height of a heading bold text
 const subTextHeight = 14;		// height of a standard sub text
-const directoryHeight = 32;		// height of a directory text
+const directoryHeight = 24;		// height of a directory text
 const directoryWidth = 275;		// width of a directory before cutoff
 let	  levelWidth = undefined;	// will change to truncLevelWidth if truncating
 const truncLevelWidth = 18;		// will shrink previous levels to this width
@@ -111,7 +111,7 @@ let clickableStyle = common.bodyLinkStyle;
 //new Style({font: "16px Roboto Regular", color: "#2F80ED", horizontal: "left"});
 
 // For nonclickable text
-let nonClickableStyle = common.bodyStyle;
+let nonClickableStyle = common.smallStyle;
 //new Style({font: "16px Roboto Regular", color: "black", horizontal: "left"});
 
 let tagLabel = Label.template($ => ({				// for a label tag
@@ -480,7 +480,7 @@ let FolderLine = Container.template($ => ({
 let DirectoryLine = Line.template($ => ({
 	height: directoryHeight, width: screenWidth,
 	top: 0, left: 0, right: 0,
-	skin: lineSkin,
+	skin: new Skin({fill:"#e6e6e6"}),
 	Behavior: directoryLineBehavior,
 	contents: []
 }));
