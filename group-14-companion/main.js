@@ -43,7 +43,7 @@ let screenWithMenubar = Container.template($ => ({
 						left:0, right:0, bottom:0, contents: $.screen}),
 		new Container({top: 0, left:0, right:0, height: menuBarHeight, skin: new Skin({fill:"#e6e6e6"}),
 			contents:[
-			new Picture({height: 26,top: 5,left:14, url: "Assets/MenuIcon.png",
+			new Picture({height: 26,top: 5,left:14, url: "Assets/MenuIcon.png", active: true,
 			behavior: Behavior({
 				onTouchEnded: function(content){
 					application.distribute("showMenu");
@@ -192,6 +192,7 @@ var data = {
 var screens = {
 	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}),
 	"documentHistoryScreen" : new DocumentHistoryScreen({ document: "3e6f5707", data: data }),
+	"documentInfoScreen" : sampleDoc,
 	"userProfileScreen": sampleUser,
 	"test" : new Container({
 		left: 0, right: 0, top: 0, bottom: 0,

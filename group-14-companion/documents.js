@@ -13,14 +13,21 @@
 /************ 1) EXPORT SCREEN **********************************************/
 export var DocumentsScreen = Container.template($ => ({
 	top: 0, left: 0, right: 0, bottom: 0,
-	skin: lineSkin,	contents: [],
+	skin: lineSkin,
+	contents: [],
 	screenData: $.screenData,
-	Behavior: screenBehavior}));
+	Behavior: screenBehavior
+}));
 
 /************ 2) IMPORTS *****************************************************/
 import * as common from "common";
 
-import {    VerticalScroller,    VerticalScrollbar,    TopScrollerShadow,    BottomScrollerShadow} from 'src/scroller';
+import {
+    VerticalScroller,
+    VerticalScrollbar,
+    TopScrollerShadow,
+    BottomScrollerShadow
+} from 'src/scroller';
 
 /************ 3) ASSETS ******************************************************/
 
@@ -172,7 +179,8 @@ class screenBehavior extends Behavior {
 						labels: data.documents[i].labels,
 						out: data.documents[i].out}
 				));
-			}		let mainScroller = new MainScroller({contentToScrollVertically});
+			}
+		let mainScroller = new MainScroller({contentToScrollVertically});
 		
 		// Add plus button
 		let plusButton = common.PlusButton();
@@ -289,10 +297,10 @@ class documentBehavior extends Behavior {
 		document.add(new tagWhiteout({top: 0, left: 0, right: 0, bottom: 0}));
 	}
 	onTouchBegan(document) {
-		//TODO navigation into document page
+		//TODO
 	}
 	onTouchEnded(document) {
-		//TODO
+		application.distribute("dispatch", "documentInfoScreen");
 	}
 };
 
@@ -461,6 +469,7 @@ let LabelTag = Container.template($ => ({
 // When instantiating, call new DocumentLine(data)
 let DocumentLine = Container.template($ => ({
 	top: 0, left: 0, right: 0, height: lineHeight, width: screenWidth,
+	active: true,
 	skin: lineSkin,
 	Behavior: documentBehavior,
 	contents: []
@@ -488,14 +497,18 @@ let DirectoryLine = Line.template($ => ({
 
 
 // Scroller template
-let MainScroller = Column.template($ => ({    left: 0, right: 0, top: 0, bottom: 0,     contents: [
+let MainScroller = Column.template($ => ({
+    left: 0, right: 0, top: 0, bottom: 0, 
+    contents: [
       VerticalScroller($, {
       	active: true,
       	top: 0, left: 0, right: 0,
       	contents: [ $.contentToScrollVertically,
       		VerticalScrollbar(), TopScrollerShadow(), BottomScrollerShadow(),
       	]
-      }),      ]}));
+      }),  
+    ]
+}));
 
 
 
