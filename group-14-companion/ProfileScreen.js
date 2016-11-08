@@ -93,7 +93,7 @@ let EditTitleR = Label.template($ =>({
 let TopNavi = Column.template($ => ({
    height: 50, width: 320, skin: whiteSkin,
    contents:[
-      new Container({height:10, width: 320, skin:blackSkin}),
+      new Container({height:10, width: 320, skin:whiteSkin}),
       new Line({height: 39, contents:[BackButton]}),
       new Container({height:1, width: 320, skin:blackSkin})
    ]

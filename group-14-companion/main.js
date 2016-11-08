@@ -14,6 +14,12 @@
 import {
     DocumentsScreen
 } from "documents";
+import {
+   FileScreenTemplate
+} from "FileScreen";
+import {
+   ProfileScreenTemplate
+} from "ProfileScreen";
 import * as common from "common";
 
 /***************** 2) ASSETS ********************************************/
@@ -65,6 +71,25 @@ let screenData = {
 	folders: folders
 };
 
+let FileData = {
+   docName: 'Document #1',
+   Tag: 'Tag 1',
+   LastUsed: 'Sep 20th 2016 by Jessica',
+   DateCreated: 'Aug 21st 2016',
+   Description: 'This is the description for Doc 1',
+   AccessTier: 'Tier 1',
+   InOut: 'IN',
+};
+
+
+let PersonData = {
+   firstName: 'Brain',
+   lastName: 'Chen',
+   Email: 'brain.c@gmail.com',
+   AccessTier: 'Tier 1',
+};
 // DOCUMENTSSCREEN For Display of testing. Comment out later
 //application.add(new DocumentsScreen(screenData));
+let sampleUser = new ProfileScreenTemplate(PersonData);
+let sampleDoc = new FileScreenTemplate(FileData);
 application.add(new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}));
