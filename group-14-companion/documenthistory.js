@@ -13,6 +13,8 @@ var documentHistoryItemSkin = new Skin({
 	borders: {bottom: 1},
 });
 
+var screenSkin = new Skin({ fill: "white" });
+
 /* Data object structure:
 
 var data = {
@@ -85,18 +87,18 @@ var data = {
 
 */
 export var DocumentHistoryScreen = Container.template($ => ({
-	left: 0, right: 0, top: 0, bottom: 0,
+	left: 0, right: 0, top: 0, bottom: 0, skin: screenSkin,
 	contents: [
 		new DocumentHistoryList({
 			left: 10, right: 10, top: 200, bottom: 10,
-			history: $.document.history, data: $.data
+			documentData: $.data.documents[$.document], data: $.data,
 		})
 	]
 }));
 
 var DocumentHistoryList = Container.template(($={}) => Object.assign($, {
 	contents: [
-		new VerticalScroller({
+		VerticalScroller($, {
 			left: 0, right: 0, top: 0, bottom: 0, active: true,
 			contents: [
 				new Column({ left: 0, right: 0, top: 0 }),
@@ -105,14 +107,16 @@ var DocumentHistoryList = Container.template(($={}) => Object.assign($, {
 		})
 	],
 	Behavior: class extends Behavior {
-		onCreate(content) {
-			this.update();
+		onDisplayed(content) {
+			this.update(content);
 		}
 		update(content) {
 			let column = content.first.first;
-			column.clear();
-			for (let event of $.history) {
-				column.add(new DocumentHistoryItem({ event: event, data: $.data));
+			column.empty();
+			for (let event of $.documentData.history) {
+				let eventData = $.data.events[event];
+				let userData = $.data.users[eventData.user];
+				column.add(new DocumentHistoryItem({ eventData: eventData, userData: userData, data: $.data }));
 			}
 		}
 	}
@@ -123,19 +127,19 @@ var DocumentHistoryItem = Container.template($ => ({
 	contents: [
 		new Label({
 			left: 5, top: 5, style: common.smallLightStyle,
-			string: common.formatDate($.event.date),
+			string: "Test" //common.formatDate($.eventData.date),
 		}),
 		new Container({
-			left: 5, bottom: 5, width 5, height: 5,
-			skin: new Skin({ fill: common[$.data.users[$.event.userid].avatarColor] }),
+			left: 5, bottom: 5, width: 5, height: 5,
+			skin: new Skin({ fill: common[$.userData.avatarColor] }),
 		}),
 		new Label({
 			left: 5, bottom: 5, style: common.bodyBoldStyle,
-			string: $.data.users[$.event.user].fullName,
+			string: $.userData.fullName,
 		}),
 		new Label({
 			right: 5, bottom: 5, style: common.smallLightStyle,
-			string: "Document " + $.event.action,
+			string: "Document " + $.eventData.action,
 		}),
 	]
 }));
