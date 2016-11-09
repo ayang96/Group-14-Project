@@ -216,7 +216,7 @@ export var ScreenWithMenuBar = Container.template($ => ({
 	top:0, left:0, bottom:0, right:0,
 	contents: [
 		new Container({
-			left: 0, right: 0, top: navBarHeight, contents: [ $.screen ]
+			left: 0, right: 0, top: navBarHeight, bottom: 0, contents: [ $.screen ]
 		}),
 		new NavBar({
 			contents: [
