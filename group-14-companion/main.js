@@ -199,9 +199,9 @@ var screenParents = {
 	"usersScreen": "root:users",
 }
 
-//var dispatcher = new common.Dispatcher({ menuHolder: new common.MenuHolder({ menu: new Menu() }), screens: screens });
-//application.add(dispatcher);
-//application.distribute("dispatch", "test");
+var dispatcher = new common.Dispatcher({ menu: new Menu(), screens: screens, screenParents: screenParents });
+application.add(dispatcher);
+application.distribute("dispatch", "documentsScreen");
 
 // var dispatcher = new common.Dispatcher({ menu: new Menu(), screens: screens, screenParents: screenParents });
 // application.add(dispatcher);
