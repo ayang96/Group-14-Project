@@ -1,4 +1,5 @@
 import "src/date.format";
+import { CrossFade, Push, Flip, TimeTravel } from 'src/transition';
 
 /**
  * This file is for everything that is used universally throughout this project.
@@ -81,7 +82,83 @@ export var plusIconDown = 'assets/icon_plus_button_pressed_60x60.png';
 
 /************ UI Elements **********************************************/
 
-export var MenuHolder = Container.template($ => ({
+
+
+/** 
+Handles switching between screens in the app.
+Use this as the main container for the app
+
+Params:
+$.menu : menu content to be displayed
+$.screens: dict of <"screenName", screenContent>
+
+Usage:
+application.distribute("dispatch", "screenName")
+	Makes the app switch to the screen with name "screenName" in $.screens
+application.distribute("dispatch", "back")
+	Makes the app go back to the last screen that it was on
+application.distribute("showMenu")
+	Shows the menu
+application.distribute("hideMenu")
+	Hides the menu
+**/
+export var Dispatcher = Container.template($ => ({
+	left: 0, right: 0, top: 0, bottom: 0,
+	contents: [
+		new Container({
+			left: 0, right: 0, top: 0, bottom: 0,
+			name: "page", contents: [ new Container() ],
+		}),
+		this.menuHolder,
+	],
+	Behavior: class extends Behavior {
+		onCreate(content, data) {
+			this.menuHolder = new MenuHolder({ menu: $.menu });
+			this.prevScreen = null;
+		}
+		onDisplayed(content) {
+			this.hideMenu(content);
+		}
+		dispatch(content, screenName, transition) {
+			let screen = null;
+			if (screenName === "back") {
+				screen = this.prevScreen;
+				transition = transition || 'pushRight';
+			} else {
+				screen = $.screens[screenName];
+			}
+			if (screen && screen != content.page.last) {
+				this.prevScreen = content.page.last;
+				switch (transition) {
+					case 'push':
+					case 'pushLeft':
+						content.page.run( new Push(), content.page.last, screen, { duration: 400, direction: "left" } );
+						break;
+					case 'pushRight':
+						content.page.run( new Push(), content.page.last, screen, { duration: 400, direction: "right" } );
+						break;
+					default:
+						content.page.empty();
+						content.page.add(screen);
+				}
+			}
+			this.hideMenu(content);
+		}
+		showMenu(content) {
+			// Can change how this works
+			if (! content.holder) {
+				content.add(this.menuHolder);
+			}
+		}
+		hideMenu(content) {
+			if (content.holder) {
+				content.remove(this.menuHolder);
+			}
+		}
+	}
+}));
+
+let MenuHolder = Container.template($ => ({
 	left: 0, right: 0, top: 0, bottom: 0, active: true,
 	name: "holder",
 	contents: [ $.menu ],
@@ -92,42 +169,6 @@ export var MenuHolder = Container.template($ => ({
 	}
 }));
 
-export var Dispatcher = Container.template($ => ({
-	left: 0, right: 0, top: 0, bottom: 0,
-	contents: [
-		new Container({
-			left: 0, right: 0, top: 0, bottom: 0,
-			name: "page",
-		}),
-		$.menuHolder,
-	],
-	Behavior: class extends Behavior {
-		onDisplayed(content) {
-			this.hideMenu(content);
-		}
-		dispatch(content, screenName) {
-			if (screenName) {
-				let screen = $.screens[screenName];
-				if (screen) {
-					content.page.empty();
-					content.page.add(screen);
-				}
-			}
-			this.hideMenu(content);
-		}
-		showMenu(content) {
-			// Can change how this works
-			if (! content.holder) {
-				content.add($.menuHolder);
-			}
-		}
-		hideMenu(content) {
-			if (content.holder) {
-				content.remove($.menuHolder);
-			}
-		}
-	}
-}))
 
 
 // Plus Add button template. See its behavior below

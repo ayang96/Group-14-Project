@@ -210,7 +210,7 @@ var screens = {
 	"userProfileScreen": sampleUser,
 }
 
-var dispatcher = new common.Dispatcher({ menuHolder: new common.MenuHolder({ menu: new Menu() }), screens: screens });
+var dispatcher = new common.Dispatcher({ menu: new Menu(), screens: screens });
 application.add(dispatcher);
 application.distribute("dispatch", "documentsScreen");
 //application.add(new DocumentHistoryScreen({ document: "3e6f5707", data: data }));
