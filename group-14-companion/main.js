@@ -37,35 +37,7 @@ const menuBarHeight = 35;
 
 // Template for adding a menu bar placeholder above and on top of screen.
 // Instantiate as new screenWithMenubar({screen: [ScreenObject]})
-let screenWithMenubar = Container.template($ => ({
-	top:0, left:0, bottom:0, right:0,
-	contents: [
-	
-		//new Picture({left:-40, url: "Assets/UserProfileIcon.png"}),
-		new Container({height: applicationHeight - menuBarHeight, 
-						left:0, right:0, bottom:0, contents: $.screen}),
-		new Container({top: 0, left:0, right:0, height: menuBarHeight, skin: new Skin({fill:"#e6e6e6"}),
-			contents:[
-			new Picture({height: 26,top: 5,left:14, url: "Assets/MenuIcon.png", active: true,
-				Behavior: class extends common.ButtonBehavior {
-					onTap(content){
-						application.distribute("showMenu");
-					}
-				}
-			}),
-			new Picture({height: 21 ,top: 8,left:64, url: "Assets/SearchIcon.png"}),
-			new Label({ top: 7, left: 100,height:25 ,
-            		style: new Style({ font: "13px Roboto Regular", color: "gray" }), 
-            		string: "Search Documents" }),
-			
-			new Label({ top: 7, right: 10,height:25 ,
-            		style: new Style({ font: "13px Roboto Regular", color: common.blue }), 
-            		string: "Select" }),
-			]
-			}),
-			//menu bar placeholder. TODO
-		]
-}));
+let screenWithMenubar = common.ScreenWithMenuBar;
 
 /***************** 5) APPLICATION AND APPLICATION DATA ******************/
 
