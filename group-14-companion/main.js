@@ -7,13 +7,13 @@
 *	2) Assets- common stuff from Figma and our own icons
 *	3) Behaviors
 *	4) Templates
-*	5) Application and Application Data- display and testing, example data here
+*	5) Application and Application Data- application, example data here
+*	6) Testing Code- display and testing
 */
 
 /***************** 1) IMPORTS *******************************************/
-import {
-    DocumentsScreen
-} from "documents";
+import { DocumentsScreen } from "documents";
+import { UsersScreen } from "users";
 import { DocumentHistoryScreen } from "documenthistory";
 import * as common from "common";
 
@@ -64,6 +64,17 @@ let screenData = {
 	directory: directory,
 	documents: documents,
 	folders: folders
+};
+
+let usersData = {
+	users: [
+		{name:'Allison Rory', tier:'Admin', color:'red'},
+		{name:'Brian Chen', tier:'Tier 1', color:'green'},
+		{name:'Dominique Yano', tier:'Tier 2', color:'blue'},
+		{name:'Ellen van Hurst', tier:'Supervisor', color:'yellow'},
+		{name:'Gabrielle Glasner', tier:'Tier 1', color:'blue'},
+		{name:'Hector Smith', tier:'Tier 2', color:'pending'},
+	]
 };
 
 
@@ -135,7 +146,14 @@ var data = {
 	lockers: {},
 }
 
+/***************** 6) TESTING CODE *************************************/
+// Comment out any below and your screen here to application for testing display
+
+// DOCUMENTSHISTORYSCREEN
 //application.add(new DocumentHistoryScreen({ document: "3e6f5707", data: data }));
 
-// DOCUMENTSSCREEN For Display of testing. Comment out if necessary
+// DOCUMENTSSCREEN
 application.add(new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}));
+
+// USERSSCREEN
+application.add(new screenWithMenubar({screen: [new UsersScreen(usersData)]}));
