@@ -30,6 +30,9 @@ export var grey = '#828282';
 export var black = 'black';
 
 export var darkerBlue = "#0455C2"; // for second state of buttons and links
+export var systemGrey = "#F2F2F2"; // for backgrounds
+export var systemDarkerGrey = "#CCCCCC"; // for second state of backgrounds
+export var systemLineColor = grey; // for lines seperating things
 
 // Solid Fill Skins
 export var redSkin = new Skin({ fill: red }); 			// = "red"
@@ -46,16 +49,19 @@ export var buttonStyleWhite = new Style({font: "16px Roboto", color: blue});
 export var buttonStyleBlue = new Style({font: "16px Roboto", color: 'white'});
 
 export var darkScreenCoverSkin = new Skin({ fill: "rgba(0, 0, 0, 0.5)" });
-export var alertSkin = new Skin({ fill: "#F2F2F2" });
-export var alertOptionsSkin = new Skin({ stroke: grey, borders: { top: 1 }});
-export var alertOptionButtonSkin = new Skin({ fill: ["#F2F2F2", "#CCCCCC"] });
-export var alertOptionsSeperatorSkin = new Skin({ fill: grey });
+export var alertSkin = new Skin({ fill: systemGrey });
+export var alertOptionsSkin = new Skin({ stroke: systemLineColor, borders: { top: 1 }});
+export var alertOptionButtonSkin = new Skin({ fill: [systemGrey, systemDarkerGrey] });
+export var alertOptionsSeperatorSkin = new Skin({ fill: systemLineColor });
+
+export var navBarSkin = new Skin({ fill: systemGrey, stroke: systemLineColor, borders: { bottom: 1 }});
 
 // Text Styles (left aligned by default for convenience)
 export var bodyStyle 			= new Style({ font: "16px Roboto", color: black, horizontal: "left" });
 export var bodyBoldStyle 		= new Style({ font: "16px Roboto Medium", color: black, horizontal: "left" });
 export var bodyLightStyle 		= new Style({ font: "16px Roboto", color: grey, horizontal: "left" });
 export var bodyLinkStyle 		= new Style({ font: "16px Roboto", color: [blue, darkerBlue], horizontal: "left" });
+export var bodyLinkBoldStyle 	= new Style({ font: "16px Roboto Medium", color: [blue, darkerBlue], horizontal: "left" });
 export var smallStyle 			= new Style({ font: "14px Roboto", color: black, horizontal: "left" });
 export var smallLightStyle 		= new Style({ font: "14px Roboto", color: grey, horizontal: "left" });
 export var smallLinkStyle		= new Style({ font: "14px Roboto", color: [blue, darkerBlue], horizontal: "left" });
@@ -67,6 +73,7 @@ export var bodyStyleCenter			= new Style({ font: "16px Roboto", color: black, ho
 export var bodyBoldStyleCenter		= new Style({ font: "16px Roboto Medium", color: black, horizontal: "center" });
 export var bodyLightStyleCenter		= new Style({ font: "16px Roboto", color: grey, horizontal: "center" });
 export var bodyLinkStyleCenter		= new Style({ font: "16px Roboto", color: [blue, darkerBlue], horizontal: "center" });
+export var bodyLinkBoldStyleCenter 	= new Style({ font: "16px Roboto Medium", color: [blue, darkerBlue], horizontal: "center" });
 export var smallStyleCenter			= new Style({ font: "14px Roboto", color: black, horizontal: "center" });
 export var smallLightStyleCenter	= new Style({ font: "14px Roboto", color: grey, horizontal: "center" });
 export var smallLinkStyleCenter		= new Style({ font: "14px Roboto", color: [blue, darkerBlue], horizontal: "center" });
@@ -78,6 +85,7 @@ export var bodyStyleRight			= new Style({ font: "16px Roboto", color: black, hor
 export var bodyBoldStyleRight		= new Style({ font: "16px Roboto Medium", color: black, horizontal: "right" });
 export var bodyLightStyleRight		= new Style({ font: "16px Roboto", color: grey, horizontal: "right" });
 export var bodyLinkStyleRight		= new Style({ font: "16px Roboto", color: [blue, darkerBlue], horizontal: "right" });
+export var bodyLinkBoldStyleRight 	= new Style({ font: "16px Roboto Medium", color: [blue, darkerBlue], horizontal: "right" });
 export var smallStyleRight			= new Style({ font: "14px Roboto", color: black, horizontal: "right" });
 export var smallLightStyleRight		= new Style({ font: "14px Roboto", color: grey, horizontal: "right" });
 export var smallLinkStyleRight		= new Style({ font: "14px Roboto", color: [blue, darkerBlue], horizontal: "right" });
@@ -89,6 +97,8 @@ export const screenWidth = 320;		// width of screen / 2
 export const screenHeight = 480;		// height of screen / 2
 export const plusButtonSize = 60;		// width and height of the plus add button
 export const plusBottomOffset = 15;	// bottom offset of the plus add button
+export const navBarHeight = 40;
+export const navPadding = 15; // left-right padding of navBar items
 
 // Images
 export var plusIconUp = 'assets/icon_plus_button_60x60.png';
@@ -211,13 +221,7 @@ export var ScreenWithMenuBar = Container.template($ => ({
 		new Container({top: menuBarHeight, left:0, right:0, bottom:0, contents: $.screen}),
 		new Container({top: 0, left:0, right:0, height: menuBarHeight, skin: new Skin({fill:"#e6e6e6"}),
 			contents:[
-			new Picture({height: 26,top: 5,left:14, url: "Assets/MenuIcon.png", active: true,
-				Behavior: class extends ButtonBehavior {
-					onTap(content){
-						application.distribute("showMenu");
-					}
-				}
-			}),
+			new NavMenuButton,
 			new Picture({height: 21 ,top: 8,left:64, url: "Assets/SearchIcon.png"}),
 			new Label({ top: 7, left: 100,height:25 ,
             		style: new Style({ font: "13px Roboto Regular", color: "gray" }), 
@@ -231,6 +235,59 @@ export var ScreenWithMenuBar = Container.template($ => ({
 			//menu bar placeholder. TODO
 		]
 }));
+
+export var NavBar = Line.template($ => ({
+	left: 0, right: 0, top: 0, height: navBarHeight,
+	name: "nav", skin: navBarSkin, active: true, contents: $.contents,
+}));
+
+export var NavMenuButton = Picture.template($ => ({
+	height: 26, left: navPadding,
+	url: "Assets/MenuIcon.png", active: true,
+	Behavior: class extends ButtonBehavior {
+		onTap(content){
+			application.distribute("showMenu");
+		}
+	}
+}));
+
+export var NavBackButton = Label.template($ => ({
+	left: navPadding, right: navPadding, style: bodyLinkStyle, active: true,
+	string: "< Back", Behavior: class extends ButtonBehavior {
+		onTap(content) {
+			application.distribute("dispatch", "back");
+		}
+	}
+}));
+
+export var NavSelectButton = Label.template($ => ({
+	left: navPadding, right: navPadding, style: bodyLinkStyleRight, active: true,
+	string: "Select", Behavior: $.Behavior
+}));
+
+export var NavSelectAllButton = Label.template($ => ({
+	left: navPadding, right: navPadding, style: bodyLinkStyleLeft, active: true,
+	string: "Select All", Behavior: $.Behavior
+}));
+
+export var NavCancelButton = Label.template($ => ({
+	left: navPadding, right: navPadding, style: bodyLinkBoldStyleRight, active: true,
+	string: "Cancel", Behavior: $.Behavior
+}));
+
+export var NavEditButton = Label.template($ => ({
+	left: navPadding, right: navPadding, style: bodyLinkStyleRight, active: true,
+	string: "Edit", Behavior: $.Behavior
+}))
+
+export var NavTitleLeft = Label.template($ => ({
+	left: navPadding, right: navPadding, style: bodyStyle, string: $.string,
+}));
+
+export var NavTitleCenter = Label.template($ => ({
+	left: navPadding, right: navPadding, style: bodyStyleCenter, string: $.string,
+}));
+
 
 /**
 Use for the big blue buttons at the bottom of a lot of our screens
