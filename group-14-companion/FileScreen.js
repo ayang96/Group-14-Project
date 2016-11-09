@@ -163,7 +163,7 @@ class screenBehavior extends Behavior {
       let DocIcon = new Line({
          height: 80, width: 320, skin: whiteSkin,
          contents:[
-            new Picture({height: 50, width: 80, align:'middle', url:'./assets/icon_document_in_ring_70x70.png'}),
+            new Picture({height: 50, width: 80, align:'middle', url:'./assets/icon_document_in_ring_70x70_2.png'}),
             new Column({height: 80, width: 240, 
                contents:[
                   //Label($, {height: 29, top: 25, width: 240, string: $[0], style: textStyle, skin:whiteSkin}),
