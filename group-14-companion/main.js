@@ -181,7 +181,9 @@ let sampleDoc = new FileScreenTemplate(FileData);
 //application.add(sampleDocHis);
 //application.add(new DocumentsScreen(screenData));
 application.add(sampleUser);
+
 //application.add(new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}));
+
 var screens = {
 	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}),
 	"documentHistoryScreen" : sampleDocHis,
@@ -202,9 +204,10 @@ var screenParents = {
 //application.add(dispatcher);
 //application.distribute("dispatch", "test");
 
-var dispatcher = new common.Dispatcher({ menu: new Menu(), screens: screens, screenParents: screenParents });
-application.add(dispatcher);
-application.distribute("dispatch", "documentsScreen");
+// var dispatcher = new common.Dispatcher({ menu: new Menu(), screens: screens, screenParents: screenParents });
+// application.add(dispatcher);
+// application.distribute("dispatch", "documentsScreen");
+
 //application.add(new DocumentHistoryScreen({ document: "3e6f5707", data: data }));
 
 // DOCUMENTSSCREEN For Display of testing. Comment out if necessary
