@@ -191,11 +191,11 @@ var screens = {
 }
 
 var screenParents = {
-	"documentsScreen" : "root",
+	"documentsScreen" : "root:documents",
 	"documentHistoryScreen" : "documentInfoScreen",
 	"documentInfoScreen" : "documentsScreen",
 	"userProfileScreen": "usersScreen",
-	"usersScreen": "root",
+	"usersScreen": "root:users",
 }
 
 //var dispatcher = new common.Dispatcher({ menuHolder: new common.MenuHolder({ menu: new Menu() }), screens: screens });

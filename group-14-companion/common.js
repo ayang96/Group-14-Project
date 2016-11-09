@@ -170,11 +170,13 @@ export var Dispatcher = Container.template($ => ({
 						content.page.add(screen);
 				}
 				this.currentScreenName = screenName;
+				this.updateMenu();
 			}
 			this.hideMenu(content);
 		}
 		showMenu(content) {
 			// Can change how this works
+			this.updateMenu();
 			if (! content.holder) {
 				content.add(this.menuHolder);
 			}
@@ -182,6 +184,16 @@ export var Dispatcher = Container.template($ => ({
 		hideMenu(content) {
 			if (content.holder) {
 				content.remove(this.menuHolder);
+			}
+		}
+		updateMenu() {
+			let name = this.currentScreenName;
+			while (name in $.screenParents) {
+				name = $.screenParents[name];
+			}
+			if (name.length > 5 && name.substring(0, 6) === "root:") {
+				let category = name.substring(6);
+				this.menuHolder.first.delegate("update", category);
 			}
 		}
 		notify(content, message) {
