@@ -204,7 +204,7 @@ application.distribute("dispatch", "documentsScreen");
 //application.add(new DocumentHistoryScreen({ document: "3e6f5707", data: data }));
 
 // DOCUMENTSSCREEN
-application.add(new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}));
+//application.add(new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}));
 
 // USERSSCREEN
 //application.add(new screenWithMenubar({screen: [new UsersScreen(usersData)]}));

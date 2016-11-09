@@ -40,7 +40,7 @@ var Screen1Template = Column.template($ => ({
             ] }),
        new subtitlebox({height:22,string: "Tabs"}),
        new selectionbox({offset:1,string: "Document Explorer", screenName: "documentsScreen"}),
-       new selectionbox({offset:1,string: "Users", screenName: "userProfileScreen"}),
+       new selectionbox({offset:1,string: "Users", screenName: "usersScreen"}),
        new selectionbox({offset:1,string: "Cabinet Manager"}),
 	   new subtitlebox({height:22,string: "Other"}),
        new selectionbox({offset:1,string: "Password Settings"}),

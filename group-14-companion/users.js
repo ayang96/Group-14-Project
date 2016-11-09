@@ -13,13 +13,20 @@
 /************ 1) EXPORT SCREEN **********************************************/
 export var UsersScreen = Container.template($ => ({
 	top: 0, left: 0, right: 0, bottom: 0,
-	skin: lineSkin,	contents: [],
-	Behavior: screenBehavior}));
+	skin: lineSkin,
+	contents: [],
+	Behavior: screenBehavior
+}));
 
 /************ 2) IMPORTS *****************************************************/
 import * as common from "common";
 
-import {    VerticalScroller,    VerticalScrollbar,    TopScrollerShadow,    BottomScrollerShadow} from 'src/scroller';
+import {
+    VerticalScroller,
+    VerticalScrollbar,
+    TopScrollerShadow,
+    BottomScrollerShadow
+} from 'src/scroller';
 
 /************ 3) ASSETS ******************************************************/
 
@@ -130,7 +137,8 @@ class screenBehavior extends Behavior {
 						tier: data.users[i].tier,
 						color: data.users[i].color}
 				));
-			}		let mainScroller = new MainScroller({contentToScrollVertically});
+			}
+		let mainScroller = new MainScroller({contentToScrollVertically});
 		
 		// Add plus button
 		let plusButton = common.PlusButton();
@@ -208,7 +216,7 @@ class userIconBehavior extends Behavior {
 };
 
 // Auto-generates user icon, name, and tier
-class userBehavior extends Behavior {
+class userBehavior extends common.ButtonBehavior {
 	onCreate(user, data) {
 		// Extract given data
 		this.name = data.name;
@@ -240,11 +248,8 @@ class userBehavior extends Behavior {
 			user.add(new pendingWhiteout({top: 0, left: 0, right: 0, bottom: 0}));	
 		}
 	}
-	onTouchBegan(document) {
-		//TODO navigation into document page
-	}
-	onTouchEnded(document) {
-		//TODO
+	onTap(user) {
+		application.distribute("dispatch", "userProfileScreen");
 	}
 };
 
@@ -302,7 +307,7 @@ let userIcon = Container.template($ => ({
 // When instantiating, call new userLine(data)
 let userLine = Container.template($ => ({
 	top: 0, left: 0, right: 0, height: lineHeight, width: screenWidth,
-	Behavior: userBehavior,
+	Behavior: userBehavior, active: true,
 	contents: []
 }));
 
@@ -316,14 +321,18 @@ let SortBarLine = Column.template($ => ({
 }));
 
 // Scroller template
-let MainScroller = Column.template($ => ({    left: 0, right: 0, top: 0, bottom: 0,     contents: [
+let MainScroller = Column.template($ => ({
+    left: 0, right: 0, top: 0, bottom: 0, 
+    contents: [
       VerticalScroller($, {
       	active: true,
       	top: 0, left: 0, right: 0,
       	contents: [ $.contentToScrollVertically,
       		VerticalScrollbar(), TopScrollerShadow(), BottomScrollerShadow(),
       	]
-      }),      ]}));
+      }),  
+    ]
+}));
 
 
 
