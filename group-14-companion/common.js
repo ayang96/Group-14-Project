@@ -488,12 +488,10 @@ export class plusButtonBehavior extends Behavior {
 	onTouchBegan(button) {
 		//TODO navigation
 		this.buttonImage.url = this.downSkin;
-		trace('down\n');
 	}
 	onTouchEnded(button) {
 		//TODO
 		this.buttonImage.url = this.upSkin;
-		trace('up\n');
 	}
 };
 
