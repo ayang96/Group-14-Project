@@ -180,8 +180,7 @@ let sampleUser = new ProfileScreenTemplate(PersonData);
 let sampleDoc = new FileScreenTemplate(FileData);
 //application.add(sampleDocHis);
 //application.add(new DocumentsScreen(screenData));
-application.add(sampleUser);
-
+//application.add(sampleUser);
 //application.add(new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}));
 
 var screens = {

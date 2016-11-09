@@ -216,7 +216,7 @@ export var ScreenWithMenuBar = Container.template($ => ({
 	top:0, left:0, bottom:0, right:0,
 	contents: [
 		new Container({
-			left: 0, right: 0, top: navBarHeight, contents: [ $.screen ]
+			left: 0, right: 0, top: navBarHeight, bottom: 0, contents: [ $.screen ]
 		}),
 		new NavBar({
 			contents: [
@@ -304,7 +304,7 @@ $.left, $.right, $.top, $.bottom, $.width, $.height: optional, default is pretty
 **/
 export var NormalButton = Container.template($ => ({
 	left: $.left, right: $.right, top: $.top || 0, bottom: $.bottom || 0,
-	width: $.width || 130, height: $.height || 50,
+	width: $.width || 120, height: $.height || 40,
 	skin: $.skin || buttonSkin, active: true,
 	Behavior: $.Behavior,
 	contents: [

@@ -249,7 +249,7 @@ class userBehavior extends common.ButtonBehavior {
 		}
 	}
 	onTap(user) {
-		application.distribute("dispatch", "userProfileScreen");
+		application.distribute("dispatch", "userProfileScreen", "push");
 	}
 };
 
