@@ -30,7 +30,7 @@ var Screen1Template = Column.template($ => ({
     contents: [
         new Container({ top: 0, height: 70, left: 0, right: 0,  skin: menubox,
 			contents:[
-			new Picture({height:60,left:-40, url: "Assets/UserProfileIcon.png"}),			
+			new Picture({height:60,left:-40, url: "assets/UserProfileIcon.png"}),			
 			new Label({ top: 15, right: 64,height:22 ,
             		style: new Style({ font: "Roboto bold 13px", color: "white" }), 
             		string: "Allison Rory" }),
@@ -40,7 +40,7 @@ var Screen1Template = Column.template($ => ({
             ] }),
        new subtitlebox({height:22,string: "Tabs"}),
        new selectionbox({offset:1,string: "Document Explorer", screenName: "documentsScreen"}),
-       new selectionbox({offset:1,string: "Users", screenName: "userProfileScreen"}),
+       new selectionbox({offset:1,string: "Users", screenName: "usersScreen"}),
        new selectionbox({offset:1,string: "Cabinet Manager"}),
 	   new subtitlebox({height:22,string: "Other"}),
        new selectionbox({offset:1,string: "Password Settings"}),

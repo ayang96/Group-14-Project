@@ -7,22 +7,17 @@
 *	2) Assets- common stuff from Figma and our own icons
 *	3) Behaviors
 *	4) Templates
-*	5) Application and Application Data- display and testing, example data here
+*	5) Application and Application Data- application, example data here
+*	6) Testing Code- display and testing
 */
 
 /***************** 1) IMPORTS *******************************************/
-import {
-    DocumentsScreen
-} from "documents";
-import {
-   FileScreenTemplate
-} from "FileScreen";
-import {
-   ProfileScreenTemplate
-} from "ProfileScreen";
-import {
-   FileHistoryTemplate
-} from "FileHistory";
+
+import { DocumentsScreen } from "documents";
+import { UsersScreen } from "users";
+import { FileScreenTemplate } from "FileScreen";
+import { ProfileScreenTemplate } from "ProfileScreen";
+import { FileHistoryTemplate } from "FileHistory";
 import { DocumentHistoryScreen } from "documenthistory";
 import { Menu } from "Menu";
 import * as common from "common";
@@ -37,34 +32,7 @@ const menuBarHeight = 35;
 
 // Template for adding a menu bar placeholder above and on top of screen.
 // Instantiate as new screenWithMenubar({screen: [ScreenObject]})
-let screenWithMenubar = Container.template($ => ({
-	top:0, left:0, bottom:0, right:0,
-	contents: [
-	
-		//new Picture({left:-40, url: "Assets/UserProfileIcon.png"}),
-		new Container({height: applicationHeight - menuBarHeight, 
-						left:0, right:0, bottom:0, contents: $.screen}),
-		new Container({top: 0, left:0, right:0, height: menuBarHeight, skin: new Skin({fill:"#e6e6e6"}),
-			contents:[
-			new Picture({height: 26,top: 5,left:14, url: "Assets/MenuIcon.png", active: true,
-			behavior: Behavior({
-				onTouchEnded: function(content){
-					application.distribute("showMenu");
-				}
-				})}),
-			new Picture({height: 21 ,top: 8,left:64, url: "Assets/SearchIcon.png"}),
-			new Label({ top: 7, left: 100,height:25 ,
-            		style: new Style({ font: "13px Roboto Regular", color: "gray" }), 
-            		string: "Search Documents" }),
-			
-			new Label({ top: 7, right: 10,height:25 ,
-            		style: new Style({ font: "13px Roboto Regular", color: common.blue }), 
-            		string: "Select" }),
-			]
-			}),
-			//menu bar placeholder. TODO
-		]
-}));
+let screenWithMenubar = common.ScreenWithMenuBar;
 
 /***************** 5) APPLICATION AND APPLICATION DATA ******************/
 
@@ -94,6 +62,17 @@ let screenData = {
 	directory: directory,
 	documents: documents,
 	folders: folders
+};
+
+let usersData = {
+	users: [
+		{name:'Allison Rory', tier:'Admin', color:'red'},
+		{name:'Brian Chen', tier:'Tier 1', color:'green'},
+		{name:'Dominique Yano', tier:'Tier 2', color:'blue'},
+		{name:'Ellen van Hurst', tier:'Supervisor', color:'yellow'},
+		{name:'Gabrielle Glasner', tier:'Tier 1', color:'blue'},
+		{name:'Hector Smith', tier:'Tier 2', color:'pending'},
+	]
 };
 
 
@@ -187,6 +166,7 @@ var docData = {
 	lockers: {},
 }
 
+
 let HistoryData = {
 	docName: docName,
 	docData: docData,
@@ -204,36 +184,40 @@ application.add(sampleUser);
 //application.add(new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}));
 var screens = {
 	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}),
-	"documentHistoryScreen" : new DocumentHistoryScreen({ document: "3e6f5707", data: data }),
+	"documentHistoryScreen" : sampleDocHis,
 	"documentInfoScreen" : sampleDoc,
 	"userProfileScreen": sampleUser,
-	"test" : new Container({
-		left: 0, right: 0, top: 0, bottom: 0,
-		skin: new Skin({ fill: "white" }),
-		contents: [
-			new Container({
-				left: 10, top: 10, width: 50, height: 50, skin: new Skin({ fill: "blue" }), active: true,
-				Behavior: class extends common.ButtonBehavior {
-					onTap(content) {
-						application.distribute("showMenu");
-					}
-				}
-			}),
-			new Container({
-				left: 10, top: 100, width: 50, height: 50, skin: new Skin({ fill: "red" }), active: true,
-				Behavior: class extends common.ButtonBehavior {
-					onTap(content) {
-						application.distribute("dispatch", "documentsScreen");
-					}
-				}
-			}),
-		]
-	})
+	"usersScreen": new screenWithMenubar({screen: [new UsersScreen(usersData)]})
 }
 
-var dispatcher = new common.Dispatcher({ menuHolder: new common.MenuHolder({ menu: new Menu() }), screens: screens });
+var screenParents = {
+	"documentsScreen" : "root",
+	"documentHistoryScreen" : "documentInfoScreen",
+	"documentInfoScreen" : "documentsScreen",
+	"userProfileScreen": "usersScreen",
+	"usersScreen": "root",
+}
+
+//var dispatcher = new common.Dispatcher({ menuHolder: new common.MenuHolder({ menu: new Menu() }), screens: screens });
 //application.add(dispatcher);
 //application.distribute("dispatch", "test");
+
+var dispatcher = new common.Dispatcher({ menu: new Menu(), screens: screens, screenParents: screenParents });
+application.add(dispatcher);
+application.distribute("dispatch", "documentsScreen");
 //application.add(new DocumentHistoryScreen({ document: "3e6f5707", data: data }));
 
 // DOCUMENTSSCREEN For Display of testing. Comment out if necessary
+
+/***************** 6) TESTING CODE *************************************/
+// Comment out any below and your screen here to application for testing display
+
+// DOCUMENTSHISTORYSCREEN
+//application.add(new DocumentHistoryScreen({ document: "3e6f5707", data: data }));
+
+// DOCUMENTSSCREEN
+//application.add(new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}));
+
+// USERSSCREEN
+//application.add(new screenWithMenubar({screen: [new UsersScreen(usersData)]}));
+
