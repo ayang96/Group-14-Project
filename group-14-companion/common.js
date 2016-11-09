@@ -304,7 +304,7 @@ $.left, $.right, $.top, $.bottom, $.width, $.height: optional, default is pretty
 **/
 export var NormalButton = Container.template($ => ({
 	left: $.left, right: $.right, top: $.top || 0, bottom: $.bottom || 0,
-	width: $.width || 130, height: $.height || 50,
+	width: $.width || 120, height: $.height || 40,
 	skin: $.skin || buttonSkin, active: true,
 	Behavior: $.Behavior,
 	contents: [

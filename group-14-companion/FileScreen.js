@@ -50,25 +50,31 @@ let WbuttonStyle = common.buttonStyleBlue;
 /*Buttons*/
 /*========================*/
 
-let OpenButton = new Container({
-   height: 30, width: 110, right: 5, top: 10, skin: blueSkin,
-   contents :[
-      new Label({string:'OPEN', align: 'middle', style: WbuttonStyle}),
-   ]
-});
-
-let HistoryButton = new Container({
-   height: 30, width: 110, left: 5, top: 10, skin: blueSkin,
-   active: true,
-   contents :[
-      new Label({string:'FILE HISTORY', align: 'middle', style: WbuttonStyle}),
-   ],
+let OpenButton = new common.NormalButton({
+   string: "OPEN",
    Behavior: class extends common.ButtonBehavior {
       onTap(content) {
-         application.distribute("dispatch", "documentHistoryScreen");
+
+         // IMPLEMENT OPENING LOCKER
+
+         application.distribute("alert", {
+            title: "Opening Document",
+            message: "Locker 03 of Cabinet A has been opened. You may now retrieve the document. Your access will be logged.",
+            options: [{ string: "OK", callback: function(){} }],
+         })
       }
    }
 });
+
+let HistoryButton = new common.NormalButton({
+   left: 20,
+   string: "FILE HISTORY",
+   Behavior: class extends common.ButtonBehavior {
+      onTap(content) {
+         application.distribute("dispatch", "documentHistoryScreen", "push");
+      }
+   }
+})
 
 /*========================*/
 /*Label Template*/
