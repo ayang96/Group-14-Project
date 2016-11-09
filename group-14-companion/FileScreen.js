@@ -67,9 +67,15 @@ let OpenButton = new Container({
 
 let HistoryButton = new Container({
    height: 30, width: 110, left: 5, top: 10, skin: blueSkin,
+   active: true,
    contents :[
       new Label({string:'FILE HISTORY', align: 'middle', style: WbuttonStyle}),
-   ]
+   ],
+   Behavior: class extends common.ButtonBehavior {
+      onTap(content) {
+         application.distribute("dispatch", "documentHistoryScreen");
+      }
+   }
 });
 
 /*========================*/
