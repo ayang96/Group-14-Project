@@ -50,14 +50,6 @@ let WbuttonStyle = common.buttonStyleBlue;
 /*Buttons*/
 /*========================*/
 
-let BackButton = new Line({
-   height: 39, width: 50, right:  270,
-   contents: [
-      new Picture({height: 20, align:'middle', url:'./assets/left.png'}),
-      new Label({height:39, left: 5, align:'middle', string:'Back', style: buttonStyle, skin: whiteSkin})
-   ]
-});
-
 let OpenButton = new Container({
    height: 30, width: 110, right: 5, top: 10, skin: blueSkin,
    contents :[
@@ -107,14 +99,11 @@ let Description = Container.template($ => ({
 /*========================*/
 /*Scetions*/
 /*========================*/
-let TopNavi = Column.template($ => ({
-   height: 50, width: 320, skin: whiteSkin,
-   contents:[
-      new Container({height:10, width: 320, skin:whiteSkin}),
-      new Line({height: 39, contents:[BackButton]}),
-      new Container({height:1, width: 320, skin:blackSkin})
+let TopNavi = new common.NavBar({
+   contents: [
+      new common.NavBackButton(),
    ]
-}));
+});
 
 let Intro = Line.template($ => ({
    height: 80, width: 320, skin: whiteSkin,
@@ -193,7 +182,7 @@ class screenBehavior extends Behavior {
       });
 
 
-      FileScreen.add(TopNavi());
+      FileScreen.add(TopNavi);
       FileScreen.add(DocIcon);
       FileScreen.add(FileContent);
       screen.add(FileScreen);

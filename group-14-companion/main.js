@@ -190,7 +190,15 @@ var screens = {
 	"usersScreen": new screenWithMenubar({screen: [new UsersScreen(usersData)]})
 }
 
-var dispatcher = new common.Dispatcher({ menu: new Menu(), screens: screens });
+var screenParents = {
+	"documentsScreen" : "root",
+	"documentHistoryScreen" : "documentInfoScreen",
+	"documentInfoScreen" : "documentsScreen",
+	"userProfileScreen": "usersScreen",
+	"usersScreen": "root",
+}
+
+var dispatcher = new common.Dispatcher({ menu: new Menu(), screens: screens, screenParents: screenParents });
 application.add(dispatcher);
 application.distribute("dispatch", "documentsScreen");
 //application.add(new DocumentHistoryScreen({ document: "3e6f5707", data: data }));

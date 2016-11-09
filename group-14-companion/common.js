@@ -144,33 +144,32 @@ export var Dispatcher = Container.template($ => ({
 	Behavior: class extends Behavior {
 		onCreate(content, data) {
 			this.menuHolder = new MenuHolder({ menu: $.menu });
-			this.prevScreen = null;
+			this.currentScreenName = "";
 		}
 		onDisplayed(content) {
 			this.hideMenu(content);
 		}
 		dispatch(content, screenName, transition) {
-			let screen = null;
 			if (screenName === "back") {
-				screen = this.prevScreen;
+				screenName = $.screenParents[this.currentScreenName];
 				transition = transition || 'pushRight';
-			} else {
-				screen = $.screens[screenName];
 			}
-			if (screen && screen != content.page.last) {
-				this.prevScreen = content.page.last;
+			let screen = $.screens[screenName];
+			let currentScreen = content.page.last;
+			if (screen && screen != currentScreen) {
 				switch (transition) {
 					case 'push':
 					case 'pushLeft':
-						content.page.run( new Push(), content.page.last, screen, { duration: 400, direction: "left" } );
+						content.page.run( new Push(), currentScreen, screen, { duration: 400, direction: "left" } );
 						break;
 					case 'pushRight':
-						content.page.run( new Push(), content.page.last, screen, { duration: 400, direction: "right" } );
+						content.page.run( new Push(), currentScreen, screen, { duration: 400, direction: "right" } );
 						break;
 					default:
 						content.page.empty();
 						content.page.add(screen);
 				}
+				this.currentScreenName = screenName;
 			}
 			this.hideMenu(content);
 		}
@@ -216,24 +215,17 @@ const menuBarHeight = 35;
 export var ScreenWithMenuBar = Container.template($ => ({
 	top:0, left:0, bottom:0, right:0,
 	contents: [
-	
-		//new Picture({left:-40, url: "Assets/UserProfileIcon.png"}),
-		new Container({top: menuBarHeight, left:0, right:0, bottom:0, contents: $.screen}),
-		new Container({top: 0, left:0, right:0, height: menuBarHeight, skin: new Skin({fill:"#e6e6e6"}),
-			contents:[
-			new NavMenuButton,
-			new Picture({height: 21 ,top: 8,left:64, url: "Assets/SearchIcon.png"}),
-			new Label({ top: 7, left: 100,height:25 ,
-            		style: new Style({ font: "13px Roboto Regular", color: "gray" }), 
-            		string: "Search Documents" }),
-			
-			new Label({ top: 7, right: 10,height:25 ,
-            		style: new Style({ font: "13px Roboto Regular", color: blue }), 
-            		string: "Select" }),
+		new Container({
+			left: 0, right: 0, top: navBarHeight, contents: [ $.screen ]
+		}),
+		new NavBar({
+			contents: [
+				new NavMenuButton(),
+				new NavSearch(),
+				new NavSelectButton({ Behavior: ButtonBehavior }),
 			]
-			}),
-			//menu bar placeholder. TODO
-		]
+		}),
+	]
 }));
 
 export var NavBar = Line.template($ => ({
@@ -288,6 +280,18 @@ export var NavTitleCenter = Label.template($ => ({
 	left: navPadding, right: navPadding, style: bodyStyleCenter, string: $.string,
 }));
 
+export var NavSearch = Container.template($ => ({
+	left: navPadding, right: navPadding, width: 120, contents: [
+		new Picture({
+			height: 21, left: 0,
+			url: "Assets/SearchIcon.png"
+		}),
+		new Label({
+			left: 30, right: 0, style: bodyLightStyle,
+			string: "Search Documents"
+		}),
+	]
+}));
 
 /**
 Use for the big blue buttons at the bottom of a lot of our screens
@@ -473,7 +477,7 @@ export class ButtonBehavior extends Behavior {
 	}
 	onTouchEnded(content) {
 		content.state = 0;
-		this.onTap(content);
+		content.delegate("onTap");
 	}
 }
 
