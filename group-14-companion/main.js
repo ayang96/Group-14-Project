@@ -20,6 +20,7 @@ import { ProfileScreenTemplate } from "ProfileScreen";
 import { FileHistoryTemplate } from "FileHistory";
 import { DocumentHistoryScreen } from "documenthistory";
 import { Menu } from "Menu";
+import { Data, sampleData } from "model";
 import * as common from "common";
 
 /***************** 2) ASSETS ********************************************/
@@ -182,6 +183,10 @@ let sampleDoc = new FileScreenTemplate(FileData);
 //application.add(new DocumentsScreen(screenData));
 //application.add(sampleUser);
 //application.add(new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}));
+
+
+var data = sampleData;
+data.setState({ folder: 'root' });
 
 var screens = {
 	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}),

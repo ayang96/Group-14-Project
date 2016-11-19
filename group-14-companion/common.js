@@ -29,6 +29,9 @@ export var purple = '#9B51E0';
 export var grey = '#828282';
 export var black = 'black';
 
+export var colorNames = ['red', 'orange', 'yellow', 'green', 'sky',
+							'blue', 'purple', 'grey', 'black'];
+
 export var darkerBlue = "#0455C2"; // for second state of buttons and links
 export var systemGrey = "#F2F2F2"; // for backgrounds
 export var systemDarkerGrey = "#CCCCCC"; // for second state of backgrounds
@@ -517,4 +520,15 @@ export class plusButtonBehavior extends Behavior {
 /** Date string format to be used through the app **/
 export function formatDate(date) {
 	return date.format("mmm. d yyyy");
+}
+
+/** Returns a string corresponding to a randomly chosen color **/
+export function randomColor() {
+	return colorNames[Math.floor(Math.random() * colorNames.length)];
+}
+
+/** Returns the capitalized full name of someone given their first and last names **/
+export function fullName(firstName, lastName) {
+	return (firstName.slice(0, 1).toUpperCase() + firstName.slice(1) + ' ' +
+			lastName.slice(0, 1).toUpperCase() + lastName.slice(1)).trim();
 }
