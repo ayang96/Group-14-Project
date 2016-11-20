@@ -572,6 +572,13 @@ export class Data {
 		return idList.map(id => this.getFolderAbbreviatedData(id)).filter(x => x);
 	}
 
+	/**
+	 * Returns the tiers of this folder, which is the union of all
+	 * the tiers of all documents and folders inside this folder.
+	 * 
+	 * @param  {String} id: folder id
+	 * @return {Object[]} list of tier data, or null if broken links
+	 */
 	getFolderTiers(id) {
 		if (id in this.folders) {
 			let tiers = new Set();
@@ -583,6 +590,13 @@ export class Data {
 		}
 	}
 
+	/**
+	 * Helper for getFolderTiers. Performs a DFS preorder traversal
+	 * of the folder heirarchy in this folder, adding any found tiers
+	 * to tiers.
+	 * @param  {Object} folder: entry of folder in table
+	 * @param  {Set} tiers: ids of tiers already found
+	 */
 	_findFolderTiers(folder, tiers) {
 		for (let id of folder.documents) {
 			let document = this.documents[id];
@@ -598,6 +612,17 @@ export class Data {
 		}
 	}
 
+	/**
+	 * Finds path of a folder
+	 * 
+	 * @param  {String} id: folder id
+	 * @return {Object} two properties:
+	 * 						folderDataList: list of folder abbreviated data
+	 * 										First element is always root
+	 * 										Last element is always folder passed in
+	 * 						string: file path string, e.g. '\Folder 1\Folder 2\'
+	 * 					or null if broken links
+	 */
 	getPath(id) {
 		let current = id;
 		let folderDataList = [];
