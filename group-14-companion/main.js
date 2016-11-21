@@ -68,10 +68,10 @@ let screenData = {
 let usersData = {
 	users: [
 		{name:'Allison Rory', tier:'Admin', color:'red'},
-		{name:'Brian Chen', tier:'Tier 1', color:'green'},
+		{name:'Brian Chen', tier:'Tier 2', color:'blue'},
 		{name:'Dominique Yano', tier:'Tier 2', color:'blue'},
 		{name:'Ellen van Hurst', tier:'Supervisor', color:'yellow'},
-		{name:'Gabrielle Glasner', tier:'Tier 1', color:'blue'},
+		{name:'Gabrielle Glasner', tier:'Tier 1', color:'green'},
 		{name:'Hector Smith', tier:'Tier 2', color:'pending'},
 	]
 };
@@ -79,11 +79,31 @@ let usersData = {
 
 let FileData = {
    docName: 'Document #1',
-   Tag: 'Tag 1',
-   LastUsed: 'Sep 20th 2016 by Jessica',
+   Tag: 'F, P',
+   LastUsed: 'Sep 20th 2016 by Brian',
    DateCreated: 'Aug 21st 2016',
-   Description: 'This is the description for Doc 1',
+   Description: 'Important Financial Statement for Company X.',
    AccessTier: 'Tier 1',
+   InOut: 'OUT',
+};
+
+let FileData2 = {
+   docName: 'Document #2',
+   Tag: 'C',
+   LastUsed: 'Sep 21st 2016 by Brian',
+   DateCreated: 'Aug 16th 2016',
+   Description: 'Important Financial Statement for Company X.',
+   AccessTier: 'Tier 1',
+   InOut: 'OUT',
+};
+
+let FileData3 = {
+   docName: 'Document #3',
+   Tag: 'D',
+   LastUsed: 'Nov 20th 2016 by Jessica',
+   DateCreated: 'Aug 21st 2016',
+   Description: 'Bank Confirmation for Company X',
+   AccessTier: 'Tier 2',
    InOut: 'IN',
 };
 
@@ -92,6 +112,14 @@ let PersonData = {
    firstName: 'Brain',
    lastName: 'Chen',
    Email: 'brain.c@gmail.com',
+   AccessTier: 'Tier 2',
+};
+
+
+let PersonData2 = {
+   firstName: 'Gabrielle',
+   lastName: 'Glasner',
+   Email: 'gabrielle.g@gmail.com',
    AccessTier: 'Tier 1',
 };
 
@@ -187,6 +215,8 @@ let sampleDoc = new FileScreenTemplate(FileData);
 
 var data = sampleData;
 data.setState({ folder: 'root' });
+var docs = data.documents;
+
 
 var screens = {
 	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}),
