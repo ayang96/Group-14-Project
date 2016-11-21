@@ -16,7 +16,7 @@
 import { DocumentsScreen } from "documents";
 import { UsersScreen } from "users";
 import { FileScreenTemplate } from "FileScreen";
-import { ProfileScreenTemplate } from "ProfileScreen";
+import { ProfileScreenTemplate } from "ProfileScreen"; // PROFILE
 import { FileHistoryTemplate } from "FileHistory";
 import { DocumentHistoryScreen } from "documenthistory";
 import { Menu } from "Menu";
@@ -288,7 +288,7 @@ let HistoryData3 = {
 };
 
 /*Testing Part*/
-let sampleUser = new ProfileScreenTemplate(PersonData2);
+let sampleUser = new ProfileScreenTemplate(PersonData2); // PROFILE
 let sampleDocHis = new FileHistoryTemplate(HistoryData);
 let sampleDoc = new FileScreenTemplate(FileData);
 
@@ -320,7 +320,7 @@ var screens2 = {
 	"documentInfoScreen" : sampleDoc,
 	"documentInfoScreen2" : sampleDoc2,
 	"documentInfoScreen3" : sampleDoc3,
-	"userProfileScreen": sampleUser,
+	"userProfileScreen": sampleUser, // PROFILE
 	"usersScreen": new screenWithMenubar({screen: [new UsersScreen(usersData)]})
 }
 
@@ -337,7 +337,7 @@ var screenParents = {
 	"documentHistoryScreen" : "documentInfoScreen",
 	"documentInfoScreen" : "documentsScreen",
 	"documentInfoScreen2" : "documentsScreen",
-	"userProfileScreen": "usersScreen",
+	"userProfileScreen": "usersScreen", // PROFILE
 	"usersScreen": "root:users",
 }
 

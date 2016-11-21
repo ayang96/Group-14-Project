@@ -73,21 +73,21 @@ let lineSkin = new Skin({							//stroked skin of a document listing
 let docInIcon = Picture.template($ => ({			// icon for a in document
 	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
 	width: docIconSize, height: docIconSize,
-	url: 'assets/icon_document_ver2.png',
+	url: 'assets/icon_document.png',
 	aspect: 'fit'
 }));
 
 let docOutOtherIcon = Picture.template($ => ({		// icon for document out by other
 	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
 	width: docIconSize, height: docIconSize,
-	url: 'assets/icon_document_out_other_ver3.png',
+	url: 'assets/icon_document_out_other.png',
 	aspect: 'fit'
 }));
 
 let docOutYouIcon = Picture.template($ => ({		// icon for document out by you
 	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
 	width: docIconSize, height: docIconSize,
-	url: 'assets/icon_document_out_you_ver3.png',
+	url: 'assets/icon_document_out_you.png',
 	aspect: 'fit'
 }));
 
@@ -108,28 +108,28 @@ let folderIcon = Picture.template($ => ({		// icon for folder
 let tagWhiteout4 = Picture.template($ => ({		// hardcoded white cutouts over 4 tags
 	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
 	width: screenWidth, height: lineHeight,
-	url: 'assets/listing_line_tags_white_cutouts_4_flat.png',
+	url: 'assets/listing_line_tags_white_cutouts.png',
 	aspect: 'fit'
 }));
 
 let tagWhiteout3 = Picture.template($ => ({		// hardcoded white cutouts over 3 tags
 	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
 	width: screenWidth, height: lineHeight,
-	url: 'assets/listing_line_tags_white_cutouts_3_flat.png',
+	url: 'assets/listing_line_tags_white_cutouts_3.png',
 	aspect: 'fit'
 }));
 
 let tagWhiteout2 = Picture.template($ => ({		// hardcoded white cutouts over 2 tags
 	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
 	width: screenWidth, height: lineHeight,
-	url: 'assets/listing_line_tags_white_cutouts_2_flat.png',
+	url: 'assets/listing_line_tags_white_cutouts_2.png',
 	aspect: 'fit'
 }));
 
 let tagWhiteout1 = Picture.template($ => ({		// hardcoded white cutouts over 1 tags
 	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
 	width: screenWidth, height: lineHeight,
-	url: 'assets/listing_line_tags_white_cutouts_1_flat.png',
+	url: 'assets/listing_line_tags_white_cutouts_1.png',
 	aspect: 'fit'
 }));
 
@@ -310,8 +310,8 @@ class documentBehavior extends Behavior {
 			docLine.add(new Column({
 				width: docNameWidth, left: spacing,
 				contents: [
-					new docNameLabel({string: this.name, color: "black"}),
-					new docTierLabel({string: this.tier, color: "black"})
+					new docNameLabel({string: this.name, color: "gray"}),
+					new docTierLabel({string: this.tier, color: "gray"})
 				]
 			}));
 		}
