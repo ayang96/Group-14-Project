@@ -45,7 +45,7 @@ let documents = [
 	{ name:'Document#1', labels:[['F', 'red'], ['P', 'orange']], tier:'Tier 1', out: 'other'},
 	{ name:'Document#2', labels:[['C', 'green']], tier:'Tier 1', out: 'other'},
 	{ name:'Document#3', labels: [['D', 'purple'], ['C', 'green'], ['P', 'orange']], tier: 'Tier 2', out: 'in'},
-	{ name:'Document#4', labels: [], tier: 'Tier 1', out: 'you'},
+	//{ name:'Document#4', labels: [], tier: 'Tier 1', out: 'you'},
 	{ name:'Document#5', labels: [['F', 'red']], tier: 'Tier 1', out: 'in'},
 	// { name:'Document#6', labels: [], tier: 'Tier 2', out: 'in'},
 	// { name:'Document#7', labels: [['D', 'purple']], tier: 'Tier 2', out: 'in'},
@@ -78,7 +78,7 @@ let usersData = {
 
 
 let FileData = {
-   docName: 'Document #1',
+   docName: 'Document#1',
    Tag: 'F, P',
    LastUsed: 'Nov 11th 2016 by Brian',
    DateCreated: 'Aug 21st 2016',
@@ -88,7 +88,7 @@ let FileData = {
 };
 
 let FileData2 = {
-   docName: 'Document #2',
+   docName: 'Document#2',
    Tag: 'C',
    LastUsed: 'Nov 11th 2016 by Brian',
    DateCreated: 'Aug 16th 2016',
@@ -98,7 +98,7 @@ let FileData2 = {
 };
 
 let FileData3 = {
-   docName: 'Document #3',
+   docName: 'Document#3',
    Tag: 'D',
    LastUsed: 'Nov 20th 2016 by Jessica',
    DateCreated: 'Aug 21st 2016',
@@ -288,21 +288,15 @@ let HistoryData3 = {
 };
 
 /*Testing Part*/
-let sampleUser = new ProfileScreenTemplate(PersonData);
-// let sampleDocHis = new FileHistoryTemplate(HistoryData);
-// let sampleDoc = new FileScreenTemplate(FileData);
+let sampleUser = new ProfileScreenTemplate(PersonData2);
+let sampleDocHis = new FileHistoryTemplate(HistoryData);
+let sampleDoc = new FileScreenTemplate(FileData);
 
 let sampleDocHis2 = new FileHistoryTemplate(HistoryData2);
 let sampleDoc2 = new FileScreenTemplate(FileData2);
 
-// let sampleDocHis3 = new FileHistoryTemplate(HistoryData3);
-// let sampleDoc3 = new FileScreenTemplate(FileData3);
-
-
-//application.add(sampleDocHis);
-//application.add(new DocumentsScreen(screenData));
-//application.add(sampleUser);
-//application.add(new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}));
+let sampleDocHis3 = new FileHistoryTemplate(HistoryData3);
+let sampleDoc3 = new FileScreenTemplate(FileData3);
 
 
 var data = sampleData;
@@ -320,8 +314,12 @@ var docs = data.documents;
 
 var screens2 = {
 	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}),
-	"documentHistoryScreen" : sampleDocHis2,
-	"documentInfoScreen" : sampleDoc2,
+	"documentHistoryScreen" : sampleDocHis,
+	"documentHistoryScreen2" : sampleDocHis2,
+	"documentHistoryScreen3" : sampleDocHis3,
+	"documentInfoScreen" : sampleDoc,
+	"documentInfoScreen2" : sampleDoc2,
+	"documentInfoScreen3" : sampleDoc3,
 	"userProfileScreen": sampleUser,
 	"usersScreen": new screenWithMenubar({screen: [new UsersScreen(usersData)]})
 }
@@ -338,33 +336,15 @@ var screenParents = {
 	"documentsScreen" : "root:documents",
 	"documentHistoryScreen" : "documentInfoScreen",
 	"documentInfoScreen" : "documentsScreen",
+	"documentInfoScreen2" : "documentsScreen",
 	"userProfileScreen": "usersScreen",
 	"usersScreen": "root:users",
 }
 
-var dispatcher;
 //var dispatcher = new common.Dispatcher({ menu: new Menu(), screens: screens2, screenParents: screenParents });
 var dispatcher2 = new common.Dispatcher({ menu: new Menu(), screens: screens2, screenParents: screenParents });
 //var dispatcher3 = new common.Dispatcher({ menu: new Menu(), screens: screens3, screenParents: screenParents });
 
-var generalscreen = Container.template($ =>({
-	skin: new Skin({fill:"transparent", borders:{left: 1, right: 1, top: 1, bottom: 1}, stroke: "white"}),
-	contents:[
-		new Container({height: 200, skin: common.greySkin}),
-	],
-	Behavior:{
-		onTouchEnded(container, id, x, y, ticks) {
-			trace("HIIIIII")
-			if(200 <= y <= 250) {
-				dispatcher = new common.Dispatcher({ menu: new Menu(), screens: screens2, screenParents: screenParents });
-				application.add(dispatcher);
-			} else {
-				dispatcher = new common.Dispatcher({ menu: new Menu(), screens: screens2, screenParents: screenParents });
-				application.add(dispatcher);
-			}
-        }
-	}
-}))
 //application.add(dispatcher);
 //application.add(generalscreen());
 application.add(dispatcher2);

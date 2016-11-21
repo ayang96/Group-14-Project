@@ -54,31 +54,31 @@ let WbuttonStyle = common.buttonStyleBlue;
 /*Buttons*/
 /*========================*/
 
-let OpenButton = new common.NormalButton({
-   string: "OPEN",
-   Behavior: class extends common.ButtonBehavior {
-      onTap(content) {
+// let OpenButton = new common.NormalButton({
+//    string: "OPEN",
+//    Behavior: class extends common.ButtonBehavior {
+//       onTap(content) {
 
-         // IMPLEMENT OPENING LOCKER
+//          // IMPLEMENT OPENING LOCKER
 
-         application.distribute("alert", {
-            title: "Opening Document",
-            message: "Locker 03 of Cabinet A has been opened. You may now retrieve the document. Your access will be logged.",
-            options: [{ string: "OK", callback: function(){} }],
-         })
-      }
-   }
-});
+//          application.distribute("alert", {
+//             title: "Opening Document",
+//             message: "Locker 03 of Cabinet A has been opened. You may now retrieve the document. Your access will be logged.",
+//             options: [{ string: "OK", callback: function(){} }],
+//          })
+//       }
+//    }
+// });
 
-let HistoryButton = new common.NormalButton({
-   left: 20,
-   string: "FILE HISTORY",
-   Behavior: class extends common.ButtonBehavior {
-      onTap(content) {
-         application.distribute("dispatch", "documentHistoryScreen", "push");
-      }
-   }
-})
+// let HistoryButton = new common.NormalButton({
+//    left: 20,
+//    string: "FILE HISTORY",
+//    Behavior: class extends common.ButtonBehavior {
+//       onTap(content) {
+//          application.distribute("dispatch", "documentHistoryScreen", "push");
+//       }
+//    }
+// })
 
 /*========================*/
 /*Label Template*/
@@ -109,11 +109,11 @@ let Description = Container.template($ => ({
 /*========================*/
 /*Scetions*/
 /*========================*/
-let TopNavi = new common.NavBar({
-   contents: [
-      new common.NavBackButton(),
-   ]
-});
+// let TopNavi = new common.NavBar({
+//    contents: [
+//       new common.NavBackButton(),
+//    ]
+// });
 
 let Intro = Line.template($ => ({
    height: 80, width: 320, skin: whiteSkin,
@@ -194,12 +194,43 @@ class screenBehavior extends Behavior {
             AccessTier,
             Des,
             DetailDes,
-            new Line({contents: [OpenButton, HistoryButton]}),
-         ]
+            new Line({contents: [
+               new common.NormalButton({
+                  string: "OPEN",
+                  Behavior: class extends common.ButtonBehavior {
+                  onTap(content) {
+                           // IMPLEMENT OPENING LOCKER
+                     application.distribute("alert", {
+                     title: "Opening Document",
+                     message: "Locker 03 of Cabinet A has been opened. You may now retrieve the document. Your access will be logged.",
+                     options: [{ string: "OK", callback: function(){} }],
+                     })}}
+                  }), 
+               new common.NormalButton({
+                  left: 20,
+                  string: "FILE HISTORY",
+                  Behavior: class extends common.ButtonBehavior {
+                     onTap(content) {
+                        switch (this.docName) {
+                           case "Document#1":
+                              application.distribute("dispatch", "documentHistoryScreen", "push");
+                              break;
+                           case "Document#2":
+                              application.distribute("dispatch", "documentHistoryScreen2", "push");
+                              break; 
+                           case "Document#3":
+                              application.distribute("dispatch", "documentHistoryScreen3", "push");
+                              break;                           
+                        }
+                        //application.distribute("dispatch", "documentHistoryScreen", "push");
+                     }
+                  }
+               })
+            ]}),]
       });
 
 
-      FileScreen.add(TopNavi);
+      FileScreen.add(new common.NavBar({contents: [new common.NavBackButton(),]}));
       FileScreen.add(DocIcon);
       FileScreen.add(FileContent);
       screen.add(FileScreen);

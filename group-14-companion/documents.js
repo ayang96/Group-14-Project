@@ -275,7 +275,7 @@ class documentBehavior extends Behavior {
 		this.tier = data.tier;
 		this.labels = data.labels; 
 		this.out = data.out;
-		
+
 		// Creation of Line
 		let docLine = new Line({top: 0, bottom: 0, left: 0, right: 0, contents: []});
 		
@@ -310,8 +310,8 @@ class documentBehavior extends Behavior {
 			docLine.add(new Column({
 				width: docNameWidth, left: spacing,
 				contents: [
-					new docNameLabel({string: this.name, color: "grey"}),
-					new docTierLabel({string: this.tier, color: "grey"})
+					new docNameLabel({string: this.name, color: "black"}),
+					new docTierLabel({string: this.tier, color: "black"})
 				]
 			}));
 		}
@@ -353,9 +353,18 @@ class documentBehavior extends Behavior {
 	onTouchBegan(document) {
 		//TODO
 	}
-	onTouchEnded(document) {
-		trace(this.name);
-		application.distribute("dispatch", "documentInfoScreen", "push");
+	onTouchEnded(document, x, y, ticks) {
+		switch (this.name) {
+			case "Document#1":
+				application.distribute("dispatch", "documentInfoScreen", "push");
+				break;
+			case "Document#2":
+				application.distribute("dispatch", "documentInfoScreen2", "push");
+				break;
+			case "Document#3":
+				application.distribute("dispatch", "documentInfoScreen3", "push");
+				break;
+		}
 	}
 };
 
