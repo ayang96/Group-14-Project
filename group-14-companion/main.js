@@ -16,7 +16,7 @@
 import { DocumentsScreen } from "documents";
 import { UsersScreen } from "users";
 import { FileScreenTemplate } from "FileScreen";
-import { ProfileScreenTemplate } from "ProfileScreen";
+import { ProfileScreenTemplate } from "ProfileScreen"; // PROFILE
 import { FileHistoryTemplate } from "FileHistory";
 import { DocumentHistoryScreen } from "documenthistory";
 import { Menu } from "Menu";
@@ -325,6 +325,7 @@ var screenParents = {
 	"documentHistoryScreen3" : "documentInfoScreen",
 	"documentInfoScreen" : "documentsScreen",
 	"documentInfoScreen2" : "documentsScreen",
+
 	"documentInfoScreen3" : "documentsScreen",
 	"userProfileScreen": "usersScreen",
 	"userProfileScreen2": "usersScreen",
