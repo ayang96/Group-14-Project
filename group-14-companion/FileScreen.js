@@ -36,8 +36,12 @@ let whiteSkin = new Skin ({fill: 'white'});
 let blackSkin = new Skin ({fill: 'black'});
 let blue = '#2F80ED';
 let blueSkin = new Skin ({fill: blue});
-let boraderSkin = new Skin ({fill: 'white', stroke:'black', left: 1, right: 1, top: 1, bottom: 1});
+//let boraderSkin = new Skin ({fill: 'white', stroke:'black', left: 1, right: 1, top: 1, bottom: 1});
 
+var boraderSkin = new Skin({
+   stroke: common.grey,
+   borders: { left: 1, right: 1, bottom: 1 }
+});
 // let buttonStyle = new Style({font: '15px', color: blue});
 // let WbuttonStyle = new Style({font: '15px', color: 'white'});
 //let textStyle = new Style({font: '15px', color: 'black',  horizontal:'left'});
@@ -96,9 +100,9 @@ let RightTitle = Label.template($ =>({
 }));
 
 let Description = Container.template($ => ({
-   height: 90, width: 200, skin: boraderSkin,
+   height: 85, bottom: 10, width: 280, skin: boraderSkin,
    contents:[
-      Label($, {string: $, style: new Style({font: '15px', color: 'black',  horizontal:'left,top'})}),
+      Label($, {string: $, style: new Style({font: '15px', color: 'black',  horizontal:'left', align: 'top'})}),
    ]
 }));
 
@@ -140,6 +144,8 @@ class screenBehavior extends Behavior {
       this.Description = data.Description;
       this.AccessTier = data.AccessTier;
       this.InOut = data.InOut;
+      var iconPIC;
+      
 
       let FileScreen = new Column({
          top: 0, left: 0, right: 0, bottom: 0,
@@ -158,12 +164,17 @@ class screenBehavior extends Behavior {
                                     new RightTitle('')]);
       let DetailDes = new Description(this.Description);
 
+      if (this.InOut == "OUT"){
+         iconPIC = new Picture({height: 50, width: 80, align:'middle', url:'./assets/icon_document_out_other_ring_70x70.png'});
+      } else {
+         iconPIC = new Picture({height: 50, width: 80, align:'middle', url:'./assets/icon_document_in_ring_70x70_2.png'});
+      }
 
 
       let DocIcon = new Line({
          height: 80, width: 320, skin: whiteSkin,
          contents:[
-            new Picture({height: 50, width: 80, align:'middle', url:'./assets/icon_document_in_ring_70x70_2.png'}),
+            iconPIC,
             new Column({height: 80, width: 240, 
                contents:[
                   //Label($, {height: 29, top: 25, width: 240, string: $[0], style: textStyle, skin:whiteSkin}),

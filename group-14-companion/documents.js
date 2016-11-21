@@ -300,6 +300,7 @@ class documentBehavior extends Behavior {
 		//TODO
 	}
 	onTouchEnded(document) {
+		trace(this.name);
 		application.distribute("dispatch", "documentInfoScreen", "push");
 	}
 };
