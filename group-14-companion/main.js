@@ -44,7 +44,7 @@ let directory = 'My Cabinet/AFolder/BFolder/CFolder/DFolder/CurrentFolder';
 let documents = [
 	{ name:'Document#1', labels:[['F', 'red'], ['P', 'orange']], tier:'Tier 1', out: 'other'},
 	{ name:'Document#2', labels:[['C', 'green']], tier:'Tier 1', out: 'other'},
-	{ name:'Document#3', labels: [['D', 'purple']], tier: 'Tier 2', out: 'in'},
+	{ name:'Document#3', labels: [['D', 'purple'], ['C', 'green'], ['P', 'orange']], tier: 'Tier 2', out: 'in'},
 	{ name:'Document#4', labels: [], tier: 'Tier 1', out: 'you'},
 	{ name:'Document#5', labels: [['F', 'red']], tier: 'Tier 1', out: 'in'},
 	// { name:'Document#6', labels: [], tier: 'Tier 2', out: 'in'},
