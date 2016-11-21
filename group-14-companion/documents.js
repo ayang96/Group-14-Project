@@ -73,21 +73,21 @@ let lineSkin = new Skin({							//stroked skin of a document listing
 let docInIcon = Picture.template($ => ({			// icon for a in document
 	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
 	width: docIconSize, height: docIconSize,
-	url: 'assets/icon_document_ver2.png',
+	url: 'assets/icon_document.png',
 	aspect: 'fit'
 }));
 
 let docOutOtherIcon = Picture.template($ => ({		// icon for document out by other
 	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
 	width: docIconSize, height: docIconSize,
-	url: 'assets/icon_document_out_other_ver3.png',
+	url: 'assets/icon_document_out_other.png',
 	aspect: 'fit'
 }));
 
 let docOutYouIcon = Picture.template($ => ({		// icon for document out by you
 	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
 	width: docIconSize, height: docIconSize,
-	url: 'assets/icon_document_out_you_ver3.png',
+	url: 'assets/icon_document_out_you.png',
 	aspect: 'fit'
 }));
 
@@ -108,28 +108,28 @@ let folderIcon = Picture.template($ => ({		// icon for folder
 let tagWhiteout4 = Picture.template($ => ({		// hardcoded white cutouts over 4 tags
 	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
 	width: screenWidth, height: lineHeight,
-	url: 'assets/listing_line_tags_white_cutouts_4_flat.png',
+	url: 'assets/listing_line_tags_white_cutouts.png',
 	aspect: 'fit'
 }));
 
 let tagWhiteout3 = Picture.template($ => ({		// hardcoded white cutouts over 3 tags
 	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
 	width: screenWidth, height: lineHeight,
-	url: 'assets/listing_line_tags_white_cutouts_3_flat.png',
+	url: 'assets/listing_line_tags_white_cutouts_3.png',
 	aspect: 'fit'
 }));
 
 let tagWhiteout2 = Picture.template($ => ({		// hardcoded white cutouts over 2 tags
 	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
 	width: screenWidth, height: lineHeight,
-	url: 'assets/listing_line_tags_white_cutouts_2_flat.png',
+	url: 'assets/listing_line_tags_white_cutouts_2.png',
 	aspect: 'fit'
 }));
 
 let tagWhiteout1 = Picture.template($ => ({		// hardcoded white cutouts over 1 tags
 	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
 	width: screenWidth, height: lineHeight,
-	url: 'assets/listing_line_tags_white_cutouts_1_flat.png',
+	url: 'assets/listing_line_tags_white_cutouts_1.png',
 	aspect: 'fit'
 }));
 
@@ -275,7 +275,7 @@ class documentBehavior extends Behavior {
 		this.tier = data.tier;
 		this.labels = data.labels; 
 		this.out = data.out;
-		
+
 		// Creation of Line
 		let docLine = new Line({top: 0, bottom: 0, left: 0, right: 0, contents: []});
 		
@@ -310,8 +310,8 @@ class documentBehavior extends Behavior {
 			docLine.add(new Column({
 				width: docNameWidth, left: spacing,
 				contents: [
-					new docNameLabel({string: this.name, color: "grey"}),
-					new docTierLabel({string: this.tier, color: "grey"})
+					new docNameLabel({string: this.name, color: "gray"}),
+					new docTierLabel({string: this.tier, color: "gray"})
 				]
 			}));
 		}
@@ -353,8 +353,18 @@ class documentBehavior extends Behavior {
 	onTouchBegan(document) {
 		//TODO
 	}
-	onTouchEnded(document) {
-		application.distribute("dispatch", "documentInfoScreen", "push");
+	onTouchEnded(document, x, y, ticks) {
+		switch (this.name) {
+			case "Document#1":
+				application.distribute("dispatch", "documentInfoScreen", "push");
+				break;
+			case "Document#2":
+				application.distribute("dispatch", "documentInfoScreen2", "push");
+				break;
+			case "Document#3":
+				application.distribute("dispatch", "documentInfoScreen3", "push");
+				break;
+		}
 	}
 };
 
@@ -389,7 +399,7 @@ class folderBehavior extends Behavior {
 				tierString += this.tier[i];
 			}
 		}
-		folderName.add(new docTierLabel({string: tierString}));
+		folderName.add(new docTierLabel({string: tierString, color: "black"}));
 		folderLine.add(folderName);
 		
 		// Add empty label slots
@@ -409,19 +419,19 @@ class folderBehavior extends Behavior {
 		folder.add(folderLine);
 		switch (this.labels.length) {
 			case 0:
-				document.add(new tagWhiteout0({top: 0, left: 0, right: 0, bottom: 0}));
+				folder.add(new tagWhiteout0({top: 0, left: 0, right: 0, bottom: 0}));
 				break;
 			case 1:
-				document.add(new tagWhiteout1({top: 0, left: 0, right: 0, bottom: 0}));
+				folder.add(new tagWhiteout1({top: 0, left: 0, right: 0, bottom: 0}));
 				break;
 			case 2:
-				document.add(new tagWhiteout2({top: 0, left: 0, right: 0, bottom: 0}));
+				folder.add(new tagWhiteout2({top: 0, left: 0, right: 0, bottom: 0}));
 				break;
 			case 3:
-				document.add(new tagWhiteout3({top: 0, left: 0, right: 0, bottom: 0}));
+				folder.add(new tagWhiteout3({top: 0, left: 0, right: 0, bottom: 0}));
 				break;
 			case 4:
-				document.add(new tagWhiteout4({top: 0, left: 0, right: 0, bottom: 0}));
+				folder.add(new tagWhiteout4({top: 0, left: 0, right: 0, bottom: 0}));
 				break;
 		}	
 	

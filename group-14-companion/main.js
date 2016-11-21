@@ -16,7 +16,7 @@
 import { DocumentsScreen } from "documents";
 import { UsersScreen } from "users";
 import { FileScreenTemplate } from "FileScreen";
-import { ProfileScreenTemplate } from "ProfileScreen";
+import { ProfileScreenTemplate } from "ProfileScreen"; // PROFILE
 import { FileHistoryTemplate } from "FileHistory";
 import { DocumentHistoryScreen } from "documenthistory";
 import { Menu } from "Menu";
@@ -42,21 +42,21 @@ let screenWithMenubar = common.ScreenWithMenuBar;
 let directory = 'My Cabinet/AFolder/BFolder/CFolder/DFolder/CurrentFolder';
 
 let documents = [
-	{ name:'Document#1', labels:[['F', 'red'], ['P', 'orange']], tier:'Tier 1', out: 'in'},
+	{ name:'Document#1', labels:[['F', 'red'], ['P', 'orange']], tier:'Tier 1', out: 'other'},
 	{ name:'Document#2', labels:[['C', 'green']], tier:'Tier 1', out: 'other'},
 	{ name:'Document#3', labels: [['D', 'purple'], ['C', 'green'], ['P', 'orange']], tier: 'Tier 2', out: 'in'},
-	{ name:'Document#4', labels: [], tier: 'Tier 1', out: 'you'},
+	//{ name:'Document#4', labels: [], tier: 'Tier 1', out: 'you'},
 	{ name:'Document#5', labels: [['F', 'red']], tier: 'Tier 1', out: 'in'},
-	{ name:'Document#6', labels: [], tier: 'Tier 2', out: 'in'},
-	{ name:'Document#7', labels: [['D', 'purple'], ['C', 'green'], ['F', 'red'], ['P', 'orange']], tier: 'Tier 2', out: 'in'},
-	{ name:'Document#8', labels: [['C', 'green']], tier: 'Tier 1', out: 'other'},
-	{ name:'Document#9', labels: [], tier: 'Tier 1', out: 'in'},
+	// { name:'Document#6', labels: [], tier: 'Tier 2', out: 'in'},
+	// { name:'Document#7', labels: [['D', 'purple']], tier: 'Tier 2', out: 'in'},
+	// { name:'Document#8', labels: [['C', 'green']], tier: 'Tier 1', out: 'other'},
+	// { name:'Document#9', labels: [], tier: 'Tier 1', out: 'in'},
 ];
 
 let folders = [
 	{ name:'Folder#1', labels: [['P', 'orange']], tier:['Tier 1', 'Tier 2']},
-	{ name:'Folder#2', labels: [], tier:['Tier 1']},
-	{ name:'Folder#3', labels: [], tier:['Tier 1']}
+	// { name:'Folder#2', labels: [], tier:['Tier 1']},
+	// { name:'Folder#3', labels: [], tier:['Tier 1']}
 ];
 
 let screenData = {
@@ -68,22 +68,42 @@ let screenData = {
 let usersData = {
 	users: [
 		{name:'Allison Rory', tier:'Admin', color:'red'},
-		{name:'Brian Chen', tier:'Tier 1', color:'green'},
+		{name:'Brian Chen', tier:'Tier 2', color:'blue'},
 		{name:'Dominique Yano', tier:'Tier 2', color:'blue'},
 		{name:'Ellen van Hurst', tier:'Supervisor', color:'yellow'},
-		{name:'Gabrielle Glasner', tier:'Tier 1', color:'blue'},
+		{name:'Gabrielle Glasner', tier:'Tier 1', color:'green'},
 		{name:'Hector Smith', tier:'Tier 2', color:'pending'},
 	]
 };
 
 
 let FileData = {
-   docName: 'Document #1',
-   Tag: 'Tag 1',
-   LastUsed: 'Sep 20th 2016 by Jessica',
+   docName: 'Document#1',
+   Tag: 'F, P',
+   LastUsed: 'Nov 11th 2016 by Brian',
    DateCreated: 'Aug 21st 2016',
-   Description: 'This is the description for Doc 1',
+   Description: 'Important Financial Statement for Company X.',
    AccessTier: 'Tier 1',
+   InOut: 'OUT',
+};
+
+let FileData2 = {
+   docName: 'Document#2',
+   Tag: 'C',
+   LastUsed: 'Nov 11th 2016 by Brian',
+   DateCreated: 'Aug 16th 2016',
+   Description: 'Important Financial Statement for Company X.',
+   AccessTier: 'Tier 1',
+   InOut: 'OUT',
+};
+
+let FileData3 = {
+   docName: 'Document#3',
+   Tag: 'D',
+   LastUsed: 'Nov 20th 2016 by Jessica',
+   DateCreated: 'Aug 21st 2016',
+   Description: 'Bank Confirmation for Company X',
+   AccessTier: 'Tier 2',
    InOut: 'IN',
 };
 
@@ -92,12 +112,21 @@ let PersonData = {
    firstName: 'Brain',
    lastName: 'Chen',
    Email: 'brain.c@gmail.com',
+   AccessTier: 'Tier 2',
+};
+
+
+let PersonData2 = {
+   firstName: 'Gabrielle',
+   lastName: 'Glasner',
+   Email: 'gabrielle.g@gmail.com',
    AccessTier: 'Tier 1',
 };
 
 
 var docName = "3e6f5707";
-
+var docName2 = "4e6f5737";
+var docName3 = "5e6f5749";
 
 var docData = {
 	documents: {
@@ -107,12 +136,40 @@ var docData = {
 				"0e063425",
 			],
 			tier: "3b2aa2c6",
-			out: 'in',
+			out: 'out',
 			locker: "936420de",
 			history: [
 				"ae97a999",
+				"ae97a998",
+				"ae97a997",
 			]
-		}
+		},
+		"4e6f5737": {
+			name: 'Document#2',
+			labels: [
+				"0e063425",
+			],
+			tier: "3b2aa2c6",
+			out: 'out',
+			locker: "936420df",
+			history: [
+				"ae97a999",
+				"ae97a996",
+				"ae97a995",
+			]
+		},
+		"5e6f5749": {
+			name: 'Document#3',
+			labels: [
+				"0e063425",
+			],
+			tier: "c80ogh19",
+			out: 'in',
+			locker: "936420dg",
+			history: [
+				//"ae97a999",
+			]
+		},		
 	},
 	folders: {
 		"8294fdef": {
@@ -141,11 +198,30 @@ var docData = {
 			avatarColor: "green",
 			avatarInitials: "GG",
 			tier: "3b2aa2c6",
+		},
+		"39uizopj": {
+			fullName: "Brian Chen",
+			givenName: "Brian",
+			familyName: "Chen",
+			avatarColor: "blue",
+			avatarInitials: "BB",
+			tier: "c80ogh19",
+		},
+		"28zjieqo": {
+			fullName: "Dominique Yano",
+			givenName: "Dominique",
+			familyName: "Yano",
+			avatarColor: "blue",
+			avatarInitials: "BB",
+			tier: "c80ogh19",
 		}
 	},
 	tiers: {
 		"3b2aa2c6": {
 			name: "Tier 1",
+		},
+		"c80ogh19": {
+			name: "Tier 2",
 		}
 	},
 	events: {
@@ -153,9 +229,37 @@ var docData = {
 			type: "document",
 			document: "3e6f5707",
 			action: "out",
+			date: new Date("Tue Nov 11 2016 09:30:30 GMT-0800 (PST)"),
+			user: "39uizopj",
+		},
+		"ae97a998": {
+			type: "document",
+			document: "3e6f5707",
+			action: "in",
+			date: new Date("Tue Nov 08 2016 08:11:30 GMT-0800 (PST)"),
+			user: "46efacaf",
+		},
+		"ae97a997": {
+			type: "document",
+			document: "3e6f5707",
+			action: "out",
 			date: new Date("Tue Nov 08 2016 02:11:30 GMT-0800 (PST)"),
 			user: "46efacaf",
-		}
+		},
+		"ae97a996": {
+			type: "document",
+			document: "4e6f5737",
+			action: "in",
+			date: new Date("Tue Nov 01 2016 10:11:30 GMT-0800 (PST)"),
+			user: "28zjieqo",
+		},
+		"ae97a995": {
+			type: "document",
+			document: "4e6f5737",
+			action: "out",
+			date: new Date("Tue Nov 01 2016 01:11:30 GMT-0800 (PST)"),
+			user: "28zjieqo",
+		},			
 	},
 	labels: {
 		"0e063425": {
@@ -173,39 +277,78 @@ let HistoryData = {
 	docData: docData,
 };
 
+let HistoryData2 = {
+	docName: docName2,
+	docData: docData,
+};
 
+let HistoryData3 = {
+	docName: docName3,
+	docData: docData,
+};
 
 /*Testing Part*/
+let sampleUser = new ProfileScreenTemplate(PersonData2); // PROFILE
 let sampleDocHis = new FileHistoryTemplate(HistoryData);
-let sampleUser = new ProfileScreenTemplate(PersonData);
 let sampleDoc = new FileScreenTemplate(FileData);
-//application.add(sampleDocHis);
-//application.add(new DocumentsScreen(screenData));
-//application.add(sampleUser);
-//application.add(new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}));
+
+let sampleDocHis2 = new FileHistoryTemplate(HistoryData2);
+let sampleDoc2 = new FileScreenTemplate(FileData2);
+
+let sampleDocHis3 = new FileHistoryTemplate(HistoryData3);
+let sampleDoc3 = new FileScreenTemplate(FileData3);
 
 
 var data = sampleData;
 data.setState({ folder: 'root' });
+var docs = data.documents;
 
-var screens = {
+//Testing Screens
+// var screens = {
+// 	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}),
+// 	"documentHistoryScreen" : sampleDocHis,
+// 	"documentInfoScreen" : sampleDoc,
+// 	"userProfileScreen": sampleUser,
+// 	"usersScreen": new screenWithMenubar({screen: [new UsersScreen(usersData)]})
+// }
+
+var screens2 = {
 	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}),
 	"documentHistoryScreen" : sampleDocHis,
+	"documentHistoryScreen2" : sampleDocHis2,
+	"documentHistoryScreen3" : sampleDocHis3,
 	"documentInfoScreen" : sampleDoc,
-	"userProfileScreen": sampleUser,
+	"documentInfoScreen2" : sampleDoc2,
+	"documentInfoScreen3" : sampleDoc3,
+	"userProfileScreen": sampleUser, // PROFILE
 	"usersScreen": new screenWithMenubar({screen: [new UsersScreen(usersData)]})
 }
+
+// var screens3 = {
+// 	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}),
+// 	"documentHistoryScreen" : sampleDocHis3,
+// 	"documentInfoScreen" : sampleDoc3,
+// 	"userProfileScreen": sampleUser,
+// 	"usersScreen": new screenWithMenubar({screen: [new UsersScreen(usersData)]})
+// }
 
 var screenParents = {
 	"documentsScreen" : "root:documents",
 	"documentHistoryScreen" : "documentInfoScreen",
 	"documentInfoScreen" : "documentsScreen",
-	"userProfileScreen": "usersScreen",
+	"documentInfoScreen2" : "documentsScreen",
+	"userProfileScreen": "usersScreen", // PROFILE
 	"usersScreen": "root:users",
 }
 
-var dispatcher = new common.Dispatcher({ menu: new Menu(), screens: screens, screenParents: screenParents });
-application.add(dispatcher);
+//var dispatcher = new common.Dispatcher({ menu: new Menu(), screens: screens2, screenParents: screenParents });
+var dispatcher2 = new common.Dispatcher({ menu: new Menu(), screens: screens2, screenParents: screenParents });
+//var dispatcher3 = new common.Dispatcher({ menu: new Menu(), screens: screens3, screenParents: screenParents });
+
+//application.add(dispatcher);
+//application.add(generalscreen());
+application.add(dispatcher2);
+//application.add(dispatcher3);
 application.distribute("dispatch", "documentsScreen");
 
 // var dispatcher = new common.Dispatcher({ menu: new Menu(), screens: screens, screenParents: screenParents });

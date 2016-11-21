@@ -53,11 +53,11 @@ var screenSkin = new Skin({ fill: "white" });
 /*==================*/
 /*Scetions*/
 /*========================*/
-let TopNavi = new common.NavBar({
-   contents: [
-      new common.NavBackButton(),
-   ]
-});
+// let TopNavi = new common.NavBar({
+//    contents: [
+//       new common.NavBackButton(),
+//    ]
+// });
 
 let LabelTemp = Column.template($ =>({
    height: 40, width: 320, skin: whiteSkin,
@@ -161,7 +161,8 @@ class screenBehavior extends Behavior {
          documentData: this.docData.documents[this.docName], data: this.docData,
       });
 
-      FileScreen.add(TopNavi);
+      //FileScreen.add(TopNavi);
+      FileScreen.add(new common.NavBar({contents: [new common.NavBackButton()]}));
       FileScreen.add(DocIcon);
       FileScreen.add(Des);
       FileScreen.add(His);
