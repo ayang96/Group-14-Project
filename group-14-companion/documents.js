@@ -389,7 +389,7 @@ class folderBehavior extends Behavior {
 				tierString += this.tier[i];
 			}
 		}
-		folderName.add(new docTierLabel({string: tierString}));
+		folderName.add(new docTierLabel({string: tierString, color: "black"}));
 		folderLine.add(folderName);
 		
 		// Add empty label slots
@@ -409,19 +409,19 @@ class folderBehavior extends Behavior {
 		folder.add(folderLine);
 		switch (this.labels.length) {
 			case 0:
-				document.add(new tagWhiteout0({top: 0, left: 0, right: 0, bottom: 0}));
+				folder.add(new tagWhiteout0({top: 0, left: 0, right: 0, bottom: 0}));
 				break;
 			case 1:
-				document.add(new tagWhiteout1({top: 0, left: 0, right: 0, bottom: 0}));
+				folder.add(new tagWhiteout1({top: 0, left: 0, right: 0, bottom: 0}));
 				break;
 			case 2:
-				document.add(new tagWhiteout2({top: 0, left: 0, right: 0, bottom: 0}));
+				folder.add(new tagWhiteout2({top: 0, left: 0, right: 0, bottom: 0}));
 				break;
 			case 3:
-				document.add(new tagWhiteout3({top: 0, left: 0, right: 0, bottom: 0}));
+				folder.add(new tagWhiteout3({top: 0, left: 0, right: 0, bottom: 0}));
 				break;
 			case 4:
-				document.add(new tagWhiteout4({top: 0, left: 0, right: 0, bottom: 0}));
+				folder.add(new tagWhiteout4({top: 0, left: 0, right: 0, bottom: 0}));
 				break;
 		}	
 	
