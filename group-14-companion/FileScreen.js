@@ -195,6 +195,7 @@ class screenBehavior extends Behavior {
             Des,
             DetailDes,
             new Line({contents: [
+               //OPEN BUTTON
                new common.NormalButton({
                   string: "OPEN",
                   Behavior: class extends common.ButtonBehavior {
@@ -206,12 +207,14 @@ class screenBehavior extends Behavior {
                      options: [{ string: "OK", callback: function(){} }],
                      })}}
                   }), 
+               
+               //FILE HISTORY BUTTON
                new common.NormalButton({
                   left: 20,
                   string: "FILE HISTORY",
                   Behavior: class extends common.ButtonBehavior {
                      onTap(content) {
-                        switch (this.docName) {
+                        switch (data.docName) {
                            case "Document#1":
                               application.distribute("dispatch", "documentHistoryScreen", "push");
                               break;

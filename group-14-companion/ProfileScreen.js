@@ -41,14 +41,27 @@ var FN;
 var LN;
 var EMAIL;
 var AccessTier;
-var FileScreen = new Column({
+var FCon;
+var FScrenn;
+// var FileScreen = new Column({
+//          top: 0, left: 0, right: 0, bottom: 0, active: true,
+//          contents:[]
+// });
+// var FileContent = new Column({
+//    height: 250, width: 320, skin: whiteSkin, active: true,
+//    contents:[]
+// });
+var FileScreen = Column.template($ =>({
          top: 0, left: 0, right: 0, bottom: 0, active: true,
          contents:[]
-});
-var FileContent = new Column({
+}));
+
+
+var FileContent = Column.template($ =>({
    height: 250, width: 320, skin: whiteSkin, active: true,
    contents:[]
-});
+}));
+
 var EditMode;
 
 /*========================*/
@@ -148,11 +161,11 @@ let EditTitleR = Label.template($ =>({
 /*========================*/
 /*Scetions*/
 /*========================*/
-let TopNavi = new common.NavBar({
-   contents: [
-      new common.NavBackButton(),
-   ]
-});
+// let TopNavi = new common.NavBar({
+//    contents: [
+//       new common.NavBackButton(),
+//    ]
+// });
 
 
 /*========================*/
@@ -191,15 +204,20 @@ class screenBehavior extends Behavior {
          ]
       });
 
-      FileContent.add(FN);
-      FileContent.add(LN);
-      FileContent.add(EMAIL);
-      FileContent.add(AccessTier);
+      FCon = new FileContent();
+      
+      FCon.add(FN);
+      FCon.add(LN);
+      FCon.add(EMAIL);
+      FCon.add(AccessTier);
 
-      FileScreen.add(TopNavi);
-      FileScreen.add(ProfileIcon);
-      FileScreen.add(FileContent);
-      screen.add(FileScreen);
+      FScrenn = new FileScreen();
+      FScrenn.add(new common.NavBar({contents: [new common.NavBackButton(),]}));
+      FScrenn.add(ProfileIcon);
+      FScrenn.add(FCon);
+
+      screen.empty(0, this.length);
+      screen.add(FScrenn);
    }
    EnterEditMode() {
       EditMode = new EditTempDrop([
@@ -209,19 +227,19 @@ class screenBehavior extends Behavior {
             new DropTemp([new LeftTitle(''),new MotionTitle('Supervisor')]), 
             new DropTemp([new LeftTitle(''),new MotionTitle('Tier 2')]), 
             ]);
-      FileContent.empty(3);
-      FileContent.add(EditMode);
-      FileContent.add(SaveButton);
+      FCon.empty(3);
+      FCon.add(EditMode);
+      FCon.add(SaveButton);
    }
    ChangeTier() {
       AccessTier = new EditTemp([new EditTitleL('Access Tier'), new EditTitleR(AT), new EditButton()]);
-      FileContent.empty(3);
-      FileContent.add(AccessTier);
-      FileContent.add(SaveButton);
+      FCon.empty(3);
+      FCon.add(AccessTier);
+      FCon.add(SaveButton);
 
    }
    SaveChange() {
-      FileContent.remove(SaveButton);
+      FCon.remove(SaveButton);
    }
 };
 

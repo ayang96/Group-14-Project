@@ -288,7 +288,9 @@ let HistoryData3 = {
 };
 
 /*Testing Part*/
-let sampleUser = new ProfileScreenTemplate(PersonData2);
+let sampleUser = new ProfileScreenTemplate(PersonData);
+let sampleUser2 = new ProfileScreenTemplate(PersonData2);
+
 let sampleDocHis = new FileHistoryTemplate(HistoryData);
 let sampleDoc = new FileScreenTemplate(FileData);
 
@@ -303,15 +305,6 @@ var data = sampleData;
 data.setState({ folder: 'root' });
 var docs = data.documents;
 
-//Testing Screens
-// var screens = {
-// 	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}),
-// 	"documentHistoryScreen" : sampleDocHis,
-// 	"documentInfoScreen" : sampleDoc,
-// 	"userProfileScreen": sampleUser,
-// 	"usersScreen": new screenWithMenubar({screen: [new UsersScreen(usersData)]})
-// }
-
 var screens2 = {
 	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}),
 	"documentHistoryScreen" : sampleDocHis,
@@ -321,34 +314,26 @@ var screens2 = {
 	"documentInfoScreen2" : sampleDoc2,
 	"documentInfoScreen3" : sampleDoc3,
 	"userProfileScreen": sampleUser,
+	"userProfileScreen2": sampleUser2,
 	"usersScreen": new screenWithMenubar({screen: [new UsersScreen(usersData)]})
 }
-
-// var screens3 = {
-// 	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}),
-// 	"documentHistoryScreen" : sampleDocHis3,
-// 	"documentInfoScreen" : sampleDoc3,
-// 	"userProfileScreen": sampleUser,
-// 	"usersScreen": new screenWithMenubar({screen: [new UsersScreen(usersData)]})
-// }
 
 var screenParents = {
 	"documentsScreen" : "root:documents",
 	"documentHistoryScreen" : "documentInfoScreen",
+	"documentHistoryScreen2" : "documentInfoScreen",
+	"documentHistoryScreen3" : "documentInfoScreen",
 	"documentInfoScreen" : "documentsScreen",
 	"documentInfoScreen2" : "documentsScreen",
+	"documentInfoScreen3" : "documentsScreen",
 	"userProfileScreen": "usersScreen",
+	"userProfileScreen2": "usersScreen",
 	"usersScreen": "root:users",
 }
 
 //var dispatcher = new common.Dispatcher({ menu: new Menu(), screens: screens2, screenParents: screenParents });
 var dispatcher2 = new common.Dispatcher({ menu: new Menu(), screens: screens2, screenParents: screenParents });
-//var dispatcher3 = new common.Dispatcher({ menu: new Menu(), screens: screens3, screenParents: screenParents });
-
-//application.add(dispatcher);
-//application.add(generalscreen());
 application.add(dispatcher2);
-//application.add(dispatcher3);
 application.distribute("dispatch", "documentsScreen");
 
 // var dispatcher = new common.Dispatcher({ menu: new Menu(), screens: screens, screenParents: screenParents });

@@ -249,7 +249,15 @@ class userBehavior extends common.ButtonBehavior {
 		}
 	}
 	onTap(user) {
-		application.distribute("dispatch", "userProfileScreen", "push");
+		switch (this.name) {
+			case "Brian Chen":
+				application.distribute("dispatch", "userProfileScreen", "push");
+				break;
+			case "Gabrielle Glasner":
+				application.distribute("dispatch", "userProfileScreen2", "push");
+				break;
+		}
+		
 	}
 };
 
