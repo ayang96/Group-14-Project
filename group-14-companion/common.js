@@ -511,6 +511,7 @@ export class plusButtonBehavior extends Behavior {
 	onTouchEnded(button) {
 		//TODO
 		this.buttonImage.url = this.upSkin;
+		application.distribute("dispatch", "plusDocScreen", "push");
 	}
 };
 

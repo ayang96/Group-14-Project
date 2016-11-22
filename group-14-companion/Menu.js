@@ -18,7 +18,8 @@ var selectionbox = Container.template($ =>({//A Button overlayed with a rectangl
       /*onTap(content) {
         application.distribute("dispatch", $.screenName);
       }*/
-      onTouchBegan(content){            content.selected.skin = selectedboxSkin;
+      onTouchBegan(content){
+            content.selected.skin = selectedboxSkin;
     }
       onTouchEnded(content){
       		content.selected.skin = menuboxSkin;
@@ -55,7 +56,7 @@ var Screen1Template = Column.template($ => ({
        new selectionbox({offset:1,icon:whiteDocIcon,left:45,name: "documents", string: "Document Explorer", screenName: "documentsScreen",color:menuboxSkin}),
        new selectionbox({offset:1,icon:whiteUsersIcon,left:45,name:"users",string: "Users", screenName: "usersScreen",color:menuboxSkin}),
        new selectionbox({offset:1,icon:whiteCabinetIcon,left:45,name:"cabinets",string: "Cabinet Manager",color:menuboxSkin}),
-	   new subtitlebox({height:22,string: "Other"}),
+	     new subtitlebox({height:22,string: "Other"}),
        new selectionbox({offset:1,left:20,string: "Password Settings",color:menuboxSkin}),
        new selectionbox({offset:1,left:20,string: "Help",color:menuboxSkin}),
        new selectionbox({offset:1,left:20,string: "Log Out",color:menuboxSkin}),

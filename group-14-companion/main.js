@@ -21,6 +21,8 @@ import { FileHistoryTemplate } from "FileHistory";
 import { DocumentHistoryScreen } from "documenthistory";
 import { Menu } from "Menu";
 import { Data, sampleData } from "model";
+import { AddDocScreen } from "AddDoc";
+import { NewFileTemplate } from "NewFileScreen";
 import * as common from "common";
 
 /***************** 2) ASSETS ********************************************/
@@ -45,23 +47,30 @@ let documents = [
 	{ name:'Document#1', labels:[['F', 'red'], ['P', 'orange']], tier:'Tier 1', out: 'other'},
 	{ name:'Document#2', labels:[['C', 'green']], tier:'Tier 1', out: 'other'},
 	{ name:'Document#3', labels: [['D', 'purple'], ['C', 'green'], ['P', 'orange']], tier: 'Tier 2', out: 'in'},
-	//{ name:'Document#4', labels: [], tier: 'Tier 1', out: 'you'},
 	{ name:'Document#5', labels: [['F', 'red']], tier: 'Tier 1', out: 'in'},
-	// { name:'Document#6', labels: [], tier: 'Tier 2', out: 'in'},
-	// { name:'Document#7', labels: [['D', 'purple']], tier: 'Tier 2', out: 'in'},
-	// { name:'Document#8', labels: [['C', 'green']], tier: 'Tier 1', out: 'other'},
-	// { name:'Document#9', labels: [], tier: 'Tier 1', out: 'in'},
+];
+
+let documents2 = [
+	{ name:'Document#1', labels:[['F', 'red'], ['P', 'orange']], tier:'Tier 1', out: 'other'},
+	{ name:'Document#2', labels:[['C', 'green']], tier:'Tier 1', out: 'other'},
+	{ name:'Document#3', labels: [['D', 'purple'], ['C', 'green'], ['P', 'orange']], tier: 'Tier 2', out: 'in'},
+	{ name:'Document#5', labels: [['F', 'red']], tier: 'Tier 1', out: 'in'},
+	{ name:'TestFile', labels: [['T', 'orange']], tier: 'Tier 1', out: 'in'},
 ];
 
 let folders = [
 	{ name:'Folder#1', labels: [['P', 'orange']], tier:['Tier 1', 'Tier 2']},
-	// { name:'Folder#2', labels: [], tier:['Tier 1']},
-	// { name:'Folder#3', labels: [], tier:['Tier 1']}
 ];
 
 let screenData = {
 	directory: directory,
 	documents: documents,
+	folders: folders
+};
+
+let screenData2 = {
+	directory: directory,
+	documents: documents2,
 	folders: folders
 };
 
@@ -106,6 +115,28 @@ let FileData3 = {
    AccessTier: 'Tier 2',
    InOut: 'IN',
 };
+
+
+let EmptyFile = {
+   docName: '',
+   Tag: '',
+   LastUsed: '',
+   DateCreated: '',
+   Description: '',
+   AccessTier: '',
+   InOut: '',
+};
+
+let TestFile = {
+   docName: 'TestFile',
+   Tag: 'T',
+   LastUsed: '',
+   DateCreated: 'Nov 21st 2016 by TestUser',
+   Description: 'Test File for Usability Test',
+   AccessTier: 'Tier 1',
+   InOut: 'IN',
+};
+
 
 
 let PersonData = {
@@ -287,6 +318,13 @@ let HistoryData3 = {
 	docData: docData,
 };
 
+
+
+
+
+
+
+
 /*Testing Part*/
 let sampleUser = new ProfileScreenTemplate(PersonData);
 let sampleUser2 = new ProfileScreenTemplate(PersonData2);
@@ -300,6 +338,10 @@ let sampleDoc2 = new FileScreenTemplate(FileData2);
 let sampleDocHis3 = new FileHistoryTemplate(HistoryData3);
 let sampleDoc3 = new FileScreenTemplate(FileData3);
 
+let addDoc = new AddDocScreen();
+let sampleDocNew = new NewFileTemplate(EmptyFile);
+
+let TestDoc = new NewFileTemplate(TestFile);
 
 var data = sampleData;
 data.setState({ folder: 'root' });
@@ -307,6 +349,8 @@ var docs = data.documents;
 
 var screens2 = {
 	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}),
+	"documentsScreen2" : new screenWithMenubar({screen: [new DocumentsScreen(screenData2)]}),
+
 	"documentHistoryScreen" : sampleDocHis,
 	"documentHistoryScreen2" : sampleDocHis2,
 	"documentHistoryScreen3" : sampleDocHis3,
@@ -315,7 +359,11 @@ var screens2 = {
 	"documentInfoScreen3" : sampleDoc3,
 	"userProfileScreen": sampleUser,
 	"userProfileScreen2": sampleUser2,
-	"usersScreen": new screenWithMenubar({screen: [new UsersScreen(usersData)]})
+	"usersScreen": new screenWithMenubar({screen: [new UsersScreen(usersData)]}),
+
+	"plusDocScreen": addDoc,
+	"newDocScreen": sampleDocNew,
+	"TestDocScreen": TestDoc,
 }
 
 var screenParents = {
@@ -330,6 +378,10 @@ var screenParents = {
 	"userProfileScreen": "usersScreen",
 	"userProfileScreen2": "usersScreen",
 	"usersScreen": "root:users",
+
+	"plusDocScreen": "documentsScreen",
+	"newDocScreen": "documentsScreen",
+	"TestDocScreen": "documentsScreen2",
 }
 
 //var dispatcher = new common.Dispatcher({ menu: new Menu(), screens: screens2, screenParents: screenParents });
