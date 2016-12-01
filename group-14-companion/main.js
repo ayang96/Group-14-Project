@@ -76,10 +76,10 @@ let screenData2 = {
 
 let usersData = {
 	users: [
-		{name:'Allison Rory', tier:'Admin', color:'red'},
+		{name:'Allison Rory', tier:'Tier 1', color:'red'},
 		{name:'Brian Chen', tier:'Tier 2', color:'blue'},
-		{name:'Dominique Yano', tier:'Tier 2', color:'blue'},
-		{name:'Ellen van Hurst', tier:'Supervisor', color:'yellow'},
+		{name:'Dominique Yano', tier:'Tier 1', color:'blue'},
+		{name:'Ellen van Hurst', tier:'Tier 1', color:'yellow'},
 		{name:'Gabrielle Glasner', tier:'Tier 1', color:'green'},
 		{name:'Hector Smith', tier:'Tier 2', color:'pending'},
 	]
