@@ -44,22 +44,22 @@ let screenWithMenubar = common.ScreenWithMenuBar;
 let directory = 'My Cabinet/AFolder/BFolder/CFolder/DFolder/CurrentFolder';
 
 let documents = [
-	{ name:'Document#1', labels:[['F', 'red'], ['P', 'orange']], tier:'Tier 1', out: 'other'},
-	{ name:'Document#2', labels:[['C', 'green']], tier:'Tier 1', out: 'other'},
-	{ name:'Document#3', labels: [['D', 'purple'], ['C', 'green'], ['P', 'orange']], tier: 'Tier 2', out: 'in'},
-	{ name:'Document#5', labels: [['F', 'red']], tier: 'Tier 1', out: 'in'},
+	{ name:'Case #1', labels:[['P', 'orange']], tier:'Tier 1', out: 'other'},
+	{ name:'Case #2', labels:[['C', 'green']], tier:'Tier 1', out: 'other'},
+	{ name:'Case #3', labels: [['P', 'orange']], tier: 'Tier 2', out: 'in'},
+	{ name:'Case #5', labels: [['F', 'red']], tier: 'Tier 1', out: 'in'},
 ];
 
 let documents2 = [
-	{ name:'Document#1', labels:[['F', 'red'], ['P', 'orange']], tier:'Tier 1', out: 'other'},
-	{ name:'Document#2', labels:[['C', 'green']], tier:'Tier 1', out: 'other'},
-	{ name:'Document#3', labels: [['D', 'purple'], ['C', 'green'], ['P', 'orange']], tier: 'Tier 2', out: 'in'},
-	{ name:'Document#5', labels: [['F', 'red']], tier: 'Tier 1', out: 'in'},
+	{ name:'Case #1', labels:[['P', 'orange']], tier:'Tier 1', out: 'other'},
+	{ name:'Case #2', labels:[['C', 'green']], tier:'Tier 1', out: 'other'},
+	{ name:'Case #3', labels: [['P', 'orange']], tier: 'Tier 2', out: 'in'},
+	{ name:'Case #5', labels: [['F', 'red']], tier: 'Tier 1', out: 'in'},
 	{ name:'TestFile', labels: [['T', 'orange']], tier: 'Tier 1', out: 'in'},
 ];
 
 let folders = [
-	{ name:'Folder#1', labels: [['P', 'orange']], tier:['Tier 1', 'Tier 2']},
+	{ name:'Asylum Apps', labels: [], tier:['Tier 1', 'Tier 2']},
 ];
 
 let screenData = {
