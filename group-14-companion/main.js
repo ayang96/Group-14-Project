@@ -8,7 +8,7 @@
 *	3) Behaviors
 *	4) Templates
 *	5) Application and Application Data- application, example data here
-*	6) Testing Code- display and testing
+*	6) Launch Code
 */
 
 /***************** 1) IMPORTS *******************************************/
@@ -16,13 +16,13 @@
 import { DocumentsScreen } from "documents";
 import { UsersScreen } from "users";
 import { FileScreenTemplate } from "FileScreen";
-import { ProfileScreenTemplate } from "ProfileScreen"; // PROFILE
+import { UserProfileScreen } from "user_profile";
 import { FileHistoryTemplate } from "FileHistory";
-import { DocumentHistoryScreen } from "documenthistory";
 import { Menu } from "Menu";
 import { Data, sampleData } from "model";
 import { AddDocScreen } from "AddDoc";
-import { NewFileTemplate } from "NewFileScreen";
+import { NewFileTemplate } from "new_document";
+import { NewUserScreen } from "new_user";
 import * as common from "common";
 
 /***************** 2) ASSETS ********************************************/
@@ -326,9 +326,6 @@ let HistoryData3 = {
 
 
 /*Testing Part*/
-let sampleUser = new ProfileScreenTemplate(PersonData);
-let sampleUser2 = new ProfileScreenTemplate(PersonData2);
-
 let sampleDocHis = new FileHistoryTemplate(HistoryData);
 let sampleDoc = new FileScreenTemplate(FileData);
 
@@ -357,9 +354,9 @@ var screens2 = {
 	"documentInfoScreen" : sampleDoc,
 	"documentInfoScreen2" : sampleDoc2,
 	"documentInfoScreen3" : sampleDoc3,
-	"userProfileScreen": sampleUser,
-	"userProfileScreen2": sampleUser2,
-	"usersScreen": new screenWithMenubar({screen: [new UsersScreen(usersData)]}),
+	"userProfileScreen": new UserProfileScreen({ data: data }),
+	"usersScreen": new UsersScreen({ data: data }),
+	"newUserScreen": new NewUserScreen({ data: data }),
 
 	"plusDocScreen": addDoc,
 	"newDocScreen": sampleDocNew,
@@ -378,34 +375,111 @@ var screenParents = {
 	"userProfileScreen": "usersScreen",
 	"userProfileScreen2": "usersScreen",
 	"usersScreen": "root:users",
+	"newUserScreen": "usersScreen",
 
 	"plusDocScreen": "documentsScreen",
 	"newDocScreen": "documentsScreen",
 	"TestDocScreen": "documentsScreen2",
 }
 
-//var dispatcher = new common.Dispatcher({ menu: new Menu(), screens: screens2, screenParents: screenParents });
-var dispatcher2 = new common.Dispatcher({ menu: new Menu(), screens: screens2, screenParents: screenParents });
-application.add(dispatcher2);
-application.distribute("dispatch", "documentsScreen");
+/***************** 6) LAUNCH CODE *************************************/
 
-// var dispatcher = new common.Dispatcher({ menu: new Menu(), screens: screens, screenParents: screenParents });
-// application.add(dispatcher);
-// application.distribute("dispatch", "documentsScreen");
+// T minus 3... 2... 1
 
-//application.add(new DocumentHistoryScreen({ document: "3e6f5707", data: data }));
+var USE_TEST_CODE = false
 
-// DOCUMENTSSCREEN For Display of testing. Comment out if necessary
+/* All your test code should go in here */
+class TestApplicationBehavior extends Behavior {
+	onLaunch(application) {
 
-/***************** 6) TESTING CODE *************************************/
-// Comment out any below and your screen here to application for testing display
+		let formData = {
+			firstName: '',
+			lastName: '',
+			email: '',
+			tier: '',
+		}
+		application.add(new Container({
+			left: 0, right: 0, top: 0, bottom: 0, skin: new Skin({ fill: 'white' }), active: true,
+			Behavior: class extends Behavior {
+				onTouchEnded(content) {
+					content.focus();
+				}
+			},
+			contents: [
+				new Column({
+					left: 30, right: 30, top: 0, bottom: 100,
+					contents: [
+						new FormRow({ contents: [
+							new FormLabel({ string: 'First Name' }),
+							new FormField({ name: 'firstName', formData: formData, hintString: 'Enter First Name' }),
+						]}),
+						new FormRow({ contents: [
+							new FormLabel({ string: 'Last Name' }),
+							new FormField({ name: 'lastName', formData: formData, hintString: 'Enter Last Name' }),
+						]}),
+						new FormRow({ contents: [
+							new FormLabel({ string: 'Email Address' }),
+							new FormField({ name: 'email', formData: formData, hintString: 'Enter Email Address' }),
+						]}),
+						new FormRow({ contents: [
+							new FormLabel({ string: 'Access Tier' }),
+							new FormSelect({ name: 'tier', formData: formData, hintString: 'Choose from the list', options: [
+								{ value: 'val1', string: 'Value 1' },
+								{ value: 'val2', string: 'Value 2' },
+								{ value: 'val3', string: 'Value 3' },
+								{ value: 'val4', string: 'Value 4' },
+								{ value: 'val5', string: 'Value 5' },
+								{ string: '+ Create Tier', style: common.bodyLightStyle, callback: function(content) {
+									application.distribute('notify', 'hi');
+									trace('hi\n');
+								}}
+							]}),
+						]}),
+					]
+				}),
+				new common.NormalButton({
+					bottom: 30, string: 'PRINT',
+					Behavior: class extends common.ButtonBehavior {
+						onTap(content) {
+							trace(JSON.stringify(formData) + '\n');
+						}
+					}
+				})
+			]
+		}))
 
-// DOCUMENTSHISTORYSCREEN
-//application.add(new DocumentHistoryScreen({ document: "3e6f5707", data: data }));
+		//application.add(new DocumentHistoryScreen({ document: "3e6f5707", data: data }));
 
-// DOCUMENTSSCREEN
-//application.add(new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}));
+		// DOCUMENTSSCREEN For Display of testing. Comment out if necessary
 
-// USERSSCREEN
-//application.add(new screenWithMenubar({screen: [new UsersScreen(usersData)]}));
+		// Comment out any below and your screen here to application for testing display
 
+		// DOCUMENTSHISTORYSCREEN
+		//application.add(new DocumentHistoryScreen({ document: "3e6f5707", data: data }));
+
+		// DOCUMENTSSCREEN
+		//application.add(new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}));
+
+		// USERSSCREEN
+		//application.add(new screenWithMenubar({screen: [new UsersScreen(usersData)]}));
+	}
+}
+
+/* Actual launch code */
+class ApplicationBehavior extends Behavior {
+	onLaunch(application) {
+		//var dispatcher = new common.Dispatcher({ menu: new Menu(), screens: screens2, screenParents: screenParents });
+		var dispatcher2 = new common.Dispatcher({ menu: new Menu(), screens: screens2, screenParents: screenParents });
+		application.add(dispatcher2);
+		application.distribute("dispatch", "documentsScreen");
+		// var dispatcher = new common.Dispatcher({ menu: new Menu(), screens: screens, screenParents: screenParents });
+		// application.add(dispatcher);
+		// application.distribute("dispatch", "documentsScreen");
+	}
+}
+
+if (USE_TEST_CODE) {
+	application.behavior = new TestApplicationBehavior();
+} else {
+	application.behavior = new ApplicationBehavior();
+}

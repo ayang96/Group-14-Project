@@ -1,5 +1,6 @@
 import "src/date.format";
-import { CrossFade, Push, Flip, TimeTravel } from 'src/transition';
+import { CrossFade, Push, Flip, TimeTravel, Reveal, Hide, ZoomAndSlide } from 'src/transition';
+import { SystemKeyboard } from 'src/keyboard';
 
 /**
  * This file is for everything that is used universally throughout this project.
@@ -35,7 +36,7 @@ export var colorNames = ['red', 'orange', 'yellow', 'green', 'sky',
 export var darkerBlue = "#0455C2"; // for second state of buttons and links
 export var systemGrey = "#F2F2F2"; // for backgrounds
 export var systemDarkerGrey = "#CCCCCC"; // for second state of backgrounds
-export var systemLineColor = grey; // for lines seperating things
+export var systemLineColor = 'silver'; // for lines seperating things
 
 // Solid Fill Skins
 export var redSkin = new Skin({ fill: red }); 			// = "red"
@@ -51,6 +52,12 @@ export var buttonSkin = new Skin({ fill: [blue, darkerBlue] });
 export var buttonStyleWhite = new Style({font: "16px Roboto", color: blue});
 export var buttonStyleBlue = new Style({font: "16px Roboto", color: 'white'});
 
+export var roundButtonSkin = new Skin({
+	width: 120, height: 120, aspect: 'fit',
+	texture: new Texture('assets/round_buttons_120x120.png'),
+	states: 120, variants: 120,
+});
+
 export var darkScreenCoverSkin = new Skin({ fill: "rgba(0, 0, 0, 0.5)" });
 export var alertSkin = new Skin({ fill: systemGrey });
 export var alertOptionsSkin = new Skin({ stroke: systemLineColor, borders: { top: 1 }});
@@ -58,6 +65,8 @@ export var alertOptionButtonSkin = new Skin({ fill: [systemGrey, systemDarkerGre
 export var alertOptionsSeperatorSkin = new Skin({ fill: systemLineColor });
 
 export var navBarSkin = new Skin({ fill: systemGrey, stroke: systemLineColor, borders: { bottom: 1 }});
+
+export var screenSkin = new Skin({ fill: 'white' });
 
 // Text Styles (left aligned by default for convenience)
 export var bodyStyle 			= new Style({ font: "16px Roboto", color: black, horizontal: "left" });
@@ -67,6 +76,7 @@ export var bodyLinkStyle 		= new Style({ font: "16px Roboto", color: [blue, dark
 export var bodyLinkBoldStyle 	= new Style({ font: "16px Roboto Medium", color: [blue, darkerBlue], horizontal: "left" });
 export var smallStyle 			= new Style({ font: "14px Roboto", color: black, horizontal: "left" });
 export var smallLightStyle 		= new Style({ font: "14px Roboto", color: grey, horizontal: "left" });
+export var smallWhiteStyle 		= new Style({ font: "14px Roboto", color: 'white', horizontal: "left" });
 export var smallLinkStyle		= new Style({ font: "14px Roboto", color: [blue, darkerBlue], horizontal: "left" });
 export var titleStyle 			= new Style({ font: "18px Roboto", color: black, horizontal: "left" });
 export var titleBoldStyle 		= new Style({ font: "18px Roboto Medium", color: black, horizontal: "left" });
@@ -79,6 +89,7 @@ export var bodyLinkStyleCenter		= new Style({ font: "16px Roboto", color: [blue,
 export var bodyLinkBoldStyleCenter 	= new Style({ font: "16px Roboto Medium", color: [blue, darkerBlue], horizontal: "center" });
 export var smallStyleCenter			= new Style({ font: "14px Roboto", color: black, horizontal: "center" });
 export var smallLightStyleCenter	= new Style({ font: "14px Roboto", color: grey, horizontal: "center" });
+export var smallWhiteStyleCenter	= new Style({ font: "14px Roboto", color: 'white', horizontal: "center" });
 export var smallLinkStyleCenter		= new Style({ font: "14px Roboto", color: [blue, darkerBlue], horizontal: "center" });
 export var titleStyleCenter			= new Style({ font: "18px Roboto", color: black, horizontal: "center" });
 export var titleBoldStyleCenter 	= new Style({ font: "18px Roboto Medium", color: black, horizontal: "center" });
@@ -91,6 +102,7 @@ export var bodyLinkStyleRight		= new Style({ font: "16px Roboto", color: [blue, 
 export var bodyLinkBoldStyleRight 	= new Style({ font: "16px Roboto Medium", color: [blue, darkerBlue], horizontal: "right" });
 export var smallStyleRight			= new Style({ font: "14px Roboto", color: black, horizontal: "right" });
 export var smallLightStyleRight		= new Style({ font: "14px Roboto", color: grey, horizontal: "right" });
+export var smallWhiteStyleRight		= new Style({ font: "14px Roboto", color: 'white', horizontal: "right" });
 export var smallLinkStyleRight		= new Style({ font: "14px Roboto", color: [blue, darkerBlue], horizontal: "right" });
 export var titleStyleRight			= new Style({ font: "18px Roboto", color: black, horizontal: "right" });
 export var titleBoldStyleRight 		= new Style({ font: "18px Roboto Medium", color: black, horizontal: "right" });
@@ -98,15 +110,14 @@ export var titleBoldStyleRight 		= new Style({ font: "18px Roboto Medium", color
 // Layout constants/parameters
 export const screenWidth = 320;		// width of screen / 2
 export const screenHeight = 480;		// height of screen / 2
+export const screenPadding = 20;	// padding for screens that use it (document info, user profile, etc)
 export const plusButtonSize = 60;		// width and height of the plus add button
 export const plusBottomOffset = 15;	// bottom offset of the plus add button
+export const normalButtonBottomOffset = 70; // bottom offset of the normal buttons (user profile, new user)
 export const navBarHeight = 40;
 export const navPadding = 15; // left-right padding of navBar items
 
 // Images
-export var plusIconUp = 'assets/icon_plus_button_60x60.png';
-
-export var plusIconDown = 'assets/icon_plus_button_pressed_60x60.png';
 
 /************ 2) UI Elements **********************************************/
 
@@ -136,7 +147,7 @@ application.distribute("alert", { some settings })
 	See the document for Alert below on what settings can be passed in.
 **/
 export var Dispatcher = Container.template($ => ({
-	left: 0, right: 0, top: 0, bottom: 0,
+	left: 0, right: 0, top: 0, bottom: 0, active: true,
 	contents: [
 		new Container({
 			left: 0, right: 0, top: 0, bottom: 0,
@@ -145,6 +156,10 @@ export var Dispatcher = Container.template($ => ({
 		this.menuHolder,
 	],
 	Behavior: class extends Behavior {
+		onTouchEnded(content) {
+			SystemKeyboard.hide();
+			content.focus();
+		}
 		onCreate(content, data) {
 			this.menuHolder = new MenuHolder({ menu: $.menu });
 			this.currentScreenName = "";
@@ -160,17 +175,30 @@ export var Dispatcher = Container.template($ => ({
 			let screen = $.screens[screenName];
 			let currentScreen = content.page.last;
 			if (screen && screen != currentScreen) {
+				screen.delegate('render');
 				switch (transition) {
 					case 'push':
 					case 'pushLeft':
-						content.page.run( new Push(), currentScreen, screen, { duration: 400, direction: "left" } );
+						content.page.run( new Push(), currentScreen, screen, { duration: 300, direction: "left" } );
 						break;
 					case 'pushRight':
-						content.page.run( new Push(), currentScreen, screen, { duration: 400, direction: "right" } );
+						content.page.run( new Push(), currentScreen, screen, { duration: 300, direction: "right" } );
 						break;
-					default:
+					case 'new':
+					case 'revealUp':
+						content.page.run( new Reveal(), currentScreen, screen, { duration: 300, direction: "up" } );
+						break;
+					case 'cancelNew':
+					case 'hideDown':
+						content.page.run( new Hide(), currentScreen, screen, { duration: 300, direction: "down" } );
+						break;
+					case 'none':
 						content.page.empty();
 						content.page.add(screen);
+						break;
+					default:
+						content.page.run( new CrossFade(), currentScreen, screen, { duration: 50 } );
+						break;
 				}
 				this.currentScreenName = screenName;
 				this.updateMenu();
@@ -202,6 +230,7 @@ export var Dispatcher = Container.template($ => ({
 		notify(content, message) {
 			let settings = {
 				message: message,
+				blocking: true,
 				options: [{ string: "OK", callback: function(){} }]
 			};
 			application.add(new Alert(settings));
@@ -258,9 +287,19 @@ export var NavMenuButton = Picture.template($ => ({
 	}
 }));
 
-export var NavBackButton = Label.template($ => ({
-	left: navPadding, right: navPadding, style: bodyLinkStyle, active: true,
-	string: "< Back", Behavior: class extends ButtonBehavior {
+export var NavBackButton = Line.template($ => ({
+	left: navPadding, right: navPadding, active: true,
+	contents: [
+		new Picture({
+			left: 0, width: 8, aspect: 'fit',
+			url: 'assets/arrow_left.png',
+		}),
+		new Label({
+			left: 5, style: bodyLinkStyle,
+			string: "Back",
+		})
+	],
+	Behavior: class extends ButtonBehavior {
 		onTap(content) {
 			application.distribute("dispatch", "back");
 		}
@@ -318,13 +357,22 @@ $.style: optional, style for the label in the button, default is the white commo
 $.left, $.right, $.top, $.bottom, $.width, $.height: optional, default is pretty good too
 **/
 export var NormalButton = Container.template($ => ({
-	name:$.name,left: $.left, right: $.right, top: $.top || 0, bottom: $.bottom || 0,
+	name:$.name, left: $.left, right: $.right, top: $.top, bottom: $.bottom,
 	width: $.width || 120, height: $.height || 40,
 	skin: $.skin || buttonSkin, active: true,
 	Behavior: $.Behavior,
 	contents: [
 		new Label({ string: $.string, style: $.style || buttonStyleBlue })
 	]
+}));
+
+
+// Use to cover the screen entirely to register taps
+export var ScreenCover = Container.template($ => ({
+	left: 0, right: 0, top: 0, bottom: 0,
+	skin: darkScreenCoverSkin, active: true,
+	contents: ($ && $.contents ? $.contents : []),
+	Behavior: ($ && $.contents ? $.Behavior : null),
 }));
 
 
@@ -348,22 +396,11 @@ $.options: corresponds to the buttons, should be a list of dicts
 				}
 			}
 **/
-export var Alert = Container.template($ => ({
-	left: 0, right: 0, top: 0, bottom: 0,
-	contents: [
-		new ScreenCover({ skin: darkScreenCoverSkin }),
-		new AlertBox($),
-	],
-	Behavior: class extends Behavior {
-		onCreate(content, settings) {
-			if ('blocking' in $) {
-				this.blocking = $.blocking;
-			} else {
-				this.blocking = true;
-			}
-		}
-		onTapOutside(content) {
-			if (! this.blocking) {
+export var Alert = ScreenCover.template($ => ({
+	contents: [ new AlertBox($) ],
+	Behavior: class extends ButtonBehavior {
+		onTap(content) {
+			if ('blocking' in $ && ! $.blocking) {
 				this.exit(content);
 			}
 		}
@@ -446,25 +483,27 @@ let AlertOptionSeperator = Container.template($ => ({
 
 let alertPadding = 15;
 
-// Use to cover the screen entirely to register taps
-let ScreenCover = Container.template($ => ({
-	left: 0, right: 0, top: 0, bottom: 0,
-	skin: $.skin, active: true,
-	Behavior: class extends ButtonBehavior {
-		onTap(content) {
-			content.container.delegate("onTapOutside");
-		}
-	}
-}));
 
-
-// Plus Add button template. See its behavior below
+// Plus Add button template. set Behavior by extending common.ButtonBehavior
 export var PlusButton = Container.template($ => ({
 	bottom: plusBottomOffset, width: plusButtonSize, height: plusButtonSize,
-	Behavior: plusButtonBehavior, active: true,
-	contents: []
+	active: true, skin: roundButtonSkin, variant: 0, state: 0,
+	Behavior: ($ ? $.Behavior : ButtonBehavior)
 }));
 
+export var CancelButton = Container.template($ => ({
+	bottom: plusBottomOffset, width: plusButtonSize, height: plusButtonSize,
+	active: true, skin: roundButtonSkin, variant: 1, state: 0,
+	Behavior: ($ ? $.Behavior : ButtonBehavior)
+}));
+
+export var ProfileIcon = Picture.template(($={}) => (Object.assign({
+	height: 50, width: 50, url:'./assets/icon_user_ring_70x70.png'
+}, $)));
+
+export var CircleMaskWhite = Picture.template(($={}) => (Object.assign({
+	url: 'assets/circle_mask_white_120x120.png', aspect: 'stretch',
+}, $)));
 
 /************ 3) Behaviors **********************************************/
 
@@ -493,27 +532,9 @@ export class ButtonBehavior extends Behavior {
 	onTouchEnded(content) {
 		content.state = 0;
 		content.delegate("onTap");
+		content.focus();
 	}
 }
-
-export class plusButtonBehavior extends Behavior {
-	onCreate(button) {
-		this.upSkin = plusIconUp;
-		this.downSkin = plusIconDown;
-		this.buttonImage = new Picture({width: plusButtonSize, height: plusButtonSize,
-										aspect: 'fit', url: this.upSkin}); 
-		button.add(this.buttonImage);
-	}
-	onTouchBegan(button) {
-		//TODO navigation
-		this.buttonImage.url = this.downSkin;
-	}
-	onTouchEnded(button) {
-		//TODO
-		this.buttonImage.url = this.upSkin;
-		application.distribute("dispatch", "plusDocScreen", "push");
-	}
-};
 
 
 /************ 4) Miscellaneous **********************************************/
@@ -532,4 +553,8 @@ export function randomColor() {
 export function fullName(firstName, lastName) {
 	return (firstName.slice(0, 1).toUpperCase() + firstName.slice(1) + ' ' +
 			lastName.slice(0, 1).toUpperCase() + lastName.slice(1)).trim();
+}
+
+export function capitalize(name) {
+	return (name.slice(0, 1).toUpperCase() + name.slice(1)).trim();
 }

@@ -1,5 +1,7 @@
 import * as common from "common";
 
+const menuWidth = 230;
+
 var menuboxSkin= new Skin({fill: "#666666"});
 var selectedboxSkin = new Skin({fill:"#333333"});
 var menufont = new Style({ font: "15px Roboto Medium", color: "white" })
@@ -39,12 +41,12 @@ var whiteDocIcon = new Picture({height:15,left: 12,url:"assets/icon_document_32x
 var whiteCabinetIcon = new Picture({height:15,left: 12,url:"assets/icon_cabinet_32x32White.png"});
 var whiteUsersIcon = new Picture({height:20,left: 12,url:"assets/icon_users_32x32White.png"});
 var Screen1Template = Column.template($ => ({
-    top: 0, bottom: 0, left: 0, right: 90, active: true,
+    top: 0, bottom: 0, left: 0, width: menuWidth, active: true,
     skin: new Skin({fill: "#595959"}),
     contents: [
         new Container({ top: 0, height: 70, left: 0, right: 0,  skin: menuboxSkin,
 			contents:[
-			new Picture({height:60,left:-40, url: "assets/UserProfileIcon.png"}),			
+			new common.ProfileIcon({ height:50, width: 50, left: 20 }),			
 			new Label({ top: 15, right: 63,height:22 ,
             		style: new Style({ font: "16px Roboto Medium", color: "white" }), 
             		string: "Allison Rory" }),

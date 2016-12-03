@@ -689,6 +689,23 @@ export class Data {
 		return user;
 	}
 
+	getUserListData(idList) {
+		return idList.map(id => this.getUserData(id)).filter(x => x);
+	}
+
+	/**
+	 * Returns a list of all users (without any particular ordering),
+	 * excluding the default users (Admin, Unknown).
+	 * 
+	 * @return {Object[]} List of user data
+	 */
+	getUserList() {
+		let userIDs = Object.keys(this.users).filter(id => (
+			id !== 'admin' &&
+			id !== 'unknown'
+		));
+		return this.getUserListData(userIDs);
+	}
 
 	/**
 	 * 
@@ -908,8 +925,8 @@ for (let i = 0; i < 30; i++) {
 	});
 }
 
-let tier1 = sampleData.addTier({ name: 'Tier 1'});
-let tier2 = sampleData.addTier({ name: 'Tier 2'});
+let tier1 = sampleData.addTier({ name: 'Tier 1', color: 'blue' });
+let tier2 = sampleData.addTier({ name: 'Tier 2', color: 'green' });
 
 let user1 = sampleData.addUser({
 	firstName: 'allison',
