@@ -392,62 +392,8 @@ var USE_TEST_CODE = false
 class TestApplicationBehavior extends Behavior {
 	onLaunch(application) {
 
-		let formData = {
-			firstName: '',
-			lastName: '',
-			email: '',
-			tier: '',
-		}
-		application.add(new Container({
-			left: 0, right: 0, top: 0, bottom: 0, skin: new Skin({ fill: 'white' }), active: true,
-			Behavior: class extends Behavior {
-				onTouchEnded(content) {
-					content.focus();
-				}
-			},
-			contents: [
-				new Column({
-					left: 30, right: 30, top: 0, bottom: 100,
-					contents: [
-						new FormRow({ contents: [
-							new FormLabel({ string: 'First Name' }),
-							new FormField({ name: 'firstName', formData: formData, hintString: 'Enter First Name' }),
-						]}),
-						new FormRow({ contents: [
-							new FormLabel({ string: 'Last Name' }),
-							new FormField({ name: 'lastName', formData: formData, hintString: 'Enter Last Name' }),
-						]}),
-						new FormRow({ contents: [
-							new FormLabel({ string: 'Email Address' }),
-							new FormField({ name: 'email', formData: formData, hintString: 'Enter Email Address' }),
-						]}),
-						new FormRow({ contents: [
-							new FormLabel({ string: 'Access Tier' }),
-							new FormSelect({ name: 'tier', formData: formData, hintString: 'Choose from the list', options: [
-								{ value: 'val1', string: 'Value 1' },
-								{ value: 'val2', string: 'Value 2' },
-								{ value: 'val3', string: 'Value 3' },
-								{ value: 'val4', string: 'Value 4' },
-								{ value: 'val5', string: 'Value 5' },
-								{ string: '+ Create Tier', style: common.bodyLightStyle, callback: function(content) {
-									application.distribute('notify', 'hi');
-									trace('hi\n');
-								}}
-							]}),
-						]}),
-					]
-				}),
-				new common.NormalButton({
-					bottom: 30, string: 'PRINT',
-					Behavior: class extends common.ButtonBehavior {
-						onTap(content) {
-							trace(JSON.stringify(formData) + '\n');
-						}
-					}
-				})
-			]
-		}))
-
+		data.search('docu 2');
+		trace(JSON.stringify(data.getFolderData('search'))+'\n');
 		//application.add(new DocumentHistoryScreen({ document: "3e6f5707", data: data }));
 
 		// DOCUMENTSSCREEN For Display of testing. Comment out if necessary
