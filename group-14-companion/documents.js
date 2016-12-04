@@ -208,8 +208,9 @@ class screenBehavior extends Behavior{
 			top: 0, left: 0, right: 0, 
 			contents: []});
 			// Add folders
-			for (let i = 0; i < this.folders.length; i++) {
-				let addingFolderID = this.folders[i];
+			let foldersList = Object.keys(this.folders);
+			for (let i = 0; i < foldersList.length; i++) {
+				let addingFolderID = foldersList[i];
 				let addingFolder = this.data.getFolderData(addingFolderID);
 				let addingFolderName = addingFolder.name;
 				let addingFolderTiers = addingFolder.tiers;
@@ -228,11 +229,12 @@ class screenBehavior extends Behavior{
 			}
 			
 			// Add documents
-			for (let i = 0; i < this.documents.length; i++) {
-				let addingDocID = this.documents[i];
+			let docList = Object.keys(this.documents);
+			for (let i = 0; i < docList.length; i++) {
+				let addingDocID = docList[i];
 				let addingDoc = this.data.getDocumentData(addingDocID);
 				let addingDocName = addingDoc.name;
-				let addingDocTier = addingDoc.tier[0];
+				let addingDocTier = addingDoc.tier;
 				let addingDocLabels = addingDoc.labels;
 				let addingDocOut = addingDoc.out;
 				
@@ -335,35 +337,48 @@ class labelBehavior extends Behavior {
 		this.color = data.color;
 		
 		// Add initial to label
-		label.add(new tagLabel({string: this.text.slice(0, 1)}));
+		label.add(new tagLabel({string: this.text}));
+		//label.add(new tagLabel({string: this.text.slice(0, 1).toUpperCase()}));
 		
 		// Color label
+		let foundColor = false;
 		switch (this.color) {
 			case 'red':
 				label.skin = redSkin;
+				foundColor = true;
 				break;
 			case 'orange':
 				label.skin = orangeSkin;
+				foundColor = true;
 				break;
 			case 'yellow':
 				label.skin = yellowSkin;
+				foundColor = true;
 				break;
 			case 'green':
 				label.skin = greenSkin;
+				foundColor = true;
 				break;
 			case 'sky':
 				label.skin = skySkin;
+				foundColor = true;
 				break;
 			case 'blue':
 				label.skin = blueSkin;
+				foundColor = true;
 				break;
 			case 'purple':
 				label.skin = purpleSkin;
+				foundColor = true;
 				break;
 			case 'grey':
 				label.skin = greySkin;
+				foundColor = true;
 				break;
 		} 
+		if (!foundColor) { // assume grey
+			label.skin = greySkin;
+		}
 	}
 };
 
@@ -417,15 +432,20 @@ class documentBehavior extends Behavior {
 			}));
 		}
 		
+		let labelsList = Object.keys(this.labels);
+		
 		// Add empty label slots
-		for (let i = this.labels.length; i < 4; i++) {
+		for (let i = labelsList.length; i < 4; i++) {
 			docLine.add(new emptyTagIcon({right:0, top: 0}));
 		}
 		
 		// Add document labels
-		for (let i = 0; i < Math.min(4, this.labels.length); i++) {
-			let addingLabelText = this.labels[i].abbreviation; // this.labels[i][0];
-			let addingLabelColor = this.labels[i].color; // this.labels[i][1];
+		for (let i = 0; i < Math.min(4, labelsList.length); i++) {
+			let label = this.labels[i];
+			let addingLabelText = label.abbreviation;
+			let addingLabelColor = label.color;
+			//let addingLabelText = this.labels[i][0];
+			//let addingLabelColor = this.labels[i][1];
 			docLine.add(new LabelTag({text: addingLabelText, color: addingLabelColor,
 										right: 0, top: 0}));
 		}	
@@ -435,7 +455,7 @@ class documentBehavior extends Behavior {
 		
 		
 		document.add(docLine);
-		switch (this.labels.length) {
+		switch (labelsList.length) {
 			case 0:
 				document.add(new tagWhiteout0({top: 0, left: 0, right: 0, bottom: 0}));
 				break;
@@ -494,26 +514,32 @@ class folderBehavior extends Behavior {
 		
 		// Add folder tiers
 		let tierString = "";
-		for (let i = 0; i < this.tier.length; i++) {
+		let tiersList = Object.keys(this.tier);
+		for (let i = 0; i < tiersList.length; i++) {
 			if (i == 0) {
-				tierString = this.tier[i].name; //this.tier[i];
+				tierString = this.tier.get(tiersList[i]).name; //this.tier[i];
 			} else {
 				tierString += ", ";
-				tierString += this.tier[i].name; //this.tier[i];
+				tierString += this.tier.get(tiersList[i]).name; //this.tier[i];
 			}
 		}
 		folderName.add(new docTierLabel({string: tierString, color: "black"}));
 		folderLine.add(folderName);
 		
+		let labelsList = Object.keys(this.labels);
+		
 		// Add empty label slots
-		for (let i = this.labels.length; i < 4; i++) {
+		for (let i = labelsList.length; i < 4; i++) {
 			folderLine.add(new emptyTagIcon({right:0, top: 0}));
 		}
 		
 		// Add folder labels
-		for (let i = 0; i < Math.min(4, this.labels.length); i++) {
-			let addingLabelText = this.labels[i].abbreviation; // this.labels[i][0];
-			let addingLabelColor = this.labels[i].color; // this.labels[i][1];
+		for (let i = 0; i < Math.min(4, labelsList.length); i++) {
+			let label = this.labels[i];
+			let addingLabelText = label.abbreviation;
+			let addingLabelColor = label.color;
+		//	let addingLabelText = this.labels[i][0];
+		//	let addingLabelColor = this.labels[i][1];
 			folderLine.add(new LabelTag({text: addingLabelText, color: addingLabelColor, 
 										right: 0, top: 0}));
 		}	
@@ -522,7 +548,7 @@ class folderBehavior extends Behavior {
 		folderLine.add(new Container({width: sideMargin, right: 0}));
 		
 		folder.add(folderLine);
-		switch (this.labels.length) {
+		switch (labelsList.length) {
 			case 0:
 				folder.add(new tagWhiteout0({top: 0, left: 0, right: 0, bottom: 0}));
 				break;
@@ -607,8 +633,8 @@ class directoryLineBehavior extends Behavior {
 				hierarchy.add(new Label({style: nonClickableStyle, string: '/ ', left: 0}));
 			}
 		}
-		let levelsParsedCorrectly = (currLevelIndex == this.ids.length);
-		//trace("Parsing directory: " + levelsParsedCorrectly + "\n");
+		let levelsParsedCorrectly = (currLevelIndex == Object.keys(this.ids).length);
+		trace("Parsing directory: " + levelsParsedCorrectly + "\n");
 		
 		line.add(hierarchy);
 		
