@@ -922,6 +922,10 @@ sampleData.setState({
 	login: user1
 });
 
+sampleData.setState({
+	folder: 'root' // Added
+});
+
 let user2 = sampleData.addUser({
 	firstName: 'brian',
 	lastName: 'chen',

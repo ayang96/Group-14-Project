@@ -15,12 +15,14 @@ export var DocumentsScreen = Container.template($ => ({
 	top: 0, left: 0, right: 0, bottom: 0,
 	skin: lineSkin,
 	contents: [],
+	active: true,
 	Behavior: screenBehavior
 }));
 
 
 /************ 2) IMPORTS *****************************************************/
 import * as common from "common";
+import * as model from "model";
 
 import {
     VerticalScroller,
@@ -68,6 +70,12 @@ let lineSkin = new Skin({							//stroked skin of a document listing
 		stroke: 'silver',
 		borders: {left: 0, right: 0, top: 1, bottom: 1}
 });	
+
+let addDocumentFolderSkin = new Skin({
+	width: 90, height: 90, aspect: 'fit',
+	texture: new Texture('assets/icon_add_folder_document_45x45.png'),
+	states: 90, variants: 90,
+});
 		
 // Source Images
 let docInIcon = Picture.template($ => ({			// icon for a in document
@@ -136,7 +144,7 @@ let tagWhiteout1 = Picture.template($ => ({		// hardcoded white cutouts over 1 t
 let tagWhiteout0 = Picture.template($ => ({		// hardcoded white cutouts over 0 tags
 	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
 	width: screenWidth, height: lineHeight,
-	url: 'assets/listing_line_tags_white_cutouts.png',
+	url: 'assets/listing_line_tags_white_cutouts_0.png',
 	aspect: 'fit'
 }));
 
@@ -174,44 +182,137 @@ let docTierLabel = Label.template($ => ({			// for a document's tier
 
 /************* 4) BEHAVIORS ****************************************************/
 
+let applicationData = null;
+
 // Main screen behavior
-class screenBehavior extends Behavior {
+class screenBehavior extends Behavior{
 	onCreate(screen, data) {
 		// Extract given data
 		this.data = data;
-		this.directory = data.directory;
-		this.documents = data.documents;
-		this.folders = data.folders;
+		applicationData = this.data;
+		screen.active = true;
+		screen.distribute("render");
+	}
+	render(screen) {
+		this.currFolderID = this.data.state.folder;
+		this.currFolder = this.data.getFolderData(this.currFolderID);
+		this.directory = this.data.getPath(this.currFolderID); //data.directory;
+		this.documents = this.data.documents;
+		this.folders = this.currFolder.folders; //data.folders;
 		
 		// Add directory bar line
-		let directoryHeading = new DirectoryLine(this.data.directory);
+		let directoryHeading = new DirectoryLine(this.directory);
 		
 		// Add scroller 
 		let contentToScrollVertically = new Column({
 			top: 0, left: 0, right: 0, 
 			contents: []});
 			// Add folders
-			for (let i = 0; i < data.folders.length; i++) {
+			for (let i = 0; i < this.folders.length; i++) {
+				let addingFolderID = this.folders[i];
+				let addingFolder = this.data.getFolderData(addingFolderID);
+				let addingFolderName = addingFolder.name;
+				let addingFolderTiers = addingFolder.tiers;
+				let addingFolderLabels = addingFolder.labels;
+				
 				contentToScrollVertically.add(new FolderLine(
-						{name: data.folders[i].name,
-						tier: data.folders[i].tier,
-						labels: data.folders[i].labels}
+						{name: addingFolderName,
+						tier: addingFolderTiers,
+						labels: addingFolderLabels,
+						id: addingFolderID
+						}
+						//{name: data.folders[i].name,
+						//tier: data.folders[i].tier,
+						//labels: data.folders[i].labels}
 				));
 			}
 			
 			// Add documents
-			for (let i = 0; i < data.documents.length; i++) {
+			for (let i = 0; i < this.documents.length; i++) {
+				let addingDocID = this.documents[i];
+				let addingDoc = this.data.getDocumentData(addingDocID);
+				let addingDocName = addingDoc.name;
+				let addingDocTier = addingDoc.tier[0];
+				let addingDocLabels = addingDoc.labels;
+				let addingDocOut = addingDoc.out;
+				
 				contentToScrollVertically.add(new DocumentLine(
-						{name: data.documents[i].name,
-						tier: data.documents[i].tier,
-						labels: data.documents[i].labels,
-						out: data.documents[i].out}
+						{name: addingDocName,
+						tier: addingDocTier,
+						labels: addingDocLabels,
+						out: addingDocOut,
+						id: addingDocID
+						}
+						//{name: data.documents[i].name,
+						//tier: data.documents[i].tier,
+						//labels: data.documents[i].labels,
+						//out: data.documents[i].out}
 				));
 			}
 		let mainScroller = new MainScroller({contentToScrollVertically});
 		
 		// Add plus button
-		let plusButton = common.PlusButton();
+		let plusButton = common.PlusButton({
+			Behavior: class extends common.ButtonBehavior {
+				onTap(content) {
+					application.add(new common.ScreenCover({
+						contents: [
+							new Column({
+								left: 0, right: 0, bottom: 0,
+								contents: [
+									new Line({
+										left: 0, right: 0, bottom: 0,
+										contents: [
+											new Label({
+												left: 0, right: 10, style: common.smallWhiteStyleRight,
+												string: 'New Folder'
+											}),
+											new Container({
+												right: 20, width: 45, height: 45, active: true,
+												skin: addDocumentFolderSkin, variant: 0, state: 0,
+												Behavior: class extends common.ButtonBehavior {
+													onTap(content) {
+														content.bubble('exit');
+														application.distribute('dispatch', 'newFolderScreen', 'new');
+													}
+												}
+											}),
+											new Container({
+												left: 20, width: 45, height: 45, active: true,
+												skin: addDocumentFolderSkin, variant: 1, state: 0,
+												Behavior: class extends common.ButtonBehavior {
+													onTap(content) {
+														content.bubble('exit');
+														application.distribute('dispatch', 'newDocScreen', 'new');
+													}
+												}
+											}),
+											new Label({
+												left: 10, right: 0, style: common.smallWhiteStyle,
+												string: 'New Document'
+											}),
+										]
+									}),
+									new common.CancelButton({
+										Behavior: class extends common.ButtonBehavior {
+											onTap(content) {
+												content.bubble('exit');
+											}
+										}
+									}),
+								]
+							})
+						],
+						Behavior: class extends Behavior {
+							exit(content) {
+								application.remove(content);
+								return true;
+							}
+						}
+					}));
+				}
+			}
+		});
 		
 		// Add to screen
 		let screenColumn = new Column({
@@ -223,7 +324,6 @@ class screenBehavior extends Behavior {
 		screen.add(screenColumn);
 		screen.add(directoryHeading);
 		screen.add(plusButton);
-		
 	}
 };
 
@@ -231,7 +331,7 @@ class screenBehavior extends Behavior {
 class labelBehavior extends Behavior {
 	onCreate(label, data) {
 		// Extract given data
-		this.text = data.text;
+		this.text = data.text; 
 		this.color = data.color;
 		
 		// Add initial to label
@@ -272,9 +372,10 @@ class documentBehavior extends Behavior {
 	onCreate(document, data) {
 		// Extract given data
 		this.name = data.name;
-		this.tier = data.tier;
+		this.tierName = data.tier.name; //data.tier;
 		this.labels = data.labels; 
 		this.out = data.out;
+		this.id = data.id;
 
 		// Creation of Line
 		let docLine = new Line({top: 0, bottom: 0, left: 0, right: 0, contents: []});
@@ -295,7 +396,7 @@ class documentBehavior extends Behavior {
 				validOut = true;
 				break;
 		}
-		if (!validOut) docLine.add(new docInIcon({left: sideMargin})); // Assume in
+		if (!validOut) docLine.add(new docOutOtherIcon({left: sideMargin})); // Assume other
 		
 		// Add document name and tier
 		if (this.out != 'other') {
@@ -303,7 +404,7 @@ class documentBehavior extends Behavior {
 				width: docNameWidth, left: spacing,
 				contents: [
 					new docNameLabel({string: this.name, color: "black"}),
-					new docTierLabel({string: this.tier, color: "black"})
+					new docTierLabel({string: this.tierName, color: "black"})
 				]
 			}));
 		} else {
@@ -311,7 +412,7 @@ class documentBehavior extends Behavior {
 				width: docNameWidth, left: spacing,
 				contents: [
 					new docNameLabel({string: this.name, color: "gray"}),
-					new docTierLabel({string: this.tier, color: "gray"})
+					new docTierLabel({string: this.tierName, color: "gray"})
 				]
 			}));
 		}
@@ -323,7 +424,9 @@ class documentBehavior extends Behavior {
 		
 		// Add document labels
 		for (let i = 0; i < Math.min(4, this.labels.length); i++) {
-			docLine.add(new LabelTag({text: this.labels[i][0], color: this.labels[i][1],
+			let addingLabelText = this.labels[i].abbreviation; // this.labels[i][0];
+			let addingLabelColor = this.labels[i].color; // this.labels[i][1];
+			docLine.add(new LabelTag({text: addingLabelText, color: addingLabelColor,
 										right: 0, top: 0}));
 		}	
 		
@@ -350,21 +453,20 @@ class documentBehavior extends Behavior {
 				break;
 		}
 	}
-	onTouchBegan(document) {
-		//TODO
-	}
 	onTouchEnded(document, x, y, ticks) {
-		switch (this.name) {
-			case "Document#1":
-				application.distribute("dispatch", "documentInfoScreen", "push");
-				break;
-			case "Document#2":
-				application.distribute("dispatch", "documentInfoScreen2", "push");
-				break;
-			case "Document#3":
-				application.distribute("dispatch", "documentInfoScreen3", "push");
-				break;
-		}
+		applicationData.setState({document: this.id});
+		application.distribute("dispatch", "documentInfoScreen", "push");
+		//switch (this.name) {
+		//	case "Document#1":
+		//		application.distribute("dispatch", "documentInfoScreen", "push");
+		//		break;
+		//	case "Document#2":
+		//		application.distribute("dispatch", "documentInfoScreen2", "push");
+		//		break;
+		//	case "Document#3":
+		//		application.distribute("dispatch", "documentInfoScreen3", "push");
+		//		break;
+		//}
 	}
 };
 
@@ -374,6 +476,7 @@ class folderBehavior extends Behavior {
 		this.name = data.name;
 		this.tier = data.tier;
 		this.labels = data.labels; 
+		this.id = data.id;
 		
 		// Creation of line
 		let folderLine = new Line({top: 0, bottom: 0, left: 0, right: 0, contents: []});
@@ -393,10 +496,10 @@ class folderBehavior extends Behavior {
 		let tierString = "";
 		for (let i = 0; i < this.tier.length; i++) {
 			if (i == 0) {
-				tierString = this.tier[i];
+				tierString = this.tier[i].name; //this.tier[i];
 			} else {
 				tierString += ", ";
-				tierString += this.tier[i];
+				tierString += this.tier[i].name; //this.tier[i];
 			}
 		}
 		folderName.add(new docTierLabel({string: tierString, color: "black"}));
@@ -409,7 +512,9 @@ class folderBehavior extends Behavior {
 		
 		// Add folder labels
 		for (let i = 0; i < Math.min(4, this.labels.length); i++) {
-			folderLine.add(new LabelTag({text: this.labels[i][0], color: this.labels[i][1], 
+			let addingLabelText = this.labels[i].abbreviation; // this.labels[i][0];
+			let addingLabelColor = this.labels[i].color; // this.labels[i][1];
+			folderLine.add(new LabelTag({text: addingLabelText, color: addingLabelColor, 
 										right: 0, top: 0}));
 		}	
 		
@@ -434,13 +539,10 @@ class folderBehavior extends Behavior {
 				folder.add(new tagWhiteout4({top: 0, left: 0, right: 0, bottom: 0}));
 				break;
 		}	
-	
 	}
-	onTouchBegan(document) {
-		//TODO navigation into document page
-	}
-	onTouchEnded(document) {
-		//TODO
+	onTouchEnded(folder, x, y, ticks) {
+		applicationData.setState({folder: this.id});
+		application.distribute("dispatch", "documentsScreen", "pushLeft"); // Going to child level
 	}
 };
 
@@ -448,24 +550,25 @@ class directoryLevelBehavior extends Behavior {
 	onCreate(level, data) {
 		this.folder = data.string.split("/")[0];
 		level.string = this.folder;
+		this.folderID = data.id; 
 		
 		level.style = clickableStyle;
 		this.clickable = data.clickable;
 		if (!data.clickable) { level.style = nonClickableStyle; }
 	}
-	onTouchBegan(level) {
-		//TODO
-	}
-	onTouchEnded(level) {
-		//TODO
+	onTouchEnded(level, x, y, ticks) {
+		applicationData.setState({folder: this.folderID});
+		application.distribute("dispatch", "documentsScreen", "pushRight"); // Going to ancestor level
 	}
 };
 
 class directoryLineBehavior extends Behavior {
 	onCreate(line, data) {
 		// Extract given data
-		this.name = data;
-		this.levels = data.split("/");
+		this.name = data.string;
+		this.ids = data.folderDataList;
+		this.levels = data.string.split("/");
+
 		
 		// Truncate width of level text based on # of chars, 
 		// show only truncLevels levels at a time
@@ -480,11 +583,15 @@ class directoryLineBehavior extends Behavior {
 			}
 		}
 		
+		
 		// Add directory listing
+		let currLevelIndex = 0;
 		for (; levelStart < this.levels.length - 2; levelStart++) {
 			if (this.levels[levelStart]) {
 				hierarchy.add(new directoryLabel({showFull: false, 
-						clickable: true, string: this.levels[levelStart]}));
+						clickable: true, string: this.levels[levelStart], 
+						id: this.ids[currLevelIndex]}));
+				currLevelIndex++;
 				hierarchy.add(new Label({style: nonClickableStyle, string: '/ ', left: 0}));
 			}
 		}
@@ -494,10 +601,15 @@ class directoryLineBehavior extends Behavior {
 				let click = true;
 				if (i == this.levels.length-1) { click = false; }
 				hierarchy.add(new directoryLabel({showFull: true, 
-							clickable: click, string: this.levels[i] }));
+							clickable: click, string: this.levels[i],
+							id: this.ids[currLevelIndex] }));
+				currLevelIndex++;
 				hierarchy.add(new Label({style: nonClickableStyle, string: '/ ', left: 0}));
 			}
 		}
+		let levelsParsedCorrectly = (currLevelIndex == this.ids.length);
+		//trace("Parsing directory: " + levelsParsedCorrectly + "\n");
+		
 		line.add(hierarchy);
 		
 		// Add Sort function 
@@ -524,12 +636,14 @@ class sortButtonBehavior extends Behavior {
 let directoryLabel = Label.template($ => ({	
 	left: 0, width: levelWidth,
 	style: clickableStyle,
+	active: true,
 	Behavior: directoryLevelBehavior
 }));
 
 // Sort button on upper right
 let sortButton = Label.template($ => ({
 	string: 'Sort v',  right: sideMargin, 
+	active: true,
 	style: common.bodyLinkStyleRight,
 	Behavior: sortButtonBehavior
 }));
@@ -561,6 +675,7 @@ let FolderLine = Container.template($ => ({
 	top: 0, left: 0, right: 0, height: lineHeight,
 	skin: lineSkin,
 	Behavior: folderBehavior,
+	active: true,
 	contents: []
 }));
 
@@ -570,6 +685,7 @@ let DirectoryLine = Line.template($ => ({
 	height: directoryHeight, width: screenWidth,
 	top: 0, left: 0, right: 0,
 	skin: new Skin({fill:"#e6e6e6"}),
+	active: true,
 	Behavior: directoryLineBehavior,
 	contents: []
 }));

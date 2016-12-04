@@ -8,7 +8,7 @@
 *	3) Behaviors
 *	4) Templates
 *	5) Application and Application Data- application, example data here
-*	6) Testing Code- display and testing
+*	6) Launch Code
 */
 
 /***************** 1) IMPORTS *******************************************/
@@ -16,11 +16,13 @@
 import { DocumentsScreen } from "documents";
 import { UsersScreen } from "users";
 import { FileScreenTemplate } from "FileScreen";
-import { ProfileScreenTemplate } from "ProfileScreen"; // PROFILE
+import { UserProfileScreen } from "user_profile";
 import { FileHistoryTemplate } from "FileHistory";
-import { DocumentHistoryScreen } from "documenthistory";
 import { Menu } from "Menu";
 import { Data, sampleData } from "model";
+import { AddDocScreen } from "AddDoc";
+import { NewFileTemplate } from "new_document";
+import { NewUserScreen } from "new_user";
 import * as common from "common";
 
 /***************** 2) ASSETS ********************************************/
@@ -42,21 +44,22 @@ let screenWithMenubar = common.ScreenWithMenuBar;
 let directory = 'My Cabinet/AFolder/BFolder/CFolder/DFolder/CurrentFolder';
 
 let documents = [
-	{ name:'Document#1', labels:[['F', 'red'], ['P', 'orange']], tier:'Tier 1', out: 'other'},
-	{ name:'Document#2', labels:[['C', 'green']], tier:'Tier 1', out: 'other'},
-	{ name:'Document#3', labels: [['D', 'purple'], ['C', 'green'], ['P', 'orange']], tier: 'Tier 2', out: 'in'},
-	//{ name:'Document#4', labels: [], tier: 'Tier 1', out: 'you'},
-	{ name:'Document#5', labels: [['F', 'red']], tier: 'Tier 1', out: 'in'},
-	// { name:'Document#6', labels: [], tier: 'Tier 2', out: 'in'},
-	// { name:'Document#7', labels: [['D', 'purple']], tier: 'Tier 2', out: 'in'},
-	// { name:'Document#8', labels: [['C', 'green']], tier: 'Tier 1', out: 'other'},
-	// { name:'Document#9', labels: [], tier: 'Tier 1', out: 'in'},
+	{ name:'Case #1', labels:[['P', 'orange']], tier:'Tier 1', out: 'other'},
+	{ name:'Case #2', labels:[['C', 'green']], tier:'Tier 1', out: 'other'},
+	{ name:'Case #3', labels: [['P', 'orange']], tier: 'Tier 2', out: 'in'},
+	{ name:'Case #5', labels: [['F', 'red']], tier: 'Tier 1', out: 'in'},
+];
+
+let documents2 = [
+	{ name:'Case #1', labels:[['P', 'orange']], tier:'Tier 1', out: 'other'},
+	{ name:'Case #2', labels:[['C', 'green']], tier:'Tier 1', out: 'other'},
+	{ name:'Case #3', labels: [['P', 'orange']], tier: 'Tier 2', out: 'in'},
+	{ name:'Case #5', labels: [['F', 'red']], tier: 'Tier 1', out: 'in'},
+	{ name:'TestFile', labels: [['T', 'orange']], tier: 'Tier 1', out: 'in'},
 ];
 
 let folders = [
-	{ name:'Folder#1', labels: [['P', 'orange']], tier:['Tier 1', 'Tier 2']},
-	// { name:'Folder#2', labels: [], tier:['Tier 1']},
-	// { name:'Folder#3', labels: [], tier:['Tier 1']}
+	{ name:'Asylum Apps', labels: [], tier:['Tier 1', 'Tier 2']},
 ];
 
 let screenData = {
@@ -65,12 +68,18 @@ let screenData = {
 	folders: folders
 };
 
+let screenData2 = {
+	directory: directory,
+	documents: documents2,
+	folders: folders
+};
+
 let usersData = {
 	users: [
-		{name:'Allison Rory', tier:'Admin', color:'red'},
+		{name:'Allison Rory', tier:'Tier 1', color:'red'},
 		{name:'Brian Chen', tier:'Tier 2', color:'blue'},
-		{name:'Dominique Yano', tier:'Tier 2', color:'blue'},
-		{name:'Ellen van Hurst', tier:'Supervisor', color:'yellow'},
+		{name:'Dominique Yano', tier:'Tier 1', color:'blue'},
+		{name:'Ellen van Hurst', tier:'Tier 1', color:'yellow'},
 		{name:'Gabrielle Glasner', tier:'Tier 1', color:'green'},
 		{name:'Hector Smith', tier:'Tier 2', color:'pending'},
 	]
@@ -106,6 +115,28 @@ let FileData3 = {
    AccessTier: 'Tier 2',
    InOut: 'IN',
 };
+
+
+let EmptyFile = {
+   docName: '',
+   Tag: '',
+   LastUsed: '',
+   DateCreated: '',
+   Description: '',
+   AccessTier: '',
+   InOut: '',
+};
+
+let TestFile = {
+   docName: 'TestFile',
+   Tag: 'T',
+   LastUsed: '',
+   DateCreated: 'Nov 21st 2016 by TestUser',
+   Description: 'Test File for Usability Test',
+   AccessTier: 'Tier 1',
+   InOut: 'IN',
+};
+
 
 
 let PersonData = {
@@ -287,8 +318,14 @@ let HistoryData3 = {
 	docData: docData,
 };
 
+
+
+
+
+
+
+
 /*Testing Part*/
-let sampleUser = new ProfileScreenTemplate(PersonData2); // PROFILE
 let sampleDocHis = new FileHistoryTemplate(HistoryData);
 let sampleDoc = new FileScreenTemplate(FileData);
 
@@ -298,76 +335,99 @@ let sampleDoc2 = new FileScreenTemplate(FileData2);
 let sampleDocHis3 = new FileHistoryTemplate(HistoryData3);
 let sampleDoc3 = new FileScreenTemplate(FileData3);
 
+let addDoc = new AddDocScreen();
+let sampleDocNew = new NewFileTemplate(EmptyFile);
+
+let TestDoc = new NewFileTemplate(TestFile);
 
 var data = sampleData;
 data.setState({ folder: 'root' });
 var docs = data.documents;
 
-//Testing Screens
-// var screens = {
-// 	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}),
-// 	"documentHistoryScreen" : sampleDocHis,
-// 	"documentInfoScreen" : sampleDoc,
-// 	"userProfileScreen": sampleUser,
-// 	"usersScreen": new screenWithMenubar({screen: [new UsersScreen(usersData)]})
-// }
-
 var screens2 = {
-	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}),
+	//"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}),
+	//"documentsScreen2" : new screenWithMenubar({screen: [new DocumentsScreen(screenData2)]}),
+	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(data)]}),
+
 	"documentHistoryScreen" : sampleDocHis,
 	"documentHistoryScreen2" : sampleDocHis2,
 	"documentHistoryScreen3" : sampleDocHis3,
 	"documentInfoScreen" : sampleDoc,
 	"documentInfoScreen2" : sampleDoc2,
 	"documentInfoScreen3" : sampleDoc3,
-	"userProfileScreen": sampleUser, // PROFILE
-	"usersScreen": new screenWithMenubar({screen: [new UsersScreen(usersData)]})
-}
+	"userProfileScreen": new UserProfileScreen({ data: data }),
+	//"usersScreen": new UsersScreen({ data: data }),
+	"usersScreen": new screenWithMenubar({screen: [new UsersScreen(usersData)]}), // temp pre-migration
+	"newUserScreen": new NewUserScreen({ data: data }),
 
-// var screens3 = {
-// 	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}),
-// 	"documentHistoryScreen" : sampleDocHis3,
-// 	"documentInfoScreen" : sampleDoc3,
-// 	"userProfileScreen": sampleUser,
-// 	"usersScreen": new screenWithMenubar({screen: [new UsersScreen(usersData)]})
-// }
+	"plusDocScreen": addDoc,
+	"newDocScreen": sampleDocNew,
+	"TestDocScreen": TestDoc,
+}
 
 var screenParents = {
 	"documentsScreen" : "root:documents",
 	"documentHistoryScreen" : "documentInfoScreen",
+	"documentHistoryScreen2" : "documentInfoScreen",
+	"documentHistoryScreen3" : "documentInfoScreen",
 	"documentInfoScreen" : "documentsScreen",
 	"documentInfoScreen2" : "documentsScreen",
-	"userProfileScreen": "usersScreen", // PROFILE
+
+	"documentInfoScreen3" : "documentsScreen",
+	"userProfileScreen": "usersScreen",
+	"userProfileScreen2": "usersScreen",
 	"usersScreen": "root:users",
+	"newUserScreen": "usersScreen",
+
+	"plusDocScreen": "documentsScreen",
+	"newDocScreen": "documentsScreen",
+	"TestDocScreen": "documentsScreen2",
 }
 
-//var dispatcher = new common.Dispatcher({ menu: new Menu(), screens: screens2, screenParents: screenParents });
-var dispatcher2 = new common.Dispatcher({ menu: new Menu(), screens: screens2, screenParents: screenParents });
-//var dispatcher3 = new common.Dispatcher({ menu: new Menu(), screens: screens3, screenParents: screenParents });
+/***************** 6) LAUNCH CODE *************************************/
 
-//application.add(dispatcher);
-//application.add(generalscreen());
-application.add(dispatcher2);
-//application.add(dispatcher3);
-application.distribute("dispatch", "documentsScreen");
+// T minus 3... 2... 1
 
-// var dispatcher = new common.Dispatcher({ menu: new Menu(), screens: screens, screenParents: screenParents });
-// application.add(dispatcher);
-// application.distribute("dispatch", "documentsScreen");
+var USE_TEST_CODE = false
 
-//application.add(new DocumentHistoryScreen({ document: "3e6f5707", data: data }));
+/* All your test code should go in here */
+class TestApplicationBehavior extends Behavior {
+	onLaunch(application) {
 
-// DOCUMENTSSCREEN For Display of testing. Comment out if necessary
+		data.search('docu 2');
+		trace(JSON.stringify(data.getFolderData('search'))+'\n');
+		//application.add(new DocumentHistoryScreen({ document: "3e6f5707", data: data }));
 
-/***************** 6) TESTING CODE *************************************/
-// Comment out any below and your screen here to application for testing display
+		// DOCUMENTSSCREEN For Display of testing. Comment out if necessary
 
-// DOCUMENTSHISTORYSCREEN
-//application.add(new DocumentHistoryScreen({ document: "3e6f5707", data: data }));
+		// Comment out any below and your screen here to application for testing display
 
-// DOCUMENTSSCREEN
-//application.add(new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}));
+		// DOCUMENTSHISTORYSCREEN
+		//application.add(new DocumentHistoryScreen({ document: "3e6f5707", data: data }));
 
-// USERSSCREEN
-//application.add(new screenWithMenubar({screen: [new UsersScreen(usersData)]}));
+		// DOCUMENTSSCREEN
+		//application.add(new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}));
 
+		// USERSSCREEN
+		//application.add(new screenWithMenubar({screen: [new UsersScreen(usersData)]}));
+	}
+}
+
+/* Actual launch code */
+class ApplicationBehavior extends Behavior {
+	onLaunch(application) {
+		//var dispatcher = new common.Dispatcher({ menu: new Menu(), screens: screens2, screenParents: screenParents });
+		var dispatcher2 = new common.Dispatcher({ menu: new Menu(), screens: screens2, screenParents: screenParents });
+		application.add(dispatcher2);
+		application.distribute("dispatch", "documentsScreen");
+		// var dispatcher = new common.Dispatcher({ menu: new Menu(), screens: screens, screenParents: screenParents });
+		// application.add(dispatcher);
+		// application.distribute("dispatch", "documentsScreen");
+	}
+}
+
+if (USE_TEST_CODE) {
+	application.behavior = new TestApplicationBehavior();
+} else {
+	application.behavior = new ApplicationBehavior();
+}
