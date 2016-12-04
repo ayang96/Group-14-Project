@@ -142,7 +142,7 @@ let tagWhiteout1 = Picture.template($ => ({		// hardcoded white cutouts over 1 t
 let tagWhiteout0 = Picture.template($ => ({		// hardcoded white cutouts over 0 tags
 	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
 	width: screenWidth, height: lineHeight,
-	url: 'assets/listing_line_tags_white_cutouts.png',
+	url: 'assets/listing_line_tags_white_cutouts_0.png',
 	aspect: 'fit'
 }));
 
