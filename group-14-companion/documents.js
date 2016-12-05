@@ -197,8 +197,19 @@ class screenBehavior extends Behavior{
 		this.currFolderID = this.data.state.folder;
 		this.currFolder = this.data.getFolderData(this.currFolderID);
 		this.directory = this.data.getPath(this.currFolderID); //data.directory;
-		this.documents = this.data.documents;
-		this.folders = this.currFolder.folders; //data.folders;
+		
+		this.documents = this.data.documents; // TEMP: pull from all documents
+		//this.documents = this.data.getDocumentListData(Object.keys(this.currFolder)); //Pull from current children
+		
+		this.folders = this.data.folders; // TEMP: pull from all folders
+		//this.folders = this.currFolder.folders; // Pull from current children
+		
+		trace('This.currFolderID ' + this.currFolderID + '\n');
+		trace('This.currFolder ' + this.currFolder + '\n');
+		trace('This.currFolder keys ' + Object.keys(this.currFolder) + '\n'); 
+		trace('This.directory ' + this.directory + '\n');
+		trace('This.documents ' + this.documents + '\n');
+		trace('This.folders ' + this.folders + '\n');
 		
 		// Add directory bar line
 		let directoryHeading = new DirectoryLine(this.directory);
@@ -209,6 +220,7 @@ class screenBehavior extends Behavior{
 			contents: []});
 			// Add folders
 			let foldersList = Object.keys(this.folders);
+			trace('foldersList length ' + foldersList.length + '\n');
 			for (let i = 0; i < foldersList.length; i++) {
 				let addingFolderID = foldersList[i];
 				let addingFolder = this.data.getFolderData(addingFolderID);
@@ -514,13 +526,12 @@ class folderBehavior extends Behavior {
 		
 		// Add folder tiers
 		let tierString = "";
-		let tiersList = Object.keys(this.tier);
-		for (let i = 0; i < tiersList.length; i++) {
+		for (let i = 0; i < this.tier.length; i++) {
 			if (i == 0) {
-				tierString = this.tier.get(tiersList[i]).name; //this.tier[i];
+				tierString = this.tier[i].name; //this.tier[i];
 			} else {
 				tierString += ", ";
-				tierString += this.tier.get(tiersList[i]).name; //this.tier[i];
+				tierString += this.tier[i].name; //this.tier[i];
 			}
 		}
 		folderName.add(new docTierLabel({string: tierString, color: "black"}));
@@ -574,7 +585,7 @@ class folderBehavior extends Behavior {
 
 class directoryLevelBehavior extends Behavior {
 	onCreate(level, data) {
-		this.folder = data.string.split("/")[0];
+		this.folder = data.string.split("\\")[0];
 		level.string = this.folder;
 		this.folderID = data.id; 
 		
@@ -593,7 +604,7 @@ class directoryLineBehavior extends Behavior {
 		// Extract given data
 		this.name = data.string;
 		this.ids = data.folderDataList;
-		this.levels = data.string.split("/");
+		this.levels = data.string.split("\\");
 
 		
 		// Truncate width of level text based on # of chars, 
@@ -605,7 +616,7 @@ class directoryLineBehavior extends Behavior {
 			levelWidth = truncLevelWidth;
 			if (this.levels.length >= truncLevels) {
 				levelStart = this.levels.length - truncLevels;
-				hierarchy.add(new Label({style: nonClickableStyle, string: '/ ', left: 0}));
+				hierarchy.add(new Label({style: nonClickableStyle, string: '\\ ', left: 0}));
 			}
 		}
 		
@@ -618,7 +629,7 @@ class directoryLineBehavior extends Behavior {
 						clickable: true, string: this.levels[levelStart], 
 						id: this.ids[currLevelIndex]}));
 				currLevelIndex++;
-				hierarchy.add(new Label({style: nonClickableStyle, string: '/ ', left: 0}));
+				hierarchy.add(new Label({style: nonClickableStyle, string: '\\ ', left: 0}));
 			}
 		}
 		levelWidth = undefined;
@@ -630,7 +641,7 @@ class directoryLineBehavior extends Behavior {
 							clickable: click, string: this.levels[i],
 							id: this.ids[currLevelIndex] }));
 				currLevelIndex++;
-				hierarchy.add(new Label({style: nonClickableStyle, string: '/ ', left: 0}));
+				hierarchy.add(new Label({style: nonClickableStyle, string: '\\ ', left: 0}));
 			}
 		}
 		let levelsParsedCorrectly = (currLevelIndex == Object.keys(this.ids).length);

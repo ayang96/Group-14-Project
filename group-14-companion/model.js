@@ -65,12 +65,29 @@ export class Data {
 		};
 
 		/* Our data "tables" */
-		this.documents = {};
+		this.documents = {
+			'dummyDoc': { // Temp. Remove when done
+				name: 'dummy doc',	
+				labels: [],				
+				tier: 'admin',
+				description: '',	
+				folder: 'root',			
+				locker: null,			
+				history: ['e1'],		
+			}
+		};
 		this.folders = {
 			'root': { // The root or highest folder in the folder hierarchy
-				name: '',
+				name: 'root', // temp. Change back to '' when done
 				labels: [],
 				parent: null,
+				folders: ['dummy'], //temp. Change back to empty when done
+				documents: ['dummyDoc'], //temp. Change back to empty when done
+			},
+			'dummy': { // Temp. remove when done
+				name: 'dummy',
+				labels: ['temp'],
+				parent: 'root',
 				folders: [],
 				documents: [],
 			},
@@ -99,8 +116,20 @@ export class Data {
 				color: 'grey',
 			},
 		};
-		this.labels = {};
-		this.events = {};
+		this.labels = {
+			'temp': { // Temp. Remove when done.
+				name: 'temp',
+				color: 'red',
+				abbreviation: 'T',
+			}
+		};
+		this.events = {
+			'e1': {user: 'admin',	// Temp. Remove when done.
+				document: 'dummyDoc',			
+				action: 'created',			
+				date: new Date(),
+			}
+		};
 		this.lockers = {};
 		this.cabinets = {};
 		this.emptyLockers = new Set();
@@ -607,7 +636,8 @@ export class Data {
 		for (let id of folder.folders) {
 			let child = this.folders[id];
 			if (child) {
-				this._getFolderTiers(child, tiers);
+				//this._getFolderTiers(child, tiers);
+				this.getFolderTiers(child, tiers); //Other didn't compile
 			}
 		}
 	}

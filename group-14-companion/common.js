@@ -545,8 +545,10 @@ export function formatDate(date) {
 }
 
 /** Returns a string corresponding to a randomly chosen color **/
-export function randomColor() {
-	return colorNames[Math.floor(Math.random() * colorNames.length)];
+export function randomColor() {	// Modified as was yielding improper values frequently?
+	let colorNum = Math.floor(Math.random() * colorNames.length);
+	if (colorNum == colorNames.length) colorNum--;
+	return colorNames[colorNum];
 }
 
 /** Returns the capitalized full name of someone given their first and last names **/
