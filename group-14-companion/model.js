@@ -66,31 +66,34 @@ export class Data {
 
 		/* Our data "tables" */
 		this.documents = {
-			'dummyDoc': { // Temp. Remove when done
-				name: 'dummy doc',	
-				labels: [],				
-				tier: 'admin',
-				description: '',	
-				folder: 'root',			
-				locker: null,			
-				history: ['e1'],		
-			}
+			//'dummyDoc': { // Temp. Remove when done
+			//	name: 'dummy doc',	
+			//	labels: [],				
+			//	tier: 'admin',
+			//	description: '',	
+			//	folder: 'root',			
+			//	locker: null,			
+			//	history: ['e1'],		
+			//}
 		};
 		this.folders = {
 			'root': { // The root or highest folder in the folder hierarchy
-				name: 'root', // temp. Change back to '' when done
+				//name: 'root', // temp. Change back to '' when done
+				name: '',
 				labels: [],
 				parent: null,
-				folders: ['dummy'], //temp. Change back to empty when done
-				documents: ['dummyDoc'], //temp. Change back to empty when done
-			},
-			'dummy': { // Temp. remove when done
-				name: 'dummy',
-				labels: ['temp'],
-				parent: 'root',
 				folders: [],
-				documents: [],
+				documents: []
+				//folders: ['dummy'], //temp. Change back to empty when done
+				//documents: ['dummyDoc'], //temp. Change back to empty when done
 			},
+			//'dummy': { // Temp. remove when done
+			//	name: 'dummy',
+			//	labels: ['temp'],
+			//	parent: 'root',
+			//	folders: [],
+			//	documents: [],
+			//},
 		};
 		this.users = {
 			'admin': { // Initial admin account. Can be different from the actual administrator account
@@ -117,18 +120,18 @@ export class Data {
 			},
 		};
 		this.labels = {
-			'temp': { // Temp. Remove when done.
-				name: 'temp',
-				color: 'red',
-				abbreviation: 'T',
-			}
+			//'temp': { // Temp. Remove when done.
+			//	name: 'temp',
+			//	color: 'red',
+			//	abbreviation: 'T',
+			//}
 		};
 		this.events = {
-			'e1': {user: 'admin',	// Temp. Remove when done.
-				document: 'dummyDoc',			
-				action: 'created',			
-				date: new Date(),
-			}
+			//'e1': {user: 'admin',	// Temp. Remove when done.
+			//	document: 'dummyDoc',			
+			//	action: 'created',			
+			//	date: new Date(),
+			//}
 		};
 		this.lockers = {};
 		this.cabinets = {};
