@@ -68,8 +68,8 @@ let greySkin = new Skin({ fill: '#828282'});		// = "grey"
 
 let lineSkin = new Skin({							//stroked skin of a document listing
 		fill: 'white', 			
-		stroke: 'silver',
-		borders: {left: 0, right: 0, top: 1, bottom: 1}
+		stroke: common.systemLineColor,
+		borders: {left: 0, right: 0, top: 0, bottom: 1}
 });	
 
 let addDocumentFolderSkin = new Skin({
@@ -793,7 +793,7 @@ let FolderLine = Container.template($ => ({
 let DirectoryLine = Container.template($ => ({
 	height: directoryHeight,
 	top: 0, left: 0, right: 0,
-	skin: new Skin({fill:"#e6e6e6"}),
+	skin: new Skin({fill:"#e6e6e6", stroke: common.systemLineColor, borders: { bottom: 1 }}),
 	active: true,
 	Behavior: directoryLineBehavior,
 	contents: []

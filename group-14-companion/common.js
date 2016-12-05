@@ -303,7 +303,7 @@ export var NavMenuButton = Picture.template($ => ({
 }));
 
 export var NavBackButton = Line.template($ => ({
-	left: navPadding, active: true,
+	left: navPadding, right: navPadding, active: true,
 	contents: [
 		new Picture({
 			left: 0, width: 8, aspect: 'fit',
