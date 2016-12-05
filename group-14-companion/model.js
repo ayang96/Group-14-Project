@@ -542,8 +542,11 @@ export class Data {
 	returnDocument(id) {
 		let document = this.getDocumentData(id);
 		if (document === null) return false;
+		//trace('document ' + JSON.stringify(document) + '\n');
 		if (document.out === Data.IN) return false;
+		//trace('document OUT' + JSON.stringify(document.out) + '\n');
 		let lockerID = this.getEmptyLocker();
+		//trace('Locker: ' + JSON.stringify(lockerID) + '\n');
 		if (! lockerID) return false;
 		let eventID = this.addEvent({ document: id, action: Data.RETURN });
 		document.history.push(eventID);

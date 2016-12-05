@@ -112,13 +112,13 @@ class screenBehavior extends Behavior {
    render(screen) {
       let docID = this.db.state.document;
       let docData = this.db.getDocumentData(docID);
-      this._render(screen, docData);
+      this._render(screen, docData, this.db);
    }
-   _render(screen, data) {
+   _render(screen, data, db) {
    	screen.empty();
-      this.data = data;
-      //data.data.setState({document: this.data.id});å
 
+      //TAKING IN DATA
+      this.data = data;
       this.docName = data.name;
       if (data.labels.length > 0) {
          this.Tag = data.labels[0].abbreviation + ' ';
@@ -144,9 +144,17 @@ class screenBehavior extends Behavior {
       this.Description = data.description;
       this.DateCreated = common.formatDate(data.dateCreated);
       this.InOut = data.out;
-      var iconPIC;
-      
+      this.Locker = data.locker;
+      //trace('LOCKER + ' + JSON.stringify(this.Locker) + '\n');
 
+
+      trace(JSON.stringify(this.InOut) + '\n');
+      var iconPIC;
+      var open_return;
+
+
+
+      //CONSTRUCTING ELEMENTS INSIDE THE STUFF
       let FileScreen = new Column({
          top: 0, left: 0, right: 0, bottom: 0,
          contents:[]
@@ -164,10 +172,58 @@ class screenBehavior extends Behavior {
                                     new RightTitle('')]);
       let DetailDes = new Description(this.Description);
 
-      if (this.InOut == "OUT"){
+      if (this.InOut == "other"){
          iconPIC = new Picture({height: 50, width: 80, align:'middle', url:'./assets/icon_document_out_other_ring_70x70.png'});
+         this.docName += '  [OUT]';
+         open_return = new common.NormalButton({
+                  string: "RETURN",
+                  Behavior: class extends common.ButtonBehavior {
+                  onTap(content) {
+                     // IMPLEMENT OPENING LOCKER
+                     application.distribute("alert", {
+                     title: "Returning Document",
+                     message: "IMPORTANT: Please notice that this document is NOT originally taken out by YOU! \n \nLocker 05 of Cabinet A has been opened. You may now return the document. Your access will be logged.",
+                     options: [{ string: "OK", callback: function(){} }],
+                     });
+
+                     //trace(JSON.stringify(db) + '\n');
+                     trace(JSON.stringify(db.state.document) + '\n');
+                     let boo = db.returnDocument(db.state.document);
+                     trace(JSON.stringify(boo) + '\n');
+                     application.distribute("update");
+                  }},
+         });
+      } else if (this.InOut == "you"){
+         trace(JSON.stringify("TRUE") + '\n');
+         this.docName += ' [OUT]';
+         iconPIC = new Picture({height: 50, width: 80, align:'middle', url:'./assets/icon_document_out_you_ring_70x70.png'});
+         open_return = new common.NormalButton({
+                  string: "RETURN",
+                  Behavior: class extends common.ButtonBehavior {
+                  onTap(content) {
+                     // IMPLEMENT OPENING LOCKER
+                     application.distribute("alert", {
+                     title: "Returning Document",
+                     message: "Locker 01 of Cabinet A has been opened. You may now return the document. Your access will be logged.",
+                     options: [{ string: "OK", callback: function(){} }],
+                     });
+                     // this.db.returnDocument(this.db.state.document);
+                     // application.distribute("dispatch", "documentInfoScreen");
+                  }},
+         });
       } else {
          iconPIC = new Picture({height: 50, width: 80, align:'middle', url:'./assets/icon_document_in_ring_70x70_2.png'});
+         open_return = new common.NormalButton({
+                  string: "RETRIEVE",
+                  Behavior: class extends common.ButtonBehavior {
+                  onTap(content) {
+                     // IMPLEMENT OPENING LOCKER
+                     application.distribute("alert", {
+                     title: "Retrieving Document",
+                     message: "Locker 03 of Cabinet A has been opened. You may now retrieve the document. Your access will be logged.",
+                     options: [{ string: "OK", callback: function(){} }],
+                     })}}
+                  });
       }
 
 
@@ -195,35 +251,14 @@ class screenBehavior extends Behavior {
             DetailDes,
             new Line({contents: [
                //OPEN BUTTON
-               new common.NormalButton({
-                  string: "OPEN",
-                  Behavior: class extends common.ButtonBehavior {
-                  onTap(content) {
-                           // IMPLEMENT OPENING LOCKER
-                     application.distribute("alert", {
-                     title: "Opening Document",
-                     message: "Locker 03 of Cabinet A has been opened. You may now retrieve the document. Your access will be logged.",
-                     options: [{ string: "OK", callback: function(){} }],
-                     })}}
-                  }), 
-               
+               open_return,
+
                //FILE HISTORY BUTTON
                new common.NormalButton({
                   left: 20,
                   string: "FILE HISTORY",
                   Behavior: class extends common.ButtonBehavior {
                      onTap(content) {
-                        // switch (data.docName) {
-                        //    case "Document#1":
-                        //       application.distribute("dispatch", "documentHistoryScreen", "push");
-                        //       break;
-                        //    case "Document#2":
-                        //       application.distribute("dispatch", "documentHistoryScreen2", "push");
-                        //       break; 
-                        //    case "Document#3":
-                        //       application.distribute("dispatch", "documentHistoryScreen3", "push");
-                        //       break;                           
-                        // }
                         application.distribute("dispatch", "documentHistoryScreen");
                      }
                   }
