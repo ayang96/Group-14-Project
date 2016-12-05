@@ -11,6 +11,9 @@
 *	6) Launch Code
 */
 
+// Note: While working, be sure to clear cache before compiling as follows:
+// rm -r ~/Library/Preferences/fsk/1/Kinoma\ Code/com.marvell.kinoma.project.*
+
 /***************** 1) IMPORTS *******************************************/
 
 import { DocumentsScreen } from "documents";
@@ -23,6 +26,7 @@ import { Data, sampleData } from "model";
 import { AddDocScreen } from "AddDoc";
 import { NewFileTemplate } from "new_document";
 import { NewUserScreen } from "new_user";
+import { CabinetsScreen } from "cabinets";
 import * as common from "common";
 
 /***************** 2) ASSETS ********************************************/
@@ -364,6 +368,8 @@ var screens2 = {
 	"plusDocScreen": addDoc,
 	"newDocScreen": sampleDocNew,
 	"TestDocScreen": TestDoc,
+	
+	"cabinetsScreen" : new screenWithMenubar({screen: [new CabinetsScreen(data)]})
 }
 
 var screenParents = {
@@ -383,6 +389,8 @@ var screenParents = {
 	"plusDocScreen": "documentsScreen",
 	"newDocScreen": "documentsScreen",
 	"TestDocScreen": "documentsScreen2",
+	
+	"cabinetsScreen" : "root:cabinets" //Hopefully works?? Can't access this to check
 }
 
 /***************** 6) LAUNCH CODE *************************************/
@@ -411,6 +419,10 @@ class TestApplicationBehavior extends Behavior {
 
 		// USERSSCREEN
 		//application.add(new screenWithMenubar({screen: [new UsersScreen(usersData)]}));
+		
+		
+		// CABINETSSCREEN
+		//application.add(new screenWithMenubar({screen: [new CabinetsScreen(data)]}));
 	}
 }
 
