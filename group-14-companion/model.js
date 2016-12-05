@@ -80,23 +80,12 @@ export class Data {
 		};
 		this.folders = {
 			'root': { // The root or highest folder in the folder hierarchy
-				//name: 'root', // temp. Change back to '' when done
 				name: '',
 				labels: [],
 				parent: null,
 				folders: [],
 				documents: []
-				//folders: ['dummy'], //temp. Change back to empty when done
-				//documents: ['dummyDoc'], //temp. Change back to empty when done
 			},
-			//'dummy': { // Temp. remove when done
-			//	name: 'dummy',
-			//	labels: ['temp'],
-			//	parent: 'root',
-			//	folders: [],
-			//	documents: [],
-			//},
-
 			'search': {	// fake folder to hold the results of search
 				name: 'Search Results',
 				labels: [],
@@ -123,10 +112,12 @@ export class Data {
 			'admin': { // Admin tier. Should have access to everything
 				name: 'Admin',
 				color: 'black',
+				rank: Number.POSITIVE_INFINITY
 			},
 			'default': { // Lowest tier
-				name: 'Default',
+				name: 'Lowest Access',
 				color: 'grey',
+				rank: Number.NEGATIVE_INFINITY
 			},
 		};
 		this.labels = {
@@ -485,17 +476,29 @@ export class Data {
 	 * @return {Object[]} array of document data (see getDocumentData)
 	 */
 	getDocumentListData(idList) {
-		return idList.map(id => this.getDocumentData(id)).filter(x => x);
-	}
-
-	/**
-	 * Dereferences a list of document ids to abbreviated document data
-	 * 
-	 * @param  {String[]} idList: array of ids of documents
-	 * @return {[type]} array of document data (see getDocumentAbbreviatedData)
-	 */
-	getDocumentListAbbreviatedData(idList) {
-		return idList.map(id => this.getDocumentAbbreviatedData(id)).filter(x => x);
+		let documentList = idList.map(id => this.getDocumentData(id)).filter(x => x);
+		switch (this.state.documentsSort) {
+			case 'accessTierAsc':
+				documentList.sort(documentTierComparator);
+				break;
+			case 'accessTierDesc':
+				documentList.sort(documentTierComparator).reverse();
+				break;
+			case 'labels':
+				documentList.sort(documentLabelsComparator);
+				break;
+			case 'dateCreated':
+				documentList.sort(documentDateCreatedComparator);
+				break;
+			case 'dateLastAccessed':
+				documentList.sort(documentDateLastAccessedComparator);
+				break;
+			case 'name': // default is to sort by name
+			default:
+				documentList.sort(documentNameComparator);
+				break;
+		}
+		return documentList;
 	}
 
 	/**
@@ -601,7 +604,7 @@ export class Data {
 		folder.labels = this.getLabelListData(folder.labels);
 		folder.tiers = this.getFolderTiers(id);
 		folder.folders = this.getFolderListAbbreviatedData(folder.folders);
-		folder.documents = this.getDocumentListAbbreviatedData(folder.documents);
+		folder.documents = this.getDocumentListData(folder.documents);
 		folder.path = this.getPath(id);
 
 		return folder;
@@ -620,7 +623,23 @@ export class Data {
 
 	getFolderListAbbreviatedData(idList) {
 		let folderList = idList.map(id => this.getFolderAbbreviatedData(id)).filter(x => x);
-		// to do
+		switch (this.state.documentsSort) {
+			case 'accessTierAsc':
+				folderList.sort(folderTiersComparator);
+				break;
+			case 'accessTierDesc':
+				folderList.sort(folderTiersComparator).reverse();
+				break;
+			case 'labels':
+				folderList.sort(documentLabelsComparator);
+				break;
+			case 'dateCreated': // implement when folder history is implemented
+			case 'dateLastAccessed': // implement when folder history is implemented
+			case 'name': // default is to sort by name
+			default:
+				folderList.sort(documentNameComparator);
+				break;
+		}
 		return folderList;
 	}
 
@@ -794,6 +813,7 @@ export class Data {
 		let tier = { // default values
 			name: 'Tier ' + Object.keys(this.tiers).length + 1,	// {String}
 			color: common.randomColor(),					// {String} name of color from common.js
+			rank: -100,										// {Number} rank of tier, higher ranks can access lower ranks
 		}
 		Object.assign(tier, data);
 		return this.addEntry(this.tiers, tier);
@@ -820,7 +840,12 @@ export class Data {
 	}
 
 	getTierListData(idList) {
-		return idList.map(id => this.getTierData(id)).filter(x => x);
+		let tierList = idList.map(id => this.getTierData(id)).filter(x => x);
+		tierList.sort(tierRankComparator);
+		if (this.state.documentsSort === 'accessTierDesc') {
+			tierList.reverse();
+		}
+		return tierList;
 	}
 
 
@@ -867,7 +892,9 @@ export class Data {
 	}
 
 	getLabelListData(idList) {
-		return idList.map(id => this.getLabelData(id)).filter(x => x);
+		let labelList = idList.map(id => this.getLabelData(id)).filter(x => x);
+		labelList.sort(labelNameComparator);
+		return labelList;
 	}
 
 
@@ -1068,6 +1095,53 @@ export class Data {
 
 }
 
+function folderTiersComparator(a, b) {
+	if (a.tiers.length == 0 && b.tiers.length == 0) {
+		return 0;
+	} else if (a.tiers.length == 0 && b.tiers.length > 0) {
+		return 1;
+	} else if (a.tiers.length > 0 && b.tiers.length == 0) {
+		return -1;
+	} else {
+		return tierRankComparator(a.tiers[0], b.tiers[0]);
+	}
+}
+
+function documentNameComparator(a, b) {
+	return a.name.localeCompare(b.name);
+}
+
+function documentLabelsComparator(a, b) {
+	if (a.labels.length == 0 && b.labels.length == 0) {
+		return 0;
+	} else if (a.labels.length == 0 && b.labels.length > 0) {
+		return 1;
+	} else if (a.labels.length > 0 && b.labels.length == 0) {
+		return -1;
+	} else {
+		return labelNameComparator(a.labels[0], b.labels[0]);
+	}
+}
+
+function documentTierComparator(a, b) {
+	return tierRankComparator(a.tier, b.tier);
+}
+
+function documentDateCreatedComparator(a, b) {
+	return a.history[0].date.getTime() - b.history[0].date.getTime();
+}
+
+function documentDateLastAccessedComparator(a, b) {
+	return a.history[a.history.length - 1].date.getTime() - b.history[b.history.length - 1].date.getTime();
+}
+
+function labelNameComparator(a, b) {
+	return a.name.localeCompare(b.name);
+}
+
+function tierRankComparator(a, b) {
+	return a.rank - b.rank;
+}
 
 /*********
 
@@ -1090,8 +1164,9 @@ for (let i = 0; i < 30; i++) {
 	});
 }
 
-let tier1 = sampleData.addTier({ name: 'Tier 1', color: 'blue' });
-let tier2 = sampleData.addTier({ name: 'Tier 2', color: 'green' });
+let tier1 = sampleData.addTier({ name: 'Tier 1', color: 'blue', rank: -1 });
+let tier2 = sampleData.addTier({ name: 'Tier 2', color: 'green', rank: -2 });
+let tier3 = sampleData.addTier({ name: 'Tier 3', color: 'purple', rank: -3 });
 
 let user1 = sampleData.addUser({
 	firstName: 'allison',
@@ -1189,7 +1264,3 @@ sampleData.documents[document5].history.push(sampleData.addEvent({ user: user2, 
 sampleData.documents[document5].history.push(sampleData.addEvent({ user: user3, document: document5, action: Data.RETRIEVE }));
 
 
-//sampleData.setState({ document: document1 });
-//=======
-sampleData.setState({ document: document1 });
-//>>>>>>> master

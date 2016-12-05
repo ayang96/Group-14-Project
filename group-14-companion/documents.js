@@ -288,9 +288,9 @@ class screenBehavior extends Behavior{
 				let addingDoc = this.documents[i]; // Pulling curr directory ver
 				let addingDocID = addingDoc.id; // Pulling curr directory ver
 				let addingDocName = addingDoc.name;
-				let addingDocTier = this.data.getTierData(addingDoc.tier); //addingDoc.tier;
+				let addingDocTier = addingDoc.tier; //addingDoc.tier;
 				let addingDocLabels = addingDoc.labels;
-				let addingDocOut = this.data.getDocumentState(addingDocID); //addingDoc.out;
+				let addingDocOut = addingDoc.out; //addingDoc.out;
 				//trace("addingDoc keys " + Object.keys(addingDoc) + '\n');
 				
 				contentToScrollVertically.add(new DocumentLine(
@@ -498,7 +498,7 @@ class documentBehavior extends Behavior {
 		
 		// Add document labels
 		for (let i = 0; i < Math.min(4, labelsList.length); i++) {
-			let label = applicationData.getLabelData(this.labels[i]); //this.labels[i];
+			let label = this.labels[i]; //this.labels[i];
 			let addingLabelText = label.abbreviation;
 			let addingLabelColor = label.color;
 			//let addingLabelText = this.labels[i][0];
