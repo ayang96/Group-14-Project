@@ -346,8 +346,9 @@ data.setState({ folder: 'root' });
 var docs = data.documents;
 
 var screens2 = {
-	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}),
-	"documentsScreen2" : new screenWithMenubar({screen: [new DocumentsScreen(screenData2)]}),
+	//"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}),
+	//"documentsScreen2" : new screenWithMenubar({screen: [new DocumentsScreen(screenData2)]}),
+	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(data)]}),
 
 	"documentHistoryScreen" : sampleDocHis,
 	"documentHistoryScreen2" : sampleDocHis2,
@@ -356,7 +357,9 @@ var screens2 = {
 	"documentInfoScreen2" : sampleDoc2,
 	"documentInfoScreen3" : sampleDoc3,
 	"userProfileScreen": new UserProfileScreen({ data: data }),
-	"usersScreen": new UsersScreen({ data: data }),
+
+	//"usersScreen": new UsersScreen({ data: data }),
+	"usersScreen": new screenWithMenubar({screen: [new UsersScreen(usersData)]}), // temp pre-migration
 	"newUserScreen": new NewUserScreen({ data: data }),
 
 	"plusDocScreen": addDoc,

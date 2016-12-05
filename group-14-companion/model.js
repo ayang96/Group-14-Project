@@ -66,15 +66,36 @@ export class Data {
 		};
 
 		/* Our data "tables" */
-		this.documents = {};
+		this.documents = {
+			//'dummyDoc': { // Temp. Remove when done
+			//	name: 'dummy doc',	
+			//	labels: [],				
+			//	tier: 'admin',
+			//	description: '',	
+			//	folder: 'root',			
+			//	locker: null,			
+			//	history: ['e1'],		
+			//}
+		};
 		this.folders = {
 			'root': { // The root or highest folder in the folder hierarchy
+				//name: 'root', // temp. Change back to '' when done
 				name: '',
 				labels: [],
 				parent: null,
 				folders: [],
-				documents: [],
+				documents: []
+				//folders: ['dummy'], //temp. Change back to empty when done
+				//documents: ['dummyDoc'], //temp. Change back to empty when done
 			},
+			//'dummy': { // Temp. remove when done
+			//	name: 'dummy',
+			//	labels: ['temp'],
+			//	parent: 'root',
+			//	folders: [],
+			//	documents: [],
+			//},
+
 			'search': {	// fake folder to hold the results of search
 				name: 'Search Results',
 				labels: [],
@@ -107,8 +128,20 @@ export class Data {
 				color: 'grey',
 			},
 		};
-		this.labels = {};
-		this.events = {};
+		this.labels = {
+			//'temp': { // Temp. Remove when done.
+			//	name: 'temp',
+			//	color: 'red',
+			//	abbreviation: 'T',
+			//}
+		};
+		this.events = {
+			//'e1': {user: 'admin',	// Temp. Remove when done.
+			//	document: 'dummyDoc',			
+			//	action: 'created',			
+			//	date: new Date(),
+			//}
+		};
 		this.lockers = {};
 		this.cabinets = {};
 		this.emptyLockers = new Set();
@@ -1153,3 +1186,5 @@ sampleData.returnDocument(document5);
 sampleData.documents[document5].history.push(sampleData.addEvent({ user: user2, document: document5, action: Data.RETRIEVE }));
 sampleData.documents[document5].history.push(sampleData.addEvent({ user: user2, document: document5, action: Data.RETURN }));
 sampleData.documents[document5].history.push(sampleData.addEvent({ user: user3, document: document5, action: Data.RETRIEVE }));
+
+sampleData.setState({ document: document1 });

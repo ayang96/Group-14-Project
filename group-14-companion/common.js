@@ -192,7 +192,7 @@ export var Dispatcher = Container.template($ => ({
 			let screen = $.screens[screenName];
 			let currentScreen = content.page.last;
 			if (screen && screen != currentScreen) {
-				screen.delegate('render');
+				screen.distribute("render"); // delegate does not work
 				switch (transition) {
 					case 'push':
 					case 'pushLeft':
@@ -296,7 +296,7 @@ export var NavBar = Line.template($ => ({
 
 export var NavMenuButton = Picture.template($ => ({
 	height: 26, left: navPadding,
-	url: "Assets/MenuIcon.png", active: true,
+	url: "assets/MenuIcon.png", active: true,
 	Behavior: class extends ButtonBehavior {
 		onTap(content){
 			application.distribute("showMenu");
@@ -355,7 +355,7 @@ export var NavSearch = Container.template($ => ({
 	left: navPadding, right: navPadding, width: 120, contents: [
 		new Picture({
 			height: 21, left: 0,
-			url: "Assets/SearchIcon.png"
+			url: "assets/SearchIcon.png"
 		}),
 		new Label({
 			left: 30, right: 0, style: bodyLightStyle,
@@ -583,8 +583,10 @@ export function formatDate(date) {
 }
 
 /** Returns a string corresponding to a randomly chosen color **/
-export function randomColor() {
-	return colorNames[Math.floor(Math.random() * colorNames.length)];
+export function randomColor() {	// Modified as was yielding improper values frequently?
+	let colorNum = Math.floor(Math.random() * colorNames.length);
+	if (colorNum == colorNames.length) colorNum--;
+	return colorNames[colorNum];
 }
 
 /** Returns the capitalized full name of someone given their first and last names **/
