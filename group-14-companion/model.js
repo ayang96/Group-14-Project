@@ -31,10 +31,10 @@ export class Data {
 	/**
 	 * Standard strings for actions that happen to a document.
 	 */
-	static get CREATE() { return 'created' }
+	static get CREATE() { return 'stored' }
 	static get RETRIEVE() { return 'retrieved' }
 	static get RETURN() { return 'returned' }
-	static get DELETE() { return 'deleted' }
+	static get DELETE() { return 'removed' }
 
 	/**
 	 * Generates a guaranteed unique "hash" ID as a string.
@@ -1223,6 +1223,20 @@ sampleData.documents[document1].history.push(sampleData.addEvent({ user: user2, 
 sampleData.documents[document1].history.push(sampleData.addEvent({ user: user3, document: document1, action: Data.RETRIEVE }));
 sampleData.documents[document1].history.push(sampleData.addEvent({ user: user3, document: document1, action: Data.RETURN }));
 
+
+let document11 = sampleData.addDocument({
+	name: 'Taiko Berceyte ',
+	labels: [labelF],
+	tier: tier3,
+	description: 'Document 11 description',
+	folder: folder1,
+});
+sampleData.returnDocument(document11);
+sampleData.documents[document11].history.push(sampleData.addEvent({ user: user2, document: document11, action: Data.RETRIEVE }));
+sampleData.documents[document11].history.push(sampleData.addEvent({ user: user2, document: document11, action: Data.RETURN }));
+sampleData.documents[document11].history.push(sampleData.addEvent({ user: user3, document: document11, action: Data.RETRIEVE }));
+sampleData.documents[document11].history.push(sampleData.addEvent({ user: user3, document: document11, action: Data.RETURN }));
+
 let document2 = sampleData.addDocument({
 	name: 'Peter Hurst',
 	labels: [labelF],
@@ -1253,12 +1267,15 @@ let document4 = sampleData.addDocument({
 	labels: [labelC],
 	tier: tier3,
 	description: 'Document 4 description',
-	folder: folder1,
+	folder: folder1
 });
 sampleData.returnDocument(document4);
-sampleData.documents[document4].history.push(sampleData.addEvent({ user: user2, document: document4, action: Data.RETRIEVE }));
-sampleData.documents[document4].history.push(sampleData.addEvent({ user: user2, document: document4, action: Data.RETURN }));
-sampleData.documents[document4].history.push(sampleData.addEvent({ user: user1, document: document4, action: Data.RETRIEVE }));
+let doc4his = [];
+doc4his.push(sampleData.addEvent({ user: user2, document: document4, action: Data.CREATE, date: new Date("2015-03-24") }));
+doc4his.push(sampleData.addEvent({ user: user2, document: document4, action: Data.RETRIEVE, date: new Date("2015-03-25") }));
+doc4his.push(sampleData.addEvent({ user: user2, document: document4, action: Data.RETURN, date:new Date("2015-03-27") }));
+doc4his.push(sampleData.addEvent({ user: user3, document: document4, action: Data.RETRIEVE, date: new Date("2016-10-01")}));
+sampleData.updateDocument(document4, {history:doc4his});
 
 let document5 = sampleData.addDocument({
 	name: 'Nico Martinez',
