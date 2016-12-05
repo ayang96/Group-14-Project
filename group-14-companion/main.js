@@ -345,8 +345,8 @@ data.setState({ folder: 'root' });
 var docs = data.documents;
 
 var screens2 = {
-	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}),
-	"documentsScreen2" : new screenWithMenubar({screen: [new DocumentsScreen(screenData2)]}),
+	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(screenData)], data: data}),
+	"documentsScreen2" : new screenWithMenubar({screen: [new DocumentsScreen(screenData2)], data: data}),
 
 	"documentHistoryScreen" : sampleDocHis,
 	"documentHistoryScreen2" : sampleDocHis2,

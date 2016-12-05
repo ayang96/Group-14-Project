@@ -12,6 +12,19 @@ import { VerticalScroller, VerticalScrollbar } from 'src/scroller';
 //
 const FORM_LEFT_COLUMN_WIDTH = 115;
 
+
+class LocalButtonBehavior extends Behavior {
+    onTouchBegan(content) {
+        content.state = 1;
+    }
+    onTouchEnded(content) {
+        content.state = 0;
+        content.delegate("onTap");
+        content.focus();
+    }
+}
+
+
 let formRowSkin = new Skin({
     stroke: common.systemLineColor,
     borders: { bottom: 1 },
@@ -91,7 +104,7 @@ export var FormValue = Label.template($ => ({
 
 export var FormRightButton = Label.template($ => ({
     right: 0, style: common.bodyLinkStyleRight, string: $.string, active: true,
-    Behavior: ($.Behavior ? $.Behavior : common.ButtonBehavior),
+    Behavior: ($.Behavior ? $.Behavior : LocalButtonBehavior),
 }))
 
 /**
@@ -169,7 +182,7 @@ export var FormSelect = Container.template($ => ({
     Behavior: FormSelectBehavior,
 }));
 
-class FormSelectBehavior extends common.ButtonBehavior {
+class FormSelectBehavior extends LocalButtonBehavior {
     onCreate(content, $) {
         this.formData = $.formData;
         this.name = $.name;
@@ -223,7 +236,7 @@ let FormSelectDropDown = Container.template($ => ({
                         new Label({ left: 0, right: 15, bottom: 8, name: 'label' }),
                         new Picture({ right: 0, width: 10, bottom: 8, url: 'assets/arrow_up.png' }),
                     ],
-                    Behavior: class extends common.ButtonBehavior {
+                    Behavior: class extends LocalButtonBehavior {
                         onTap(content) {
                             content.bubble('onUnfocused');
                         }
@@ -276,7 +289,7 @@ let FormSelectOption = Container.template($ => ({
             new Label({ left: 0, right: 0, style: $.style || common.bodyStyle, string: $.string })
         ]})
     ],
-    Behavior: class extends common.ButtonBehavior {
+    Behavior: class extends LocalButtonBehavior {
         onTap(content) {
             if ($.callback) {
                 $.callback(content);
@@ -314,3 +327,5 @@ class TierSelectBehavior extends FormSelectBehavior {
         return tierOptions;
     }
 }
+
+
