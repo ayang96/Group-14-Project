@@ -53,6 +53,8 @@ var screens2 = {
 // 	"documentsScreen2" : new screenWithMenubar({screen: [new DocumentsScreen(screenData2)], data: data}),
 	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(data)], data: data}),
 	"documentInfoScreen" : new FileScreenTemplate({ data: data }),
+	"documentHistoryScreen" : new FileHistoryTemplate({ data: data}),
+
 	"userProfileScreen": new UserProfileScreen({ data: data }),
 	"usersScreen": new UsersScreen({ data: data }),
 	"newUserScreen": new NewUserScreen({ data: data }),

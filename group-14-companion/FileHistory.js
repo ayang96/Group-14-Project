@@ -17,6 +17,7 @@ export var FileHistoryTemplate = Column.template($ => ({
 
 import * as common from "common";
 import { VerticalScroller, VerticalScrollbar } from "src/scroller";
+import { Data, sampleData } from "model";
 
 /*========================*/
 /*Skins and Styles*/
@@ -53,11 +54,6 @@ var screenSkin = new Skin({ fill: "white" });
 /*==================*/
 /*Scetions*/
 /*========================*/
-// let TopNavi = new common.NavBar({
-//    contents: [
-//       new common.NavBackButton(),
-//    ]
-// });
 
 let LabelTemp = Column.template($ =>({
    height: 40, width: 320, skin: whiteSkin,
@@ -92,9 +88,8 @@ var DocumentHistoryList = Container.template(($={}) => Object.assign($, {
          let column = content.first.first;
          column.empty();
          for (let event of $.documentData.history) {
-            let eventData = $.data.events[event];
-            let userData = $.data.users[eventData.user];
-            column.add(new DocumentHistoryItem({ eventData: eventData, userData: userData, data: $.data }));
+            let userData = event.user;
+            column.add(new DocumentHistoryItem({ eventData: event, userData: userData, data: $.data }));
          }
       }
    }
@@ -109,7 +104,8 @@ var DocumentHistoryItem = Container.template($ => ({
       }),
       new Container({
          left: 15, bottom: 15, width: 10, height: 10,
-         skin: new Skin({ fill: common[$.userData.avatarColor] }),
+         //skin: new Skin({ fill: common[$.userData.avatarColor] }), //Not Sure about Color
+         skin: new Skin({ fill: 'red' }),
       }),
       new Label({
          left: 30, bottom: 10, style: common.bodyBoldStyle,
@@ -128,11 +124,23 @@ var DocumentHistoryItem = Container.template($ => ({
 /*========================*/
 class screenBehavior extends Behavior {
    onCreate(screen, data) {
-      this.data = data;
-      this.docName = data.docName;
-      this.docData = data.docData;
+      this.db = data.data;
+   }
+   update(screen) {
+      this.render(screen);
+   }
+   render(screen) {
+      let docID = this.db.state.document;
+      let docData = this.db.getDocumentData(docID);
+      this._render(screen, docData);
+   }
 
-      let findingDoc = this.docData.documents[this.docName];
+   _render(screen, data) {
+      screen.empty();
+      this.data = data;
+      this.docName = data.name;
+
+      let findingDoc = data;
 
       let FileScreen = new Column({
          top: 0, left: 0, right: 0, bottom: 0,
@@ -158,10 +166,10 @@ class screenBehavior extends Behavior {
 
       let His = new DocumentHistoryList({
          left: 10, right: 10, top: 0, bottom: 10, skin: documentHistoryListSkin,
-         documentData: this.docData.documents[this.docName], data: this.docData,
+         //documentData: this.docData.documents[this.docName], data: this.docData,
+         documentData: findingDoc, data: this.db,
       });
 
-      //FileScreen.add(TopNavi);
       FileScreen.add(new common.NavBar({contents: [new common.NavBackButton()]}));
       FileScreen.add(DocIcon);
       FileScreen.add(Des);
