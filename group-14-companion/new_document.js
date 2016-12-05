@@ -14,8 +14,8 @@
 /*Exports*/
 /*========================*/
 
-export var FileScreenTemplate = Column.template($ => ({
-   left: 0, right: 0, top: 0, bottom: 0,
+export var NewFileTemplate = Column.template($ => ({
+   left: 0, right: 0, top: 0, bottom: 0, active: true,
    skin: whiteSkin,
    contents: [],
    screenData: $.screenData,
@@ -42,9 +42,7 @@ var boraderSkin = new Skin({
    stroke: common.grey,
    borders: { left: 1, right: 1, bottom: 1 }
 });
-// let buttonStyle = new Style({font: '15px', color: blue});
-// let WbuttonStyle = new Style({font: '15px', color: 'white'});
-//let textStyle = new Style({font: '15px', color: 'black',  horizontal:'left'});
+
 let textStyle = common.bodyStyle;
 let buttonStyle = common.buttonStyleWhite;
 let WbuttonStyle = common.buttonStyleBlue;
@@ -54,69 +52,58 @@ let WbuttonStyle = common.buttonStyleBlue;
 /*Buttons*/
 /*========================*/
 
-// let OpenButton = new common.NormalButton({
-//    string: "OPEN",
-//    Behavior: class extends common.ButtonBehavior {
-//       onTap(content) {
-
-//          // IMPLEMENT OPENING LOCKER
-
-//          application.distribute("alert", {
-//             title: "Opening Document",
-//             message: "Locker 03 of Cabinet A has been opened. You may now retrieve the document. Your access will be logged.",
-//             options: [{ string: "OK", callback: function(){} }],
-//          })
-//       }
-//    }
-// });
-
-// let HistoryButton = new common.NormalButton({
-//    left: 20,
-//    string: "FILE HISTORY",
-//    Behavior: class extends common.ButtonBehavior {
-//       onTap(content) {
-//          application.distribute("dispatch", "documentHistoryScreen", "push");
-//       }
-//    }
-// })
-
 /*========================*/
 /*Label Template*/
 /*========================*/
 let LabelTemp = Column.template($ =>({
-   height: 40, width: 320, skin: whiteSkin,
+   height: 40, width: 320, skin: whiteSkin, active: true,
    contents: [
       Line($, {height: 39, contents:[$[0], $[1]]}),
       new Container({height:1, width: 280, skin: blackSkin}),
-   ]
+   ], 
+   Behavior: class extends Behavior {
+      onTouchEnded(content) {
+         application.distribute("dispatch", "TestDocScreen", "push");
+      }
+   }
 }));
 
 let LeftTitle = Label.template($ =>({
-   height: 39, width: 80, left: 55, skin: whiteSkin, string: $, style: textStyle,
+   height: 39, width: 80, left: 55, skin: whiteSkin, string: $, style: textStyle, active: true,
+   Behavior: class extends Behavior {
+      onTouchEnded(content) {
+         application.distribute("dispatch", "TestDocScreen", "push");
+      }
+   }
 }));
 
 let RightTitle = Label.template($ =>({
-   height: 39, width: 220, left: 20, horizontal:'left', skin: whiteSkin, string: $, style: textStyle,
+   height: 39, width: 220, left: 20, horizontal:'left', skin: whiteSkin, string: $, style: textStyle, active: true,
+   Behavior: class extends Behavior {
+      onTouchEnded(content) {
+         application.distribute("dispatch", "TestDocScreen", "push");
+      }
+   }
 }));
 
 let Description = Container.template($ => ({
-   height: 85, bottom: 10, width: 280, skin: boraderSkin,
+   height: 85, bottom: 10, width: 280, skin: boraderSkin, active: true,
    contents:[
       Label($, {string: $, style: new Style({font: '15px', color: 'black',  horizontal:'left', align: 'top'})}),
-   ]
+   ],
+   Behavior: class extends Behavior {
+      onTouchEnded(content) {
+         application.distribute("dispatch", "TestDocScreen", "push");
+      }
+   }
 }));
 
 /*========================*/
 /*Scetions*/
 /*========================*/
-// let TopNavi = new common.NavBar({
-//    contents: [
-//       new common.NavBackButton(),
-//    ]
-// });
 
 let Intro = Line.template($ => ({
-   height: 80, width: 320, skin: whiteSkin,
+   height: 80, width: 320, skin: whiteSkin, active: true,
    contents:[
       new Picture({height: 50, width: 80, align:'middle', url:'./assets/icon_document_in_ring_70x70.png'}),
       new Column({height: 80, width: 240, 
@@ -126,7 +113,12 @@ let Intro = Line.template($ => ({
             new Container({height: 1, width: 200, align: 'middle', skin: blackSkin}),
          ]
       })
-   ]
+   ],
+   Behavior: class extends Behavior {
+      onTouchEnded(content) {
+         application.distribute("dispatch", "TestDocScreen", "push");
+      }
+   }
 }));
 
 
@@ -148,8 +140,8 @@ class screenBehavior extends Behavior {
       
 
       let FileScreen = new Column({
-         top: 0, left: 0, right: 0, bottom: 0,
-         contents:[]
+         top: 0, left: 0, right: 0, bottom: 0, active: true,
+         contents:[],
       });
 
       let FileTitle = new LabelTemp([new LeftTitle('Tag'),  
@@ -172,7 +164,7 @@ class screenBehavior extends Behavior {
 
 
       let DocIcon = new Line({
-         height: 80, width: 320, skin: whiteSkin,
+         height: 80, width: 320, skin: whiteSkin, active: true,
          contents:[
             iconPIC,
             new Column({height: 80, width: 240, 
@@ -186,7 +178,7 @@ class screenBehavior extends Behavior {
       });
 
       let FileContent = new Column({
-         height: 250, width: 320, skin: whiteSkin,
+         height: 250, width: 320, skin: whiteSkin, active: true,
          contents:[
             FileTitle,
             LastUsed,
@@ -194,42 +186,18 @@ class screenBehavior extends Behavior {
             AccessTier,
             Des,
             DetailDes,
-            new Line({contents: [
-               //OPEN BUTTON
+            new Line({
+               contents: [
+               //SAVE BUTTON
                new common.NormalButton({
-                  string: "OPEN",
-                  Behavior: class extends common.ButtonBehavior {
-                  onTap(content) {
-                           // IMPLEMENT OPENING LOCKER
-                     application.distribute("alert", {
-                     title: "Opening Document",
-                     message: "Locker 03 of Cabinet A has been opened. You may now retrieve the document. Your access will be logged.",
-                     options: [{ string: "OK", callback: function(){} }],
-                     })}}
-                  }), 
-               
-               //FILE HISTORY BUTTON
-               new common.NormalButton({
-                  left: 20,
-                  string: "FILE HISTORY",
+                  string: "SAVE",
                   Behavior: class extends common.ButtonBehavior {
                      onTap(content) {
-                        switch (data.docName) {
-                           case "Document#1":
-                              application.distribute("dispatch", "documentHistoryScreen", "push");
-                              break;
-                           case "Document#2":
-                              application.distribute("dispatch", "documentHistoryScreen2", "push");
-                              break; 
-                           case "Document#3":
-                              application.distribute("dispatch", "documentHistoryScreen3", "push");
-                              break;                           
-                        }
-                        //application.distribute("dispatch", "documentHistoryScreen", "push");
+                        application.distribute("dispatch", "documentsScreen2", "push");
                      }
                   }
-               })
-            ]}),]
+               }), 
+            ]}),],
       });
 
 
@@ -237,6 +205,9 @@ class screenBehavior extends Behavior {
       FileScreen.add(DocIcon);
       FileScreen.add(FileContent);
       screen.add(FileScreen);
+   }
+   onTouchEnded(screen) {
+      application.distribute("dispatch", "TestDocScreen", "push");
    }
 };
 

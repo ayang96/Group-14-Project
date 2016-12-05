@@ -77,7 +77,7 @@ let RightTitle = Label.template($ =>({
 var DocumentHistoryList = Container.template(($={}) => Object.assign($, {
    contents: [
       VerticalScroller($, {
-         left: 0, right: 0, top: 0, bottom: 0, active: true,
+         left: 0, right: 0, top: 0, bottom: 0, active: true, clip: true,
          contents: [
             new Column({ left: 0, right: 0, top: 0 }),
             VerticalScrollbar(),

@@ -31,19 +31,12 @@ import {
 /************ 3) ASSETS ******************************************************/
 
 // Format standards. Edit here if necessary
-const screenWidth = 320;		// width of screen / 2
-const screenHeight = 480;		// height of screen / 2
-const sortOffset = 275;			// left offset of sort button
 const userIconSize = 30;		// width and height of a label tag
 const lineHeight = 50;			// height of a document listing
 const sideMargin = 15;			// left and right margin of a document listing
 const spacing = 10;				// spacing left and right of items
-const userNameWidth = 150;		// width of a doc name listing before cutoff
-const headingTextHeight = 16;	// height of a heading bold text
-const subTextHeight = 14;		// height of a standard sub text
+const accessTierWidth = 100;	// width of the access tier column
 const sortBarHeight = 32;		// height of sortbar/directory from documents
-
-
 
 
 // Solid Fill Skins
@@ -59,29 +52,8 @@ let greySkin = new Skin({ fill: '#828282'});		// = "grey"
 let lineSkin = new Skin({							//stroked skin of a user listing
 		fill: 'white', 			
 		stroke: 'silver',
-		borders: {left: 0, right: 0, top: 1, bottom: 1}
+		borders: {left: 0, right: 0, top: 0, bottom: 1}
 });	
-
-let pendingSkin = new Skin({						//stroked skin of a pending user listing
-		fill: '#EBEBEB', 			
-		stroke: 'silver',
-		borders: {left: 0, right: 0, top: 1, bottom: 1}
-});	
-		
-// Source Images
-let userWhiteout = Picture.template($ => ({		// hardcoded white cutouts over user icons
-	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
-	width: screenWidth, height: lineHeight,
-	url: 'assets/listing_line_users_white_cutouts.png',
-	aspect: 'fit'
-}));
-
-let pendingWhiteout = Picture.template($ => ({		// hardcoded grey cutouts over pending user icons
-	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
-	width: screenWidth, height: lineHeight,
-	url: 'assets/listing_line_users_pending_cutouts.png',
-	aspect: 'fit'
-}));
 
 let pendingIcon = Picture.template($ => ({		// hourglass user icon for pending users
 	width: userIconSize, height: userIconSize,
@@ -105,169 +77,172 @@ let iconLabel = Label.template($ => ({				// for a user icon
 	string: $.string
 }));
 
-let userNameLabel = Label.template($ => ({			// for a user's name or tier
-	height: headingTextHeight, width: $.width,
-	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
-	style: new Style({font: "16px Roboto Medium", color: "black", horizontal: "left"}),
-	string: $.string
-}));
-
-
-
 /************* 4) BEHAVIORS ****************************************************/
 
 // Main screen behavior
 class screenBehavior extends Behavior {
-	onCreate(screen, data) {
+	onCreate(screen, $) {
 		// Extract given data TODO
-		this.data = data;
-		this.users = data.users;
-		
+		this.data = $.data;
+	}
+	update(screen) {
+		this.render(screen);
+	}
+	render(screen) {
+
+		screen.empty();
+
+		// Add to screen
+		let screenColumn = new Column({
+			top: 0, left: 0, right: 0, bottom: 0,
+		});
+		screen.add(screenColumn);
+
+		// Add nav bar
+		let navBar = new common.NavBar({ contents: [
+			new common.NavMenuButton(),
+			new common.NavSearch({
+				// implement search
+			}),
+			new common.NavSelectButton({
+				Behavior: class extends common.ButtonBehavior {
+					onTap(content) {
+						// implement select
+					}
+				}
+			})
+		]});
+		screenColumn.add(navBar);
+
 		// Add directory bar line
-		let sortBarHeading = new SortBarLine();
+		screenColumn.add(new SortBarLine());
 		
 		// Add scroller 
 		let contentToScrollVertically = new Column({
 			top: 0, left: 0, right: 0, 
-			contents: []});
-			// Add users
-			for (let i = 0; i < data.users.length; i++) {
-				contentToScrollVertically.add(new userLine(
-						{name: data.users[i].name,
-						tier: data.users[i].tier,
-						color: data.users[i].color}
-				));
-			}
-		let mainScroller = new MainScroller({contentToScrollVertically});
-		
-		// Add plus button
-		let plusButton = common.PlusButton();
-		
-		// Add to screen
-		let screenColumn = new Column({
-			top: 0, left: 0, right: 0, bottom: 0,
 			contents: []
 		});
-		screenColumn.add(new Container({left: 0, right:0, top: 0, height: 2*sortBarHeight}));
-		screenColumn.add(mainScroller);
-		screen.add(screenColumn);
-		screen.add(sortBarHeading);
+		// Add users
+		let users = this.data.getUserList();
+		/* implement sorting */
+		for (let user of users) {
+			contentToScrollVertically.add(new userLine({ userData: user, data: this.data }));
+		}
+		let mainScroller = new MainScroller({contentToScrollVertically});
+		screenColumn.add(mainScroller);		
+
+
+		// Add plus button
+		let plusButton = common.PlusButton({
+			Behavior: class extends common.ButtonBehavior {
+				onTap(content) {
+					application.distribute('dispatch', 'newUserScreen', 'new');
+				}
+			}
+		});
 		screen.add(plusButton);
-		
 	}
 };
 
 // Auto-generates skin and text of a label or tag icon
 class userIconBehavior extends Behavior {
-	onCreate(icon, data) {
-		// Extract given data
-		this.text = data.text;
-		let nameSplit = data.text.split(" ");
-		this.firstName = nameSplit[0];
-		this.lastName = nameSplit[nameSplit.length - 1];
-		this.color = data.color;
-		
-		// Color label
-		let pending = true;
-		switch (this.color) {
+	onCreate(icon, $) {
+		switch ($.tier.color) {
 			case 'red':
 				icon.skin = redSkin;
-				pending = false;
 				break;
 			case 'orange':
 				icon.skin = orangeSkin;
-				pending = false;
 				break;
 			case 'yellow':
 				icon.skin = yellowSkin;
-				pending = false;
 				break;
 			case 'green':
 				icon.skin = greenSkin;
-				pending = false;
 				break;
 			case 'sky':
 				icon.skin = skySkin;
-				pending = false;
 				break;
 			case 'blue':
 				icon.skin = blueSkin;
-				pending = false;
 				break;
 			case 'purple':
 				icon.skin = purpleSkin;
-				pending = false;
 				break;
 			case 'grey':
 				icon.skin = greySkin;
-				pending = false;
+				break;
+			default:
+				icon.skin = greySkin;
 				break;
 		} 
 		
 		// If status is pending
-		if (pending) {
-			icon.skin = greySkin;
+		if ($.pending) {
 			icon.add(new pendingIcon());
 		} else {
-		// Add initial to label
-		icon.add(new iconLabel({string: this.firstName.slice(0,1)+this.lastName.slice(0,1)}));
+			// Add initial to label
+			icon.add(new iconLabel({ string: $.abbreviation }));
 		}
 	}
 };
 
 // Auto-generates user icon, name, and tier
-class userBehavior extends common.ButtonBehavior {
-	onCreate(user, data) {
-		// Extract given data
-		this.name = data.name;
-		this.tier = data.tier;
-		this.color = data.color; 
-		
-		// Creation of line
-		let userLine = new Line({top: 0, bottom: 0, left: 0, right: 0, contents: []});
-		
+class userLineBehavior extends common.ButtonBehavior {
+	onCreate(content, $) {
+
+		this.data = $.data;
+		this.userData = $.userData;
+
 		// Add left margin spacing
-		userLine.add(new Container({left:0, width: sideMargin}));
+		content.add(new Container({left:0, width: sideMargin}));
 		
 		// Add user icon
-		userLine.add(new userIcon({text: this.name, color: this.color}));
+		content.add(new userIcon($.userData));
 		
-		// Add user name and tier
-		userLine.add(new userNameLabel({string: this.name, width: userNameWidth, left: spacing}));
-		userLine.add(new userNameLabel({string: this.tier, left: 0}));
-		
-		// Add line and masking cutout to container
-		user.add(userLine);
-		
-		// Apply skin and masking cutout to container
-		if (this.color != 'pending') {
-			user.skin = lineSkin;
-			user.add(new userWhiteout({top: 0, left: 0, right: 0, bottom: 0}));	
-		} else {
-			user.skin = pendingSkin;
-			user.add(new pendingWhiteout({top: 0, left: 0, right: 0, bottom: 0}));	
-		}
+		// Add user name
+		content.add(new Label({
+			left: spacing, right: spacing, style: ($.userData.pending ? common.bodyLightStyle : common.bodyBoldStyle),
+			string: $.userData.fullName
+		}));
+
+		// Add tier
+		content.add(new Label({
+			right: sideMargin, width: accessTierWidth, style: ($.userData.pending ? common.bodyLightStyle : common.bodyStyle),
+			string: $.userData.tier.name
+		}));
 	}
-	onTap(user) {
-		application.distribute("dispatch", "userProfileScreen", "push");
+	onTap(content) {
+		this.data.setState({ user: this.userData.id });
+		application.distribute('dispatch', 'userProfileScreen', 'push');
 	}
 };
 
 class sortBarBehavior extends Behavior {
 	onCreate(col, data) {
 		// Sort text
-		let top = new Line({left: 0, width: screenWidth, height: sortBarHeight, top: 0, 
-			contents: [new Container({width: sortOffset}), new sortButton()]});
+		let top = new Container({
+			left: 0, right: 0, top: 0, height: sortBarHeight,
+			contents: [
+				new sortButton(),
+			]
+		});
 		col.add(top);
 		
 		// Access tier headings text
-		let bottom = new Line({ left: 0, top: 0, width: screenWidth, height: sortBarHeight,
-			contents: [] });
-		bottom.add(new Label({left: sideMargin,  
-			width: userIconSize + userNameWidth, height: headingTextHeight,
-			style: common.bodyBoldStyle, string: "Users"}));
-		bottom.add(new Label({left: 0, style: common.bodyBoldStyle, 
-			string: "Access Tier"}));
+		let bottom = new Container({
+			left: 0, right: 0, top: 0, height: sortBarHeight,
+			contents: [
+				new Label({
+					left: sideMargin, style: common.bodyBoldStyle,
+					string: "Users"
+				}),
+				new Label({
+					right: sideMargin, width: accessTierWidth, style: common.bodyBoldStyle,
+					string: "Access Tier"
+				}),
+			]
+		});
 		col.add(bottom);
 		
 	}
@@ -300,20 +275,21 @@ let sortButton = Label.template($ => ({
 let userIcon = Container.template($ => ({
 	width: userIconSize, height: userIconSize, 
 	Behavior: userIconBehavior,
-	contents: []
+	contents: [
+		new common.CircleMaskWhite({top: 0, left: 0, right: 0, bottom: 0})
+	]
 }));
 
-// Listing for a document. Define data = {name = username, tier, color = icon color or 'pending'}
-// When instantiating, call new userLine(data)
-let userLine = Container.template($ => ({
-	top: 0, left: 0, right: 0, height: lineHeight, width: screenWidth,
-	Behavior: userBehavior, active: true,
-	contents: []
+// Listing for a document.
+// When instantiating, call new userLine(user's data)
+let userLine = Line.template($ => ({
+	top: 0, left: 0, right: 0, height: lineHeight,
+	skin: lineSkin, active: true,
+	Behavior: userLineBehavior,
 }));
 
 // Line on top for sort bar. 
 let SortBarLine = Column.template($ => ({
-	height: 2*sortBarHeight, width: screenWidth,
 	top: 0, left: 0, right: 0,
 	skin: lineSkin,
 	Behavior: sortBarBehavior,
@@ -322,7 +298,7 @@ let SortBarLine = Column.template($ => ({
 
 // Scroller template
 let MainScroller = Column.template($ => ({
-    left: 0, right: 0, top: 0, bottom: 0, 
+    left: 0, right: 0, top: 0, bottom: 0, clip: true,
     contents: [
       VerticalScroller($, {
       	active: true,

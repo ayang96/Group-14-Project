@@ -94,6 +94,14 @@ export class Data {
 			//	folders: [],
 			//	documents: [],
 			//},
+
+			'search': {	// fake folder to hold the results of search
+				name: 'Search Results',
+				labels: [],
+				parent: 'root',
+				folders: [],
+				documents: [],
+			},
 		};
 		this.users = {
 			'admin': { // Initial admin account. Can be different from the actual administrator account
@@ -185,7 +193,7 @@ export class Data {
 	 */
 	validateData(data) {
 		if ('documents' in data) {
-			if (! data.labels.every(id => (id in this.documents))) return false;
+			if (! data.documents.every(id => (id in this.documents))) return false;
 		}
 		if ('folder' in data) {
 			if (! (data.folder in this.folders || data.folder === null)) return false; 
@@ -343,6 +351,8 @@ export class Data {
 			let eventID = this.addEvent({ user: this.state.login, document: id, action: Data.CREATE });
 			this.updateDocument(id, { history: [eventID] });
 		}
+
+		this.addDocumentToFolder(id, document.folder);
 		return id;
 	}
 
@@ -561,7 +571,13 @@ export class Data {
 			documents: [],		// {String[]} ids of child documents
 		}
 		Object.assign(folder, data);
-		return this.addEntry(this.folders, folder);
+		let folderID = this.addEntry(this.folders, folder);
+		if (folderID) {
+			this.addFolderToFolder(folderID, folder.parent);
+			return folderID;
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -639,8 +655,7 @@ export class Data {
 		for (let id of folder.folders) {
 			let child = this.folders[id];
 			if (child) {
-				//this._getFolderTiers(child, tiers);
-				this.getFolderTiers(child, tiers); //Other didn't compile
+				this._findFolderTiers(child, tiers);
 			}
 		}
 	}
@@ -668,13 +683,32 @@ export class Data {
 				return null;
 			}
 		}
-		let pathString = folderDataList.map(folder => folder.name).join('\\') + '\\';
+		let pathString = folderDataList.map(folder => folder.name).join("\\") + "\\";
 		return {
 			folderDataList: folderDataList,
 			string: pathString,
 		}
 	}
 
+	addDocumentToFolder(documentID, folderID) {
+		let folder = this.folders[folderID];
+		let document = this.documents[documentID];
+		if (folder && document) {
+			let folderDocuments = new Set(folder.documents);
+			folderDocuments.add(documentID);
+			this.updateFolder(folderID, { documents: Array.from(folderDocuments) });
+		}
+	}
+
+	addFolderToFolder(childID, parentID) {
+		let parent = this.folders[parentID];
+		let child = this.folders[childID];
+		if (parent && child) {
+			let parentFolders = new Set(parent.folders);
+			parentFolders.add(childID);
+			this.updateFolder(parentID, { folders: Array.from(parentFolders) });
+		}
+	}
 
 	/**
 	 * 
@@ -722,6 +756,23 @@ export class Data {
 		return user;
 	}
 
+	getUserListData(idList) {
+		return idList.map(id => this.getUserData(id)).filter(x => x);
+	}
+
+	/**
+	 * Returns a list of all users (without any particular ordering),
+	 * excluding the default users (Admin, Unknown).
+	 * 
+	 * @return {Object[]} List of user data
+	 */
+	getUserList() {
+		let userIDs = Object.keys(this.users).filter(id => (
+			id !== 'admin' &&
+			id !== 'unknown'
+		));
+		return this.getUserListData(userIDs);
+	}
 
 	/**
 	 * 
@@ -917,6 +968,100 @@ export class Data {
 
 		return cabinet;
 	}
+
+	/**
+	 *
+	 * SEARCH
+	 * 
+	 */
+
+	/**
+	 * Searches database for query string, and puts results in the
+	 * fake folder with id 'search'. 
+	 * Matches on these items and fields:
+	 * 	documents:
+	 * 		-name
+	 * 		-description
+	 * 		-label
+	 * 	folders:
+	 * 		-name
+	 * 		-label
+	 * Uses AND convention of search: items must have ALL of the search
+	 * terms in them to match (but the terms do not all have to be in the
+	 * same field).
+	 * Searching is case insensitive, ignores punctuation, and matches on
+	 * parts of words ('cat' matches 'catfish').
+	 *
+	 * Usage:
+	 * 	let input = 'Hello, how are you?';
+	 * 	data.search(input);
+	 * 	data.setState({ folder: 'search' });
+	 * 	application.distribute('update');
+	 * 
+	 * @param  {String} query -input search string
+	 * @return {void} -no return
+	 */
+	search(query) {
+
+		// Split query into individual words, remove punctuation
+		let terms = query.split(/\W+/);
+
+		// create regular expression tests for each term, ignoring case
+		let tests = terms.map(term => new RegExp(term, 'i'));
+
+		// Search labels and add to set of search criteria
+		// 	-name
+		let matchLabels = new Set();
+		for (let id of Object.keys(this.labels)) {
+			let label = this.labels[id];
+			if (this._match(label.name, tests)) {
+				matchLabels.add(id);
+			}
+		}
+
+		// Search documents and add to result set
+		// 	-name
+		// 	-description
+		// 	-labels in matchLabels
+		let matchDocuments = [];
+		for (let id of Object.keys(this.documents)) {
+			let document = this.documents[id];
+			let combinedFields = document.name + '\n' + document.description;
+			if (this._match(combinedFields, tests)) {
+				matchDocuments.push(id);
+			} else if (document.labels.some(label => matchLabels.has(label))) {
+				matchDocuments.push(id);
+			}
+		}
+
+		// Search folders and add to result set
+		// 	-name
+		// 	-labels in matchLabels
+		let matchFolders = [];
+		for (let id of Object.keys(this.folders)) {
+			let folder = this.folders[id];
+			if (this._match(folder.name, tests)) {
+				matchFolders.push(id);
+			} else if (folder.labels.some(label => matchLabels.has(label))) {
+				matchFolders.push(id);
+			}
+		}
+
+		// Update search folder
+		this.updateFolder('search', { documents: matchDocuments, folders: matchFolders });
+	}
+
+	/**
+	 * Helper for search(). Tests that the string passes EVERY reg ex test.
+	 * Behavior can als be changed to passing any test instead.
+	 * @param  {String} string to search
+	 * @param  {RegExp[]} tests  list of reg ex tests
+	 * @return {boolean}        return true if pass every test
+	 */
+	_match(string, tests) {
+		return tests.every(test => test.test(string));
+	}
+
 }
 
 
@@ -941,8 +1086,8 @@ for (let i = 0; i < 30; i++) {
 	});
 }
 
-let tier1 = sampleData.addTier({ name: 'Tier 1'});
-let tier2 = sampleData.addTier({ name: 'Tier 2'});
+let tier1 = sampleData.addTier({ name: 'Tier 1', color: 'blue' });
+let tier2 = sampleData.addTier({ name: 'Tier 2', color: 'green' });
 
 let user1 = sampleData.addUser({
 	firstName: 'allison',
