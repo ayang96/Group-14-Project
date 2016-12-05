@@ -23,6 +23,7 @@ export var DocumentsScreen = Container.template($ => ({
 /************ 2) IMPORTS *****************************************************/
 import * as common from "common";
 import * as model from "model";
+import { FormSelect } from 'forms';
 
 import {
     VerticalScroller,
@@ -190,7 +191,6 @@ class screenBehavior extends Behavior{
 		// Extract given data
 		this.data = data;
 		applicationData = this.data;
-		screen.active = true;
 		screen.distribute("render");
 	}
 	onDisplaying(screen) {
@@ -373,13 +373,19 @@ class screenBehavior extends Behavior{
 		
 		// Add to screen
 		let screenColumn = new Column({
-			top: 0, left: 0, right: 0, bottom: 0,
-			contents: []
+			top: common.navBarHeight + directoryHeight, left: 0, right: 0, bottom: 0,
+			contents: [
+				mainScroller
+			]
 		});
-		screenColumn.add(navBar);
-		screenColumn.add(directoryHeading);
-		screenColumn.add(mainScroller);
 		screen.add(screenColumn);
+		screen.add(new Column({
+			top: 0, left: 0, right: 0,
+			contents: [
+				navBar,
+				directoryHeading,
+			]
+		}));
 		screen.add(plusButton);
 	}
 };
@@ -706,16 +712,6 @@ class directoryLineBehavior extends Behavior {
 	}
 };
 
-class sortButtonBehavior extends Behavior {
-	onCreate(button) {
-		//TODO
-	}
-	onTouchBegan(button) {
-	}
-	onTouchEnded(button) {
-	}
-};
-
 
 
 /**************** 5) TEMPLATES *******************************************/
@@ -730,13 +726,31 @@ let directoryLabel = Label.template($ => ({
 }));
 
 // Sort button on upper right
-let sortButton = Label.template($ => ({
-	string: 'Sort v',  right: sideMargin, 
-	active: true,
-	style: common.bodyLinkStyleRight,
-	Behavior: sortButtonBehavior
+let sortButton = Container.template($ => ({
+	right: sideMargin, width: 130,
+	contents: [
+		new FormSelect({
+			formData: { sort: applicationData.state.documentsSort },
+			name: 'sort',
+			options: [
+				{ value: 'name', string: 'Name', callback: callbackGen('name') },
+				{ value: 'dateCreated', string: 'Date Created', callback: callbackGen('dateCreated')},
+				{ value: 'dateLastAccessed', string: 'Date Last Accessed', callback: callbackGen('dateLastAccessed')},
+				{ value: 'accessTierAsc', string: 'Access Tier Asc', callback: callbackGen('accessTierAsc')},
+				{ value: 'accessTierDesc', string: 'Access Tier Desc', callback: callbackGen('accessTierDesc')},
+				{ value: 'labels', string: 'Labels', callback: callbackGen('labels')},
+			]
+		})
+	]
 }));
 
+function callbackGen(value) {
+	return function(content) {
+		content.bubble('select', value);
+		applicationData.setState({ documentsSort: value });
+		application.distribute('update');
+	}
+}
 
 // Label or tag icon. Define data = {text = label name, color = label color}
 // When instantiating, call new LabelTag(data)
@@ -770,8 +784,8 @@ let FolderLine = Container.template($ => ({
 
 // Line on top for a directory. Define name = directory
 // When instantiating, call DirectoryLine(name)
-let DirectoryLine = Line.template($ => ({
-	height: directoryHeight, width: screenWidth,
+let DirectoryLine = Container.template($ => ({
+	height: directoryHeight,
 	top: 0, left: 0, right: 0,
 	skin: new Skin({fill:"#e6e6e6"}),
 	active: true,

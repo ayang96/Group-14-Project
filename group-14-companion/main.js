@@ -70,7 +70,7 @@ class ApplicationBehavior extends Behavior {
 
 
 /* TOGGLE THIS true/false TO TEST YOUR OWN CODE */
-let USE_TEST_CODE = true
+let USE_TEST_CODE = false
 
 if (USE_TEST_CODE) {
 
@@ -83,8 +83,6 @@ if (USE_TEST_CODE) {
 // application.add(new Container({ name: 'My Test Screen' }));
 
 
-data.setState({ documentsSort: 'accessTierDesc' });
-application.behavior = new ApplicationBehavior();
 
 
 
