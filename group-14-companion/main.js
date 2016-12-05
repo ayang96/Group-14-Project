@@ -390,7 +390,7 @@ var screenParents = {
 
 // T minus 3... 2... 1
 
-var USE_TEST_CODE = true
+var USE_TEST_CODE = false
 
 /* All your test code should go in here */
 class TestApplicationBehavior extends Behavior {
