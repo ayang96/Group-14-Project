@@ -198,18 +198,19 @@ class screenBehavior extends Behavior{
 		this.currFolder = this.data.getFolderData(this.currFolderID);
 		this.directory = this.data.getPath(this.currFolderID); //data.directory;
 		
-		this.documents = this.data.documents; // TEMP: pull from all documents
-		//this.documents = this.data.getDocumentListData(Object.keys(this.currFolder)); //Pull from current children
+		//this.documents = this.data.documents; // Pull from all documents ver
+		this.documents = this.currFolder.documents;
+		//this.documents = this.data.getDocumentListData(Object.keys(this.currFolder)); //Pull from current children ver
 		
-		this.folders = this.data.folders; // TEMP: pull from all folders
-		//this.folders = this.currFolder.folders; // Pull from current children
+		//this.folders = this.data.folders; // Pull from all folders ver
+		this.folders = this.currFolder.folders; // Pull from current children ver
 		
-		trace('This.currFolderID ' + this.currFolderID + '\n');
-		trace('This.currFolder ' + this.currFolder + '\n');
-		trace('This.currFolder keys ' + Object.keys(this.currFolder) + '\n'); 
-		trace('This.directory ' + this.directory + '\n');
-		trace('This.documents ' + this.documents + '\n');
-		trace('This.folders ' + this.folders + '\n');
+		//trace('This.currFolderID ' + this.currFolderID + '\n');
+		//trace('This.currFolder ' + this.currFolder + '\n');
+		//trace('This.currFolder keys ' + Object.keys(this.currFolder) + '\n'); 
+		//trace('This.directory ' + this.directory + '\n');
+		//trace('This.documents ' + this.documents + '\n');
+		//trace('This.folders ' + this.folders + '\n');
 		
 		// Add directory bar line
 		let directoryHeading = new DirectoryLine(this.directory);
@@ -220,13 +221,17 @@ class screenBehavior extends Behavior{
 			contents: []});
 			// Add folders
 			let foldersList = Object.keys(this.folders);
-			trace('foldersList length ' + foldersList.length + '\n');
+			//trace('foldersList length ' + foldersList.length + '\n');
 			for (let i = 0; i < foldersList.length; i++) {
-				let addingFolderID = foldersList[i];
-				let addingFolder = this.data.getFolderData(addingFolderID);
+				let addingFolder = this.folders[i]; // Pulling curr directory ver
+				//trace("addingFolder keys " + Object.keys(addingFolder) + '\n');
+				let addingFolderID = addingFolder.id; // Pulling curr directory ver
+				//let addingFolderID = foldersList[i]; // Pulling whole table ver
+				//let addingFolder = this.data.getFolderData(addingFolderID); // Pulling whole table ver
 				let addingFolderName = addingFolder.name;
 				let addingFolderTiers = addingFolder.tiers;
 				let addingFolderLabels = addingFolder.labels;
+				//trace("addingFolderstats " + addingFolderName + addingFolderTiers + addingFolderLabels + addingFolderID + '\n');
 				
 				contentToScrollVertically.add(new FolderLine(
 						{name: addingFolderName,
@@ -243,12 +248,15 @@ class screenBehavior extends Behavior{
 			// Add documents
 			let docList = Object.keys(this.documents);
 			for (let i = 0; i < docList.length; i++) {
-				let addingDocID = docList[i];
-				let addingDoc = this.data.getDocumentData(addingDocID);
+				//let addingDocID = docList[i]; // Pulling whole table ver
+				//let addingDoc = this.data.getDocumentData(addingDocID); // Pulling whole table ver
+				let addingDoc = this.documents[i]; // Pulling curr directory ver
+				let addingDocID = addingDoc.id; // Pulling curr directory ver
 				let addingDocName = addingDoc.name;
-				let addingDocTier = addingDoc.tier;
+				let addingDocTier = this.data.getTierData(addingDoc.tier); //addingDoc.tier;
 				let addingDocLabels = addingDoc.labels;
-				let addingDocOut = addingDoc.out;
+				let addingDocOut = this.data.getDocumentState(addingDocID); //addingDoc.out;
+				//trace("addingDoc keys " + Object.keys(addingDoc) + '\n');
 				
 				contentToScrollVertically.add(new DocumentLine(
 						{name: addingDocName,
@@ -403,6 +411,8 @@ class documentBehavior extends Behavior {
 		this.labels = data.labels; 
 		this.out = data.out;
 		this.id = data.id;
+		//trace("DocStats " + Object.keys(data) + '\n');
+		//trace("DocumentStats " + this.name + this.tierName + this.labels + this.out + this.id + '\n');
 
 		// Creation of Line
 		let docLine = new Line({top: 0, bottom: 0, left: 0, right: 0, contents: []});
@@ -453,7 +463,7 @@ class documentBehavior extends Behavior {
 		
 		// Add document labels
 		for (let i = 0; i < Math.min(4, labelsList.length); i++) {
-			let label = this.labels[i];
+			let label = applicationData.getLabelData(this.labels[i]); //this.labels[i];
 			let addingLabelText = label.abbreviation;
 			let addingLabelColor = label.color;
 			//let addingLabelText = this.labels[i][0];
@@ -509,6 +519,9 @@ class folderBehavior extends Behavior {
 		this.tier = data.tier;
 		this.labels = data.labels; 
 		this.id = data.id;
+		//trace("DocStats " + Object.keys(data) + '\n');
+		//trace("DocumentStats " + this.name + this.tier + this.labels + this.id + '\n');
+
 		
 		// Creation of line
 		let folderLine = new Line({top: 0, bottom: 0, left: 0, right: 0, contents: []});
@@ -580,6 +593,7 @@ class folderBehavior extends Behavior {
 	onTouchEnded(folder, x, y, ticks) {
 		applicationData.setState({folder: this.id});
 		application.distribute("dispatch", "documentsScreen", "pushLeft"); // Going to child level
+		application.distribute("render");
 	}
 };
 
@@ -587,7 +601,10 @@ class directoryLevelBehavior extends Behavior {
 	onCreate(level, data) {
 		this.folder = data.string.split("\\")[0];
 		level.string = this.folder;
-		this.folderID = data.id; 
+		//trace("DirectoryID " + Object.keys(data) + '\n');
+		this.folderID = data.id.id;
+		//trace("DirectoryStats " + level.string + this.folderID + '\n');
+		//trace("dirID " + this.folderID + '\n'); 
 		
 		level.style = clickableStyle;
 		this.clickable = data.clickable;
@@ -596,6 +613,7 @@ class directoryLevelBehavior extends Behavior {
 	onTouchEnded(level, x, y, ticks) {
 		applicationData.setState({folder: this.folderID});
 		application.distribute("dispatch", "documentsScreen", "pushRight"); // Going to ancestor level
+		application.distribute("render");
 	}
 };
 
@@ -645,7 +663,6 @@ class directoryLineBehavior extends Behavior {
 			}
 		}
 		let levelsParsedCorrectly = (currLevelIndex == Object.keys(this.ids).length);
-		trace("Parsing directory: " + levelsParsedCorrectly + "\n");
 		
 		line.add(hierarchy);
 		
