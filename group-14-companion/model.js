@@ -1035,3 +1035,5 @@ sampleData.returnDocument(document5);
 sampleData.documents[document5].history.push(sampleData.addEvent({ user: user2, document: document5, action: Data.RETRIEVE }));
 sampleData.documents[document5].history.push(sampleData.addEvent({ user: user2, document: document5, action: Data.RETURN }));
 sampleData.documents[document5].history.push(sampleData.addEvent({ user: user3, document: document5, action: Data.RETRIEVE }));
+
+sampleData.setState({ document: document1 });

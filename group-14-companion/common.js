@@ -287,6 +287,16 @@ export var NavMenuButton = Picture.template($ => ({
 	}
 }));
 
+//export var NavMenuButton = Container.template($ => ({
+//	height: 26, left: navPadding,
+//	skin: skySkin, active: true,
+//	Behavior: class extends ButtonBehavior {
+//		onTap(content){
+//			application.distribute("showMenu");
+//		}
+//	}
+//}));
+
 export var NavBackButton = Line.template($ => ({
 	left: navPadding, right: navPadding, active: true,
 	contents: [
