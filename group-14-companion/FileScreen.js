@@ -149,6 +149,7 @@ class screenBehavior extends Behavior {
       this._render(screen, docData);
    }
    _render(screen, data) {
+   	  screen.empty();
       this.data = data;
 
       //OLD
@@ -161,7 +162,7 @@ class screenBehavior extends Behavior {
       // this.InOut = data.InOut;
 
       this.docName = data.name;
-      if (data.labels != null) {
+      if (data.labels.length > 0) {
          this.Tag = data.labels[0].abbreviation + ' ';
          for (let i = 0; i < data.labels.length; i++) {
             this.Tag += data.labels[i].abbreviation + ' ';

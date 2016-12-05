@@ -51,7 +51,7 @@ export var colorDict = {
 export var darkerBlue = "#0455C2"; // for second state of buttons and links
 export var systemGrey = "#F2F2F2"; // for backgrounds
 export var systemDarkerGrey = "#CCCCCC"; // for second state of backgrounds
-export var systemLineColor = 'silver'; // for lines seperating things
+export var systemLineColor = 'gray'; // for lines seperating things
 
 // Solid Fill Skins
 export var redSkin = new Skin({ fill: red }); 			// = "red"
