@@ -21,12 +21,8 @@ import { FileHistoryTemplate } from "FileHistory";
 import { Menu } from "Menu";
 import { Data, sampleData } from "model";
 import { AddDocScreen } from "AddDoc";
-
-//import { NewFileTemplate } from "NewFileScreen";
-import { LogInTemplate } from "LogIn";
 import { NewFileTemplate } from "new_document";
 import { NewUserScreen } from "new_user";
-
 import * as common from "common";
 
 /***************** 2) ASSETS ********************************************/
@@ -344,6 +340,10 @@ let sampleDocNew = new NewFileTemplate(EmptyFile);
 
 let TestDoc = new NewFileTemplate(TestFile);
 
+var data = sampleData;
+data.setState({ folder: 'root' });
+var docs = data.documents;
+
 var screens2 = {
 	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}),
 	"documentsScreen2" : new screenWithMenubar({screen: [new DocumentsScreen(screenData2)]}),
@@ -382,12 +382,6 @@ var screenParents = {
 	"TestDocScreen": "documentsScreen2",
 }
 
-
-//var dispatcher = new common.Dispatcher({ menu: new Menu(), screens: screens2, screenParents: screenParents });
-//var dispatcher2 = new common.Dispatcher({ menu: new Menu(), screens: screens2, screenParents: screenParents });
-//application.add(dispatcher2);
-//application.distribute("dispatch", "documentsScreen");
-
 /***************** 6) LAUNCH CODE *************************************/
 
 // T minus 3... 2... 1
@@ -402,30 +396,6 @@ class TestApplicationBehavior extends Behavior {
 		trace(JSON.stringify(data.getFolderData('search'))+'\n');
 		//application.add(new DocumentHistoryScreen({ document: "3e6f5707", data: data }));
 
-//sampleData.setState({ document: document1 });
-var data = sampleData;
-//data.setState({ folder: 'root' });
-var docid = data.state.document;
-var doc1 = data.getDocumentData(docid);
-
-/***************** 6) TESTING CODE *************************************/
-// Comment out any below and your screen here to application for testing display
-
-// DOCUMENTSHISTORYSCREEN
-// application.add(sampleDocHis);
-
-// DOCUMENTSSCREEN
-// application.add(new FileScreenTemplate(FData));
-// application.add(new FileScreenTemplate(doc1));
-
-// MAINSCREEN
-// application.add(new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}));
-
-// USERSSCREEN
-// application.add(new screenWithMenubar({screen: [new UsersScreen(usersData)]}));
-
-// LOGINSCREEN
-// application.add(new LogInTemplate());
 		// DOCUMENTSSCREEN For Display of testing. Comment out if necessary
 
 		// Comment out any below and your screen here to application for testing display
