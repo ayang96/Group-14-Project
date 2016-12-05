@@ -2,6 +2,13 @@ import * as common from "common";
 var colorSelected = "0";
 var letterSelected = "0";
 var saveChanged = "0";
+var previewcover = new Picture({top:2,height:42,url:"assets/single_tag_cutout_lineless.png"});
+var previewTag = new Container({
+	name:"previewTag",top:10,height:44,left:221,right:53,skin:new Skin({fill:"#cccccc"}),
+	contents:[previewcover,new Label({ name:"char",top: 0, left: 0,right:0,height:42 ,
+            		style: new Style({ font: "22px Roboto Medium", color: "white" }), 
+            		string: "?" })]
+});
 var colorContainer = Container.template($=>({
 	name:$.name,top:0,height:40,left:6,right:6,bottom:0,skin:$.skin,active:true,
 	behavior: Behavior({        checkIfIAmSelected: function(container, colorname) {			if(container.name!==colorname){
@@ -43,12 +50,12 @@ var colorContainer = Container.template($=>({
 			container.container.container.delegate("updateSave", "letter");        }    })
  }));
  
-var previewTag = new Container({
+/*var previewTag = new Container({
 	name:"previewTag",top:10,height:42,left:221,right:53,skin:new Skin({fill:"#cccccc"}),
 	contents:[new Label({ name:"char",top: 0, left: 0,right:0,height:42 ,
             		style: new Style({ font: "22px Roboto Medium", color: "white" }), 
             		string: "?" })]
-});
+});*/
 let CancelButton = new common.NormalButton({   string: "CANCEL",   Behavior: class extends common.ButtonBehavior {      onTap(content) {         // IMPLEMENT OPENING LOCKER         application.distribute("alert", {            title: "Opening Document",            message: "Locker 03 of Cabinet A has been opened. You may now retrieve the document. Your access will be logged.",            options: [{ string: "OK", callback: function(){} }],         })      }   }});
 let SaveButton = new common.NormalButton({   name:"SAVE",string: "SAVE",   Behavior: class extends common.ButtonBehavior {
    	  onCreate(content){
