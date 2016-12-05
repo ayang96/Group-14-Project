@@ -362,8 +362,7 @@ var screens2 = {
 	"documentInfoScreen3" : sampleDoc3,
 	"userProfileScreen": new UserProfileScreen({ data: data }),
 
-	//"usersScreen": new UsersScreen({ data: data }),
-	"usersScreen": new screenWithMenubar({screen: [new UsersScreen(usersData)]}), // temp pre-migration
+	"usersScreen": new UsersScreen({ data: data }),
 	"newUserScreen": new NewUserScreen({ data: data }),
 
 	"plusDocScreen": addDoc,
