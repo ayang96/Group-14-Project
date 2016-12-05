@@ -15,12 +15,14 @@ export var DocumentsScreen = Container.template($ => ({
 	top: 0, left: 0, right: 0, bottom: 0,
 	skin: lineSkin,
 	contents: [],
+	active: true,
 	Behavior: screenBehavior
 }));
 
 
 /************ 2) IMPORTS *****************************************************/
 import * as common from "common";
+import * as model from "model";
 
 import {
     VerticalScroller,
@@ -142,7 +144,7 @@ let tagWhiteout1 = Picture.template($ => ({		// hardcoded white cutouts over 1 t
 let tagWhiteout0 = Picture.template($ => ({		// hardcoded white cutouts over 0 tags
 	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
 	width: screenWidth, height: lineHeight,
-	url: 'assets/listing_line_tags_white_cutouts.png',
+	url: 'assets/listing_line_tags_white_cutouts_0.png',
 	aspect: 'fit'
 }));
 
@@ -180,38 +182,97 @@ let docTierLabel = Label.template($ => ({			// for a document's tier
 
 /************* 4) BEHAVIORS ****************************************************/
 
+let applicationData = null;
+
 // Main screen behavior
-class screenBehavior extends Behavior {
+class screenBehavior extends Behavior{
 	onCreate(screen, data) {
 		// Extract given data
 		this.data = data;
-		this.directory = data.directory;
-		this.documents = data.documents;
-		this.folders = data.folders;
+		applicationData = this.data;
+		screen.active = true;
+		screen.distribute("render");
+	}
+	update(screen) {
+		this.render(screen);
+	}
+	render(screen) {
+		screen.empty()
+		this.currFolderID = this.data.state.folder;
+		this.currFolder = this.data.getFolderData(this.currFolderID);
+		this.directory = this.data.getPath(this.currFolderID); //data.directory;
+		
+		//this.documents = this.data.documents; // Pull from all documents ver
+		this.documents = this.currFolder.documents;
+		//this.documents = this.data.getDocumentListData(Object.keys(this.currFolder)); //Pull from current children ver
+		
+		//this.folders = this.data.folders; // Pull from all folders ver
+		this.folders = this.currFolder.folders; // Pull from current children ver
+		
+		//trace('This.currFolderID ' + this.currFolderID + '\n');
+		//trace('This.currFolder ' + this.currFolder + '\n');
+		//trace('This.currFolder keys ' + Object.keys(this.currFolder) + '\n'); 
+		//trace('This.directory ' + this.directory + '\n');
+		//trace('This.documents ' + this.documents + '\n');
+		//trace('This.folders ' + this.folders + '\n');
 		
 		// Add directory bar line
-		let directoryHeading = new DirectoryLine(this.data.directory);
+		let directoryHeading = new DirectoryLine(this.directory);
 		
 		// Add scroller 
 		let contentToScrollVertically = new Column({
 			top: 0, left: 0, right: 0, 
 			contents: []});
 			// Add folders
-			for (let i = 0; i < data.folders.length; i++) {
+			let foldersList = Object.keys(this.folders);
+			//trace('foldersList length ' + foldersList.length + '\n');
+			for (let i = 0; i < foldersList.length; i++) {
+				let addingFolder = this.folders[i]; // Pulling curr directory ver
+				//trace("addingFolder keys " + Object.keys(addingFolder) + '\n');
+				let addingFolderID = addingFolder.id; // Pulling curr directory ver
+				//let addingFolderID = foldersList[i]; // Pulling whole table ver
+				//let addingFolder = this.data.getFolderData(addingFolderID); // Pulling whole table ver
+				let addingFolderName = addingFolder.name;
+				let addingFolderTiers = addingFolder.tiers;
+				let addingFolderLabels = addingFolder.labels;
+				//trace("addingFolderstats " + addingFolderName + addingFolderTiers + addingFolderLabels + addingFolderID + '\n');
+				
 				contentToScrollVertically.add(new FolderLine(
-						{name: data.folders[i].name,
-						tier: data.folders[i].tier,
-						labels: data.folders[i].labels}
+						{name: addingFolderName,
+						tier: addingFolderTiers,
+						labels: addingFolderLabels,
+						id: addingFolderID
+						}
+						//{name: data.folders[i].name,
+						//tier: data.folders[i].tier,
+						//labels: data.folders[i].labels}
 				));
 			}
 			
 			// Add documents
-			for (let i = 0; i < data.documents.length; i++) {
+			let docList = Object.keys(this.documents);
+			for (let i = 0; i < docList.length; i++) {
+				//let addingDocID = docList[i]; // Pulling whole table ver
+				//let addingDoc = this.data.getDocumentData(addingDocID); // Pulling whole table ver
+				let addingDoc = this.documents[i]; // Pulling curr directory ver
+				let addingDocID = addingDoc.id; // Pulling curr directory ver
+				let addingDocName = addingDoc.name;
+				let addingDocTier = this.data.getTierData(addingDoc.tier); //addingDoc.tier;
+				let addingDocLabels = addingDoc.labels;
+				let addingDocOut = this.data.getDocumentState(addingDocID); //addingDoc.out;
+				//trace("addingDoc keys " + Object.keys(addingDoc) + '\n');
+				
 				contentToScrollVertically.add(new DocumentLine(
-						{name: data.documents[i].name,
-						tier: data.documents[i].tier,
-						labels: data.documents[i].labels,
-						out: data.documents[i].out}
+						{name: addingDocName,
+						tier: addingDocTier,
+						labels: addingDocLabels,
+						out: addingDocOut,
+						id: addingDocID
+						}
+						//{name: data.documents[i].name,
+						//tier: data.documents[i].tier,
+						//labels: data.documents[i].labels,
+						//out: data.documents[i].out}
 				));
 			}
 		let mainScroller = new MainScroller({contentToScrollVertically});
@@ -289,7 +350,6 @@ class screenBehavior extends Behavior {
 		screen.add(screenColumn);
 		screen.add(directoryHeading);
 		screen.add(plusButton);
-		
 	}
 };
 
@@ -297,39 +357,52 @@ class screenBehavior extends Behavior {
 class labelBehavior extends Behavior {
 	onCreate(label, data) {
 		// Extract given data
-		this.text = data.text;
+		this.text = data.text; 
 		this.color = data.color;
 		
 		// Add initial to label
-		label.add(new tagLabel({string: this.text.slice(0, 1)}));
+		label.add(new tagLabel({string: this.text}));
+		//label.add(new tagLabel({string: this.text.slice(0, 1).toUpperCase()}));
 		
 		// Color label
+		let foundColor = false;
 		switch (this.color) {
 			case 'red':
 				label.skin = redSkin;
+				foundColor = true;
 				break;
 			case 'orange':
 				label.skin = orangeSkin;
+				foundColor = true;
 				break;
 			case 'yellow':
 				label.skin = yellowSkin;
+				foundColor = true;
 				break;
 			case 'green':
 				label.skin = greenSkin;
+				foundColor = true;
 				break;
 			case 'sky':
 				label.skin = skySkin;
+				foundColor = true;
 				break;
 			case 'blue':
 				label.skin = blueSkin;
+				foundColor = true;
 				break;
 			case 'purple':
 				label.skin = purpleSkin;
+				foundColor = true;
 				break;
 			case 'grey':
 				label.skin = greySkin;
+				foundColor = true;
 				break;
 		} 
+		if (!foundColor) { // assume grey
+			label.skin = greySkin;
+		}
 	}
 };
 
@@ -338,9 +411,12 @@ class documentBehavior extends Behavior {
 	onCreate(document, data) {
 		// Extract given data
 		this.name = data.name;
-		this.tier = data.tier;
+		this.tierName = data.tier.name; //data.tier;
 		this.labels = data.labels; 
 		this.out = data.out;
+		this.id = data.id;
+		//trace("DocStats " + Object.keys(data) + '\n');
+		//trace("DocumentStats " + this.name + this.tierName + this.labels + this.out + this.id + '\n');
 
 		// Creation of Line
 		let docLine = new Line({top: 0, bottom: 0, left: 0, right: 0, contents: []});
@@ -361,7 +437,7 @@ class documentBehavior extends Behavior {
 				validOut = true;
 				break;
 		}
-		if (!validOut) docLine.add(new docInIcon({left: sideMargin})); // Assume in
+		if (!validOut) docLine.add(new docOutOtherIcon({left: sideMargin})); // Assume other
 		
 		// Add document name and tier
 		if (this.out != 'other') {
@@ -369,7 +445,7 @@ class documentBehavior extends Behavior {
 				width: docNameWidth, left: spacing,
 				contents: [
 					new docNameLabel({string: this.name, color: "black"}),
-					new docTierLabel({string: this.tier, color: "black"})
+					new docTierLabel({string: this.tierName, color: "black"})
 				]
 			}));
 		} else {
@@ -377,19 +453,26 @@ class documentBehavior extends Behavior {
 				width: docNameWidth, left: spacing,
 				contents: [
 					new docNameLabel({string: this.name, color: "gray"}),
-					new docTierLabel({string: this.tier, color: "gray"})
+					new docTierLabel({string: this.tierName, color: "gray"})
 				]
 			}));
 		}
 		
+		let labelsList = Object.keys(this.labels);
+		
 		// Add empty label slots
-		for (let i = this.labels.length; i < 4; i++) {
+		for (let i = labelsList.length; i < 4; i++) {
 			docLine.add(new emptyTagIcon({right:0, top: 0}));
 		}
 		
 		// Add document labels
-		for (let i = 0; i < Math.min(4, this.labels.length); i++) {
-			docLine.add(new LabelTag({text: this.labels[i][0], color: this.labels[i][1],
+		for (let i = 0; i < Math.min(4, labelsList.length); i++) {
+			let label = applicationData.getLabelData(this.labels[i]); //this.labels[i];
+			let addingLabelText = label.abbreviation;
+			let addingLabelColor = label.color;
+			//let addingLabelText = this.labels[i][0];
+			//let addingLabelColor = this.labels[i][1];
+			docLine.add(new LabelTag({text: addingLabelText, color: addingLabelColor,
 										right: 0, top: 0}));
 		}	
 		
@@ -398,7 +481,7 @@ class documentBehavior extends Behavior {
 		
 		
 		document.add(docLine);
-		switch (this.labels.length) {
+		switch (labelsList.length) {
 			case 0:
 				document.add(new tagWhiteout0({top: 0, left: 0, right: 0, bottom: 0}));
 				break;
@@ -416,21 +499,20 @@ class documentBehavior extends Behavior {
 				break;
 		}
 	}
-	onTouchBegan(document) {
-		//TODO
-	}
 	onTouchEnded(document, x, y, ticks) {
-		switch (this.name) {
-			case "Document#1":
-				application.distribute("dispatch", "documentInfoScreen", "push");
-				break;
-			case "Document#2":
-				application.distribute("dispatch", "documentInfoScreen2", "push");
-				break;
-			case "Document#3":
-				application.distribute("dispatch", "documentInfoScreen3", "push");
-				break;
-		}
+		applicationData.setState({document: this.id});
+		application.distribute("dispatch", "documentInfoScreen", "push");
+		//switch (this.name) {
+		//	case "Document#1":
+		//		application.distribute("dispatch", "documentInfoScreen", "push");
+		//		break;
+		//	case "Document#2":
+		//		application.distribute("dispatch", "documentInfoScreen2", "push");
+		//		break;
+		//	case "Document#3":
+		//		application.distribute("dispatch", "documentInfoScreen3", "push");
+		//		break;
+		//}
 	}
 };
 
@@ -440,6 +522,10 @@ class folderBehavior extends Behavior {
 		this.name = data.name;
 		this.tier = data.tier;
 		this.labels = data.labels; 
+		this.id = data.id;
+		//trace("DocStats " + Object.keys(data) + '\n');
+		//trace("DocumentStats " + this.name + this.tier + this.labels + this.id + '\n');
+
 		
 		// Creation of line
 		let folderLine = new Line({top: 0, bottom: 0, left: 0, right: 0, contents: []});
@@ -459,23 +545,30 @@ class folderBehavior extends Behavior {
 		let tierString = "";
 		for (let i = 0; i < this.tier.length; i++) {
 			if (i == 0) {
-				tierString = this.tier[i];
+				tierString = this.tier[i].name; //this.tier[i];
 			} else {
 				tierString += ", ";
-				tierString += this.tier[i];
+				tierString += this.tier[i].name; //this.tier[i];
 			}
 		}
 		folderName.add(new docTierLabel({string: tierString, color: "black"}));
 		folderLine.add(folderName);
 		
+		let labelsList = Object.keys(this.labels);
+		
 		// Add empty label slots
-		for (let i = this.labels.length; i < 4; i++) {
+		for (let i = labelsList.length; i < 4; i++) {
 			folderLine.add(new emptyTagIcon({right:0, top: 0}));
 		}
 		
 		// Add folder labels
-		for (let i = 0; i < Math.min(4, this.labels.length); i++) {
-			folderLine.add(new LabelTag({text: this.labels[i][0], color: this.labels[i][1], 
+		for (let i = 0; i < Math.min(4, labelsList.length); i++) {
+			let label = this.labels[i];
+			let addingLabelText = label.abbreviation;
+			let addingLabelColor = label.color;
+		//	let addingLabelText = this.labels[i][0];
+		//	let addingLabelColor = this.labels[i][1];
+			folderLine.add(new LabelTag({text: addingLabelText, color: addingLabelColor, 
 										right: 0, top: 0}));
 		}	
 		
@@ -483,7 +576,7 @@ class folderBehavior extends Behavior {
 		folderLine.add(new Container({width: sideMargin, right: 0}));
 		
 		folder.add(folderLine);
-		switch (this.labels.length) {
+		switch (labelsList.length) {
 			case 0:
 				folder.add(new tagWhiteout0({top: 0, left: 0, right: 0, bottom: 0}));
 				break;
@@ -500,38 +593,41 @@ class folderBehavior extends Behavior {
 				folder.add(new tagWhiteout4({top: 0, left: 0, right: 0, bottom: 0}));
 				break;
 		}	
-	
 	}
-	onTouchBegan(document) {
-		//TODO navigation into document page
-	}
-	onTouchEnded(document) {
-		//TODO
+	onTouchEnded(folder, x, y, ticks) {
+		applicationData.setState({folder: this.id});
+		application.distribute("dispatch", "documentsScreen", "pushLeft"); // Going to child level
+		application.distribute("render");
 	}
 };
 
 class directoryLevelBehavior extends Behavior {
 	onCreate(level, data) {
-		this.folder = data.string.split("/")[0];
+		this.folder = data.string.split("\\")[0];
 		level.string = this.folder;
+		//trace("DirectoryID " + Object.keys(data) + '\n');
+		this.folderID = data.id.id;
+		//trace("DirectoryStats " + level.string + this.folderID + '\n');
+		//trace("dirID " + this.folderID + '\n'); 
 		
 		level.style = clickableStyle;
 		this.clickable = data.clickable;
 		if (!data.clickable) { level.style = nonClickableStyle; }
 	}
-	onTouchBegan(level) {
-		//TODO
-	}
-	onTouchEnded(level) {
-		//TODO
+	onTouchEnded(level, x, y, ticks) {
+		applicationData.setState({folder: this.folderID});
+		application.distribute("dispatch", "documentsScreen", "pushRight"); // Going to ancestor level
+		application.distribute("render");
 	}
 };
 
 class directoryLineBehavior extends Behavior {
 	onCreate(line, data) {
 		// Extract given data
-		this.name = data;
-		this.levels = data.split("/");
+		this.name = data.string;
+		this.ids = data.folderDataList;
+		this.levels = data.string.split("\\");
+
 		
 		// Truncate width of level text based on # of chars, 
 		// show only truncLevels levels at a time
@@ -542,16 +638,20 @@ class directoryLineBehavior extends Behavior {
 			levelWidth = truncLevelWidth;
 			if (this.levels.length >= truncLevels) {
 				levelStart = this.levels.length - truncLevels;
-				hierarchy.add(new Label({style: nonClickableStyle, string: '/ ', left: 0}));
+				hierarchy.add(new Label({style: nonClickableStyle, string: '\\ ', left: 0}));
 			}
 		}
 		
+		
 		// Add directory listing
+		let currLevelIndex = 0;
 		for (; levelStart < this.levels.length - 2; levelStart++) {
 			if (this.levels[levelStart]) {
 				hierarchy.add(new directoryLabel({showFull: false, 
-						clickable: true, string: this.levels[levelStart]}));
-				hierarchy.add(new Label({style: nonClickableStyle, string: '/ ', left: 0}));
+						clickable: true, string: this.levels[levelStart], 
+						id: this.ids[currLevelIndex]}));
+				currLevelIndex++;
+				hierarchy.add(new Label({style: nonClickableStyle, string: '\\ ', left: 0}));
 			}
 		}
 		levelWidth = undefined;
@@ -560,10 +660,14 @@ class directoryLineBehavior extends Behavior {
 				let click = true;
 				if (i == this.levels.length-1) { click = false; }
 				hierarchy.add(new directoryLabel({showFull: true, 
-							clickable: click, string: this.levels[i] }));
-				hierarchy.add(new Label({style: nonClickableStyle, string: '/ ', left: 0}));
+							clickable: click, string: this.levels[i],
+							id: this.ids[currLevelIndex] }));
+				currLevelIndex++;
+				hierarchy.add(new Label({style: nonClickableStyle, string: '\\ ', left: 0}));
 			}
 		}
+		let levelsParsedCorrectly = (currLevelIndex == Object.keys(this.ids).length);
+		
 		line.add(hierarchy);
 		
 		// Add Sort function 
@@ -590,12 +694,14 @@ class sortButtonBehavior extends Behavior {
 let directoryLabel = Label.template($ => ({	
 	left: 0, width: levelWidth,
 	style: clickableStyle,
+	active: true,
 	Behavior: directoryLevelBehavior
 }));
 
 // Sort button on upper right
 let sortButton = Label.template($ => ({
 	string: 'Sort v',  right: sideMargin, 
+	active: true,
 	style: common.bodyLinkStyleRight,
 	Behavior: sortButtonBehavior
 }));
@@ -627,6 +733,7 @@ let FolderLine = Container.template($ => ({
 	top: 0, left: 0, right: 0, height: lineHeight,
 	skin: lineSkin,
 	Behavior: folderBehavior,
+	active: true,
 	contents: []
 }));
 
@@ -636,6 +743,7 @@ let DirectoryLine = Line.template($ => ({
 	height: directoryHeight, width: screenWidth,
 	top: 0, left: 0, right: 0,
 	skin: new Skin({fill:"#e6e6e6"}),
+	active: true,
 	Behavior: directoryLineBehavior,
 	contents: []
 }));

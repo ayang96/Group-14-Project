@@ -136,8 +136,21 @@ let Intro = Line.template($ => ({
 /*Behavior*/
 /*========================*/
 class screenBehavior extends Behavior {
+
    onCreate(screen, data) {
+      this.db = data.data;
+   }
+   update(screen) {
+      this.render(screen);
+   }
+   render(screen) {
+      let docID = this.db.state.document;
+      let docData = this.db.getDocumentData(docID);
+      this._render(screen, docData);
+   }
+   _render(screen, data) {
       this.data = data;
+
       //OLD
       // this.docName = data.docName;
       // this.Tag = data.Tag;

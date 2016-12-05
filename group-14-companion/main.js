@@ -345,8 +345,13 @@ data.setState({ folder: 'root' });
 var docs = data.documents;
 
 var screens2 = {
-	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(screenData)], data: data}),
-	"documentsScreen2" : new screenWithMenubar({screen: [new DocumentsScreen(screenData2)], data: data}),
+// <<<<<<< HEAD
+// 	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(screenData)], data: data}),
+// 	"documentsScreen2" : new screenWithMenubar({screen: [new DocumentsScreen(screenData2)], data: data}),
+// =======
+	//"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}),
+	//"documentsScreen2" : new screenWithMenubar({screen: [new DocumentsScreen(screenData2)]}),
+	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(data)], data: data}),
 
 	"documentHistoryScreen" : sampleDocHis,
 	"documentHistoryScreen2" : sampleDocHis2,
@@ -355,7 +360,9 @@ var screens2 = {
 	"documentInfoScreen2" : sampleDoc2,
 	"documentInfoScreen3" : sampleDoc3,
 	"userProfileScreen": new UserProfileScreen({ data: data }),
-	"usersScreen": new UsersScreen({ data: data }),
+
+	//"usersScreen": new UsersScreen({ data: data }),
+	"usersScreen": new screenWithMenubar({screen: [new UsersScreen(usersData)]}), // temp pre-migration
 	"newUserScreen": new NewUserScreen({ data: data }),
 
 	"plusDocScreen": addDoc,
@@ -392,7 +399,7 @@ var USE_TEST_CODE = false
 class TestApplicationBehavior extends Behavior {
 	onLaunch(application) {
 
-		data.search('docu 2');
+		//data.search('docu 2');
 		trace(JSON.stringify(data.getFolderData('search'))+'\n');
 		//application.add(new DocumentHistoryScreen({ document: "3e6f5707", data: data }));
 
@@ -410,6 +417,8 @@ class TestApplicationBehavior extends Behavior {
 		//application.add(new screenWithMenubar({screen: [new UsersScreen(usersData)]}));
 	}
 }
+
+//application.add(new FileScreenTemplate(data))
 
 /* Actual launch code */
 class ApplicationBehavior extends Behavior {
