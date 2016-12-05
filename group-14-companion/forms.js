@@ -12,6 +12,19 @@ import { VerticalScroller, VerticalScrollbar } from 'src/scroller';
 //
 const FORM_LEFT_COLUMN_WIDTH = 115;
 
+
+class LocalButtonBehavior extends Behavior {
+    onTouchBegan(content) {
+        content.state = 1;
+    }
+    onTouchEnded(content) {
+        content.state = 0;
+        content.delegate("onTap");
+        content.focus();
+    }
+}
+
+
 let formRowSkin = new Skin({
     stroke: common.systemLineColor,
     borders: { bottom: 1 },
@@ -91,7 +104,7 @@ export var FormValue = Label.template($ => ({
 
 export var FormRightButton = Label.template($ => ({
     right: 0, style: common.bodyLinkStyleRight, string: $.string, active: true,
-    Behavior: ($.Behavior ? $.Behavior : common.ButtonBehavior),
+    Behavior: ($.Behavior ? $.Behavior : LocalButtonBehavior),
 }))
 
 /**
@@ -169,7 +182,7 @@ export var FormSelect = Container.template($ => ({
     Behavior: FormSelectBehavior,
 }));
 
-class FormSelectBehavior extends common.ButtonBehavior {
+class FormSelectBehavior extends LocalButtonBehavior {
     onCreate(content, $) {
         this.formData = $.formData;
         this.name = $.name;
@@ -223,7 +236,7 @@ let FormSelectDropDown = Container.template($ => ({
                         new Label({ left: 0, right: 15, bottom: 8, name: 'label' }),
                         new Picture({ right: 0, width: 10, bottom: 8, url: 'assets/arrow_up.png' }),
                     ],
-                    Behavior: class extends common.ButtonBehavior {
+                    Behavior: class extends LocalButtonBehavior {
                         onTap(content) {
                             content.bubble('onUnfocused');
                         }
@@ -276,7 +289,7 @@ let FormSelectOption = Container.template($ => ({
             new Label({ left: 0, right: 0, style: $.style || common.bodyStyle, string: $.string })
         ]})
     ],
-    Behavior: class extends common.ButtonBehavior {
+    Behavior: class extends LocalButtonBehavior {
         onTap(content) {
             if ($.callback) {
                 $.callback(content);
@@ -287,7 +300,13 @@ let FormSelectOption = Container.template($ => ({
     }
 }));
 
-
+/**
+ * Form drop down for selecting a tier
+ * @params:
+ * $.data {Data} - database
+ * $.formData {Object} - form data dictionary, one of its keys should be $.name
+ * $.name {String} - key in form data
+ */
 export var TierSelect = FormSelect.template($ => ({
     Behavior: TierSelectBehavior,
 }));
@@ -301,7 +320,7 @@ class TierSelectBehavior extends FormSelectBehavior {
             string: '+ Create Tier',
             style: common.bodyLightStyle,
             callback: function(content) {
-                application.distribute('dispatch', 'newTierScreen', 'zoom');
+                application.distribute('dispatch', 'newTierScreen', 'new');
             }
         });
         this.hintString = 'Select Tier';
@@ -312,5 +331,39 @@ class TierSelectBehavior extends FormSelectBehavior {
         let tierOptions = tierDatas.map(tier => ({ value: tier.id, string: tier.name }));
         tierOptions.sort((a, b) => a.string.localeCompare(b.string));
         return tierOptions;
+    }
+}
+
+/**
+ * Form drop down for selecting a label
+ * @params:
+ * $.data {Data} - database
+ * $.formData {Object} - form data dictionary, one of its keys should be $.name
+ * $.name {String} - key in form data
+ */
+export var LabelSelect = FormSelect.template($ => ({
+    Behavior: LabelSelectBehavior,
+}));
+
+class LabelSelectBehavior extends FormSelectBehavior {
+    onCreate(content, $) {
+        this.formData = $.formData;
+        this.name = $.name;
+        this.options = this.getAllLabels($.data);
+        this.options.push({
+            string: '+ Create Label',
+            style: common.bodyLightStyle,
+            callback: function(content) {
+                application.distribute('dispatch', 'newLabelScreen', 'new');
+            }
+        });
+        this.hintString = 'Select Label';
+    }
+    getAllLabels(data) {
+        let labelIDs = Object.keys(data.labels);
+        let labelDatas = data.getLabelListData(labelIDs);
+        let labelOptions = labelDatas.map(label => ({ value: label.id, string: label.name }));
+        labelOptions.sort((a, b) => a.string.localeCompare(b.string));
+        return labelOptions;
     }
 }

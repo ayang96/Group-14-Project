@@ -62,6 +62,7 @@ export class Data {
 			folder: '', // The id of the current folder the user is viewing
 			user: '', // The id of the current user the user is viewing
 			login: '', // The id of the user
+			sort: 'name', // current search criteria ('name', 'dateCreated', 'dateLastAccessed', 'accessTierAsc', 'accessTierDesc', 'labels')
 		};
 
 		/* Our data "tables" */
@@ -617,7 +618,9 @@ export class Data {
 	}
 
 	getFolderListAbbreviatedData(idList) {
-		return idList.map(id => this.getFolderAbbreviatedData(id)).filter(x => x);
+		let folderList = idList.map(id => this.getFolderAbbreviatedData(id)).filter(x => x);
+		// to do
+		return folderList;
 	}
 
 	/**
@@ -1184,4 +1187,8 @@ sampleData.documents[document5].history.push(sampleData.addEvent({ user: user2, 
 sampleData.documents[document5].history.push(sampleData.addEvent({ user: user2, document: document5, action: Data.RETURN }));
 sampleData.documents[document5].history.push(sampleData.addEvent({ user: user3, document: document5, action: Data.RETRIEVE }));
 
+
+//sampleData.setState({ document: document1 });
+//=======
 sampleData.setState({ document: document1 });
+//>>>>>>> master

@@ -1,5 +1,6 @@
 import "src/date.format";
 import { CrossFade, Push, Flip, TimeTravel, Reveal, Hide, ZoomAndSlide } from 'src/transition';
+import { FormField,} from 'forms';
 import { SystemKeyboard } from 'src/keyboard';
 
 /**
@@ -33,10 +34,24 @@ export var black = 'black';
 export var colorNames = ['red', 'orange', 'yellow', 'green', 'sky',
 							'blue', 'purple', 'grey', 'black'];
 
+/* use this to "lookup" the value from a string
+  	i.e. colorDict['red'] ==> '#EB5757' */
+export var colorDict = {
+	red:    red,
+	orange: orange,
+	yellow: yellow,
+	green:  green,
+	sky:    sky,
+	blue:   blue,
+	purple: purple,
+	grey:   grey,
+	black:  black,
+}
+
 export var darkerBlue = "#0455C2"; // for second state of buttons and links
 export var systemGrey = "#F2F2F2"; // for backgrounds
 export var systemDarkerGrey = "#CCCCCC"; // for second state of backgrounds
-export var systemLineColor = 'silver'; // for lines seperating things
+export var systemLineColor = 'gray'; // for lines seperating things
 
 // Solid Fill Skins
 export var redSkin = new Skin({ fill: red }); 			// = "red"
@@ -72,6 +87,7 @@ export var screenSkin = new Skin({ fill: 'white' });
 export var bodyStyle 			= new Style({ font: "16px Roboto", color: black, horizontal: "left" });
 export var bodyBoldStyle 		= new Style({ font: "16px Roboto Medium", color: black, horizontal: "left" });
 export var bodyLightStyle 		= new Style({ font: "16px Roboto", color: grey, horizontal: "left" });
+export var bodyWhiteStyle 		= new Style({ font: "16px Roboto", color: 'white', horizontal: "left" });
 export var bodyLinkStyle 		= new Style({ font: "16px Roboto", color: [blue, darkerBlue], horizontal: "left" });
 export var bodyLinkBoldStyle 	= new Style({ font: "16px Roboto Medium", color: [blue, darkerBlue], horizontal: "left" });
 export var smallStyle 			= new Style({ font: "14px Roboto", color: black, horizontal: "left" });
@@ -85,6 +101,7 @@ export var titleBoldStyle 		= new Style({ font: "18px Roboto Medium", color: bla
 export var bodyStyleCenter			= new Style({ font: "16px Roboto", color: black, horizontal: "center" });
 export var bodyBoldStyleCenter		= new Style({ font: "16px Roboto Medium", color: black, horizontal: "center" });
 export var bodyLightStyleCenter		= new Style({ font: "16px Roboto", color: grey, horizontal: "center" });
+export var bodyWhiteStyleCenter		= new Style({ font: "16px Roboto", color: 'white', horizontal: "center" });
 export var bodyLinkStyleCenter		= new Style({ font: "16px Roboto", color: [blue, darkerBlue], horizontal: "center" });
 export var bodyLinkBoldStyleCenter 	= new Style({ font: "16px Roboto Medium", color: [blue, darkerBlue], horizontal: "center" });
 export var smallStyleCenter			= new Style({ font: "14px Roboto", color: black, horizontal: "center" });
@@ -98,6 +115,7 @@ export var titleBoldStyleCenter 	= new Style({ font: "18px Roboto Medium", color
 export var bodyStyleRight			= new Style({ font: "16px Roboto", color: black, horizontal: "right" });
 export var bodyBoldStyleRight		= new Style({ font: "16px Roboto Medium", color: black, horizontal: "right" });
 export var bodyLightStyleRight		= new Style({ font: "16px Roboto", color: grey, horizontal: "right" });
+export var bodyWhiteStyleRight 		= new Style({ font: "16px Roboto", color: 'white', horizontal: "right" });
 export var bodyLinkStyleRight		= new Style({ font: "16px Roboto", color: [blue, darkerBlue], horizontal: "right" });
 export var bodyLinkBoldStyleRight 	= new Style({ font: "16px Roboto Medium", color: [blue, darkerBlue], horizontal: "right" });
 export var smallStyleRight			= new Style({ font: "14px Roboto", color: black, horizontal: "right" });
@@ -257,7 +275,7 @@ const menuBarHeight = 35;
 // Template for adding a menu bar placeholder above and on top of screen.
 // Instantiate as new screenWithMenubar({screen: [ScreenObject]})
 export var ScreenWithMenuBar = Container.template($ => ({
-	top:0, left:0, bottom:0, right:0,
+	top:0, left:0, bottom:0, right:0, active: true,
 	contents: [
 		new Container({
 			left: 0, right: 0, top: navBarHeight, bottom: 0, contents: [ $.screen ]
@@ -265,7 +283,7 @@ export var ScreenWithMenuBar = Container.template($ => ({
 		new NavBar({
 			contents: [
 				new NavMenuButton(),
-				new NavSearch(),
+				new NavSearch($.data),
 				new NavSelectButton({ Behavior: ButtonBehavior }),
 			]
 		}),
@@ -335,16 +353,47 @@ export var NavTitleCenter = Label.template($ => ({
 }));
 
 export var NavSearch = Container.template($ => ({
-	left: navPadding, right: navPadding, width: 120, contents: [
-		new Picture({
-			height: 21, left: 0,
-			url: "assets/SearchIcon.png"
-		}),
-		new Label({
-			left: 30, right: 0, style: bodyLightStyle,
-			string: "Search Documents"
-		}),
-	]
+// <<<<<<< HEAD
+	left: navPadding, right: navPadding, width: 120,  active: true,
+	Behavior: class extends Behavior {
+		onCreate(content) {
+			let formData = {SearchWord: '',};
+			content.empty();
+			content.add(
+				new Picture({
+					height: 21, left: 0, url: "assets/icon_search_glass_20x20.png", active: true,
+					Behavior: class extends ButtonBehavior {
+						onTap(content) {
+							let input = formData.SearchWord;
+							$.search(input);
+							$.setState({folder: 'search'});
+							application.distribute('update');
+							trace(JSON.stringify($) + ' \n');
+						}
+					}
+				})
+			);
+			content.add(
+				new Container({
+					left: 30, right: 0, height: 21,
+					contents:[new FormField({ formData: formData, name: 'SearchWord', hintString:'Search Documents'})],
+				})
+			);
+			//new FormField({ formData: formData, name: 'SearchWord', hintString:'Search Documents'}),);
+		}
+	}
+// =======
+// 	left: navPadding, right: navPadding, width: 120, contents: [
+// 		new Picture({
+// 			height: 21, left: 0,
+// 			url: "assets/SearchIcon.png"
+// 		}),
+// 		new Label({
+// 			left: 30, right: 0, style: bodyLightStyle,
+// 			string: "Search Documents"
+// 		}),
+// 	]
+// >>>>>>> master
 }));
 
 /**
@@ -505,6 +554,27 @@ export var CircleMaskWhite = Picture.template(($={}) => (Object.assign({
 	url: 'assets/circle_mask_white_120x120.png', aspect: 'stretch',
 }, $)));
 
+/**
+ * Creates a bookmark shaped tag, default height and width can be overridden
+ * $.color {String} - name of the color, e.g. 'red'
+ * $.string {String} - letter in tag
+ * $.style {Style} - Optional, style to use for label
+ */
+export var Tag = Container.template(($={}) => (Object.assign({
+	skin: new Skin({ fill: colorDict[$.color] }),
+	height: 30, width: 20,
+	contents: [
+		new Picture({
+			left: 0, right: 0, top: 0, bottom: 0,
+			aspect: 'stretch', url: 'assets/single_tag_cutout_lineless.png',
+		}),
+		new Label({
+			name: 'char',
+			style: $.style || bodyWhiteStyle, string: $.string,
+		}),
+	]
+}, $)));
+
 /************ 3) Behaviors **********************************************/
 
 /**
@@ -542,6 +612,7 @@ export class ButtonBehavior extends Behavior {
 /** Date string format to be used through the app **/
 export function formatDate(date) {
 	return date.format("mmm. d yyyy");
+	//return date.format();
 }
 
 /** Returns a string corresponding to a randomly chosen color **/
