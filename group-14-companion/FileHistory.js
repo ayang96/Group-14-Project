@@ -105,7 +105,7 @@ var DocumentHistoryItem = Container.template($ => ({
       new Container({
          left: 15, bottom: 15, width: 10, height: 10,
          //skin: new Skin({ fill: common[$.userData.avatarColor] }), //Not Sure about Color
-         skin: new Skin({ fill: 'red' }),
+         skin: new Skin({ fill: $.userData.tier.color }),
       }),
       new Label({
          left: 30, bottom: 10, style: common.bodyBoldStyle,
@@ -125,6 +125,9 @@ var DocumentHistoryItem = Container.template($ => ({
 class screenBehavior extends Behavior {
    onCreate(screen, data) {
       this.db = data.data;
+   }
+   onDisplaying(screen) {
+      this.render(screen);
    }
    update(screen) {
       this.render(screen);
