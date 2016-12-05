@@ -6,6 +6,13 @@ export var NewUserScreen = Container.template($ => ({
 	top: 0, left: 0, right: 0, bottom: 0,
 	skin: common.screenSkin,
 	Behavior: class extends Behavior {
+		onDisplaying(content) {
+			this.render(content);
+		}
+		update(content) {
+			// no re-rendering because this make the user lose any
+			// work in progress
+		}
 		render(content) {
 			let formData = {
 				firstName: '',

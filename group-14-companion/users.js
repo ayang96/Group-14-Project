@@ -85,6 +85,9 @@ class screenBehavior extends Behavior {
 		// Extract given data TODO
 		this.data = $.data;
 	}
+	onDisplaying(screen) {
+		this.render(screen);
+	}
 	update(screen) {
 		this.render(screen);
 	}
@@ -101,9 +104,7 @@ class screenBehavior extends Behavior {
 		// Add nav bar
 		let navBar = new common.NavBar({ contents: [
 			new common.NavMenuButton(),
-			new common.NavSearch({
-				// implement search
-			}),
+			new common.NavTitleLeft({ string: 'Users' }),
 			new common.NavSelectButton({
 				Behavior: class extends common.ButtonBehavior {
 					onTap(content) {

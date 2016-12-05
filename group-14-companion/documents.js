@@ -23,6 +23,7 @@ export var DocumentsScreen = Container.template($ => ({
 /************ 2) IMPORTS *****************************************************/
 import * as common from "common";
 import * as model from "model";
+import { FormSelect } from 'forms';
 
 import {
     VerticalScroller,
@@ -190,8 +191,10 @@ class screenBehavior extends Behavior{
 		// Extract given data
 		this.data = data;
 		applicationData = this.data;
-		screen.active = true;
 		screen.distribute("render");
+	}
+	onDisplaying(screen) {
+		this.render(screen);
 	}
 	update(screen) {
 		this.render(screen);
@@ -216,6 +219,34 @@ class screenBehavior extends Behavior{
 		//trace('This.documents ' + this.documents + '\n');
 		//trace('This.folders ' + this.folders + '\n');
 		
+		// Add nav bar
+		let navBar = new common.NavBar({ contents: [
+			new common.NavMenuButton(),
+			new common.NavSearch({
+				hintString: 'Search Documents/Folders/Labels...',
+				string: this.data.state.documentsSearch,
+				Behavior: class extends Behavior {
+					onSearch(content, searchString) {
+						applicationData.setState({ documentsSearch: searchString });
+						if (searchString) {
+							applicationData.search(searchString);
+							applicationData.setState({ folder: 'search' });
+						} else {
+							applicationData.setState({ folder: 'root' });
+						}
+						application.distribute('update');
+					}
+				}
+			}),
+			new common.NavSelectButton({
+				Behavior: class extends common.ButtonBehavior {
+					onTap(content) {
+						application.distribute('notify', 'Implementation coming soon!');
+					}
+				}
+			})
+		]});
+
 		// Add directory bar line
 		let directoryHeading = new DirectoryLine(this.directory);
 		
@@ -257,9 +288,9 @@ class screenBehavior extends Behavior{
 				let addingDoc = this.documents[i]; // Pulling curr directory ver
 				let addingDocID = addingDoc.id; // Pulling curr directory ver
 				let addingDocName = addingDoc.name;
-				let addingDocTier = this.data.getTierData(addingDoc.tier); //addingDoc.tier;
+				let addingDocTier = addingDoc.tier; //addingDoc.tier;
 				let addingDocLabels = addingDoc.labels;
-				let addingDocOut = this.data.getDocumentState(addingDocID); //addingDoc.out;
+				let addingDocOut = addingDoc.out; //addingDoc.out;
 				//trace("addingDoc keys " + Object.keys(addingDoc) + '\n');
 				
 				contentToScrollVertically.add(new DocumentLine(
@@ -342,13 +373,19 @@ class screenBehavior extends Behavior{
 		
 		// Add to screen
 		let screenColumn = new Column({
-			top: 0, left: 0, right: 0, bottom: 0,
-			contents: []
+			top: common.navBarHeight + directoryHeight, left: 0, right: 0, bottom: 0,
+			contents: [
+				mainScroller
+			]
 		});
-		screenColumn.add(new Container({left: 0, right:0, top: 0, height: directoryHeight}));
-		screenColumn.add(mainScroller);
 		screen.add(screenColumn);
-		screen.add(directoryHeading);
+		screen.add(new Column({
+			top: 0, left: 0, right: 0,
+			contents: [
+				navBar,
+				directoryHeading,
+			]
+		}));
 		screen.add(plusButton);
 	}
 };
@@ -467,7 +504,7 @@ class documentBehavior extends Behavior {
 		
 		// Add document labels
 		for (let i = 0; i < Math.min(4, labelsList.length); i++) {
-			let label = applicationData.getLabelData(this.labels[i]); //this.labels[i];
+			let label = this.labels[i]; //this.labels[i];
 			let addingLabelText = label.abbreviation;
 			let addingLabelColor = label.color;
 			//let addingLabelText = this.labels[i][0];
@@ -675,16 +712,6 @@ class directoryLineBehavior extends Behavior {
 	}
 };
 
-class sortButtonBehavior extends Behavior {
-	onCreate(button) {
-		//TODO
-	}
-	onTouchBegan(button) {
-	}
-	onTouchEnded(button) {
-	}
-};
-
 
 
 /**************** 5) TEMPLATES *******************************************/
@@ -699,13 +726,31 @@ let directoryLabel = Label.template($ => ({
 }));
 
 // Sort button on upper right
-let sortButton = Label.template($ => ({
-	string: 'Sort v',  right: sideMargin, 
-	active: true,
-	style: common.bodyLinkStyleRight,
-	Behavior: sortButtonBehavior
+let sortButton = Container.template($ => ({
+	right: sideMargin, width: 130,
+	contents: [
+		new FormSelect({
+			formData: { sort: applicationData.state.documentsSort },
+			name: 'sort',
+			options: [
+				{ value: 'name', string: 'Name', callback: callbackGen('name') },
+				{ value: 'dateCreated', string: 'Date Created', callback: callbackGen('dateCreated')},
+				{ value: 'dateLastAccessed', string: 'Date Last Accessed', callback: callbackGen('dateLastAccessed')},
+				{ value: 'accessTierAsc', string: 'Access Tier Asc', callback: callbackGen('accessTierAsc')},
+				{ value: 'accessTierDesc', string: 'Access Tier Desc', callback: callbackGen('accessTierDesc')},
+				{ value: 'labels', string: 'Labels', callback: callbackGen('labels')},
+			]
+		})
+	]
 }));
 
+function callbackGen(value) {
+	return function(content) {
+		content.bubble('select', value);
+		applicationData.setState({ documentsSort: value });
+		application.distribute('update');
+	}
+}
 
 // Label or tag icon. Define data = {text = label name, color = label color}
 // When instantiating, call new LabelTag(data)
@@ -739,8 +784,8 @@ let FolderLine = Container.template($ => ({
 
 // Line on top for a directory. Define name = directory
 // When instantiating, call DirectoryLine(name)
-let DirectoryLine = Line.template($ => ({
-	height: directoryHeight, width: screenWidth,
+let DirectoryLine = Container.template($ => ({
+	height: directoryHeight,
 	top: 0, left: 0, right: 0,
 	skin: new Skin({fill:"#e6e6e6"}),
 	active: true,
@@ -752,7 +797,7 @@ let DirectoryLine = Line.template($ => ({
 
 // Scroller template
 let MainScroller = Column.template($ => ({
-    left: 0, right: 0, top: 0, bottom: 0, 
+    left: 0, right: 0, top: 0, bottom: 0, clip: true,
     contents: [
       VerticalScroller($, {
       	active: true,

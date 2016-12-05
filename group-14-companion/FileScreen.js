@@ -103,6 +103,9 @@ class screenBehavior extends Behavior {
    onCreate(screen, data) {
       this.db = data.data;
    }
+   onDisplaying(screen) {
+      this.render(screen);
+   }
    update(screen) {
       this.render(screen);
    }

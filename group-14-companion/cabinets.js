@@ -30,13 +30,9 @@ import {
 } from 'src/scroller';
 
 /************ 3) ASSETS ******************************************************/
-const screenWidth = 320;		// width of screen / 2
-const screenHeight = 480;		// height of screen / 2
-const titleHeight = 24;		// height of a title text
 
 let figmaScreen = Picture.template($ => ({		// prototype image of locker manager screen
-	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
-	width: screenWidth, height: screenHeight,
+	left: $.left, right: $.right, top: $.top,
 	url: 'assets/figma_cabinetsScreen.png',
 	aspect: 'fit'
 }));
@@ -56,22 +52,30 @@ let addCabinetSkin = new Skin({
 /************* 4) BEHAVIORS ****************************************************/
 // Main screen behavior
 class screenBehavior extends Behavior{
-	onCreate(screen, data) {
+	onCreate(screen, $) {
 		screen.active = true;
-	}
-	render(screen) {
-		application.remove(screen);
-		application.add(screen);
+		this.data = $.data;
 	}
 	onDisplaying(screen) {
+		this.render(screen);
+	}
+	update(screen) {
+		this.render(screen);
+	}
+	render(screen) {
+		screen.empty();
+
+		// Add nav bar
+		let navBar = new common.NavBar({ contents: [
+			new common.NavMenuButton(),
+			new common.NavTitleLeft({ string: 'Locker Manager' }),
+		]});
+
 		// Add scroller 
 		let contentToScrollVertically = new Column({
 			top: 0, left: 0, right: 0,
 			skin: common.skySkin, 
 			contents: []});
-		
-		// Add screen title
-		let screenTitle = new TitleLine({string: "Locker Manager"});
 		
 		// Add figma image simulation of lockers screen
 		contentToScrollVertically.add(new figmaScreen({left: 0, right: 0, top: 0}));
@@ -134,30 +138,18 @@ class screenBehavior extends Behavior{
 			top: 0, left: 0, right: 0, bottom: 0,
 			contents: []
 		});
-		screenColumn.add(new Container({left: 0, right:0, top: 0, height: titleHeight}));
+		screenColumn.add(navBar);
 		screenColumn.add(mainScroller);
 		screen.add(screenColumn);
-		screen.add(screenTitle);
 		screen.add(plusButton);	
 	
 	}
 };
 
 /**************** 5) TEMPLATES *******************************************/
-// Line on top for a title of screen. 
-// When instantiating, call TitleLine({string: textHere})
-let TitleLine = Line.template($ => ({
-	height: titleHeight, width: screenWidth,
-	top: 0, left: 0, right: 0,
-	skin: new Skin({fill:"#e6e6e6"}),
-	contents: [new Label({height: titleHeight, width: screenWidth, 
-					style: common.titleBoldStyleCenter, string: $.string})]
-}));
-
-
 // Scroller template
 let MainScroller = Column.template($ => ({
-    left: 0, right: 0, top: 0, bottom: 0, 
+    left: 0, right: 0, top: 0, bottom: 0, clip: true,
     contents: [
       VerticalScroller($, {
       	active: true,

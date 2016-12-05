@@ -14,6 +14,9 @@ export var UserProfileScreen = Container.template($ => ({
 			this.render(content);
 			return true;
 		}
+		onDisplaying(content) {
+			this.render(content);
+		}
 		update(content) {
 			if (this.mode !== 'edit') {
 				this.render(content);
