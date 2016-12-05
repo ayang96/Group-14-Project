@@ -201,8 +201,8 @@ class screenBehavior extends Behavior {
                   onTap(content) {
                            // IMPLEMENT OPENING LOCKER
                      application.distribute("alert", {
-                     title: "Opening Document",
-                     message: "Locker 03 of Cabinet A has been opened. You may now retrieve the document. Your access will be logged.",
+                     title: "Retreiving Item",
+                     message: "Locker 03 of Cabinet A has been opened. You may now retrieve the item. Your access will be logged.",
                      options: [{ string: "OK", callback: function(){} }],
                      })}}
                   }), 

@@ -113,7 +113,7 @@ var DocumentHistoryItem = Container.template($ => ({
       }),
       new Label({
          right: 10, bottom: 10, style: common.smallLightStyle,
-         string: "Document " + $.eventData.action,
+         string: "Item " + $.eventData.action,
       }),
    ]
 }));
