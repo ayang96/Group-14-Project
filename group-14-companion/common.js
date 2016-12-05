@@ -1,7 +1,6 @@
 import "src/date.format";
 import { CrossFade, Push, Flip, TimeTravel, Reveal, Hide, ZoomAndSlide } from 'src/transition';
 import { SystemKeyboard } from 'src/keyboard';
-import { FormField } from 'forms';
 
 /**
  * This file is for everything that is used universally throughout this project.
@@ -33,6 +32,20 @@ export var black = 'black';
 
 export var colorNames = ['red', 'orange', 'yellow', 'green', 'sky',
 							'blue', 'purple', 'grey', 'black'];
+
+/* use this to "lookup" the value from a string
+  	i.e. colorDict['red'] ==> '#EB5757' */
+export var colorDict = {
+	red:    red,
+	orange: orange,
+	yellow: yellow,
+	green:  green,
+	sky:    sky,
+	blue:   blue,
+	purple: purple,
+	grey:   grey,
+	black:  black,
+}
 
 export var darkerBlue = "#0455C2"; // for second state of buttons and links
 export var systemGrey = "#F2F2F2"; // for backgrounds
@@ -73,6 +86,7 @@ export var screenSkin = new Skin({ fill: 'white' });
 export var bodyStyle 			= new Style({ font: "16px Roboto", color: black, horizontal: "left" });
 export var bodyBoldStyle 		= new Style({ font: "16px Roboto Medium", color: black, horizontal: "left" });
 export var bodyLightStyle 		= new Style({ font: "16px Roboto", color: grey, horizontal: "left" });
+export var bodyWhiteStyle 		= new Style({ font: "16px Roboto", color: 'white', horizontal: "left" });
 export var bodyLinkStyle 		= new Style({ font: "16px Roboto", color: [blue, darkerBlue], horizontal: "left" });
 export var bodyLinkBoldStyle 	= new Style({ font: "16px Roboto Medium", color: [blue, darkerBlue], horizontal: "left" });
 export var smallStyle 			= new Style({ font: "14px Roboto", color: black, horizontal: "left" });
@@ -86,6 +100,7 @@ export var titleBoldStyle 		= new Style({ font: "18px Roboto Medium", color: bla
 export var bodyStyleCenter			= new Style({ font: "16px Roboto", color: black, horizontal: "center" });
 export var bodyBoldStyleCenter		= new Style({ font: "16px Roboto Medium", color: black, horizontal: "center" });
 export var bodyLightStyleCenter		= new Style({ font: "16px Roboto", color: grey, horizontal: "center" });
+export var bodyWhiteStyleCenter		= new Style({ font: "16px Roboto", color: 'white', horizontal: "center" });
 export var bodyLinkStyleCenter		= new Style({ font: "16px Roboto", color: [blue, darkerBlue], horizontal: "center" });
 export var bodyLinkBoldStyleCenter 	= new Style({ font: "16px Roboto Medium", color: [blue, darkerBlue], horizontal: "center" });
 export var smallStyleCenter			= new Style({ font: "14px Roboto", color: black, horizontal: "center" });
@@ -99,6 +114,7 @@ export var titleBoldStyleCenter 	= new Style({ font: "18px Roboto Medium", color
 export var bodyStyleRight			= new Style({ font: "16px Roboto", color: black, horizontal: "right" });
 export var bodyBoldStyleRight		= new Style({ font: "16px Roboto Medium", color: black, horizontal: "right" });
 export var bodyLightStyleRight		= new Style({ font: "16px Roboto", color: grey, horizontal: "right" });
+export var bodyWhiteStyleRight 		= new Style({ font: "16px Roboto", color: 'white', horizontal: "right" });
 export var bodyLinkStyleRight		= new Style({ font: "16px Roboto", color: [blue, darkerBlue], horizontal: "right" });
 export var bodyLinkBoldStyleRight 	= new Style({ font: "16px Roboto Medium", color: [blue, darkerBlue], horizontal: "right" });
 export var smallStyleRight			= new Style({ font: "14px Roboto", color: black, horizontal: "right" });
@@ -504,6 +520,27 @@ export var ProfileIcon = Picture.template(($={}) => (Object.assign({
 
 export var CircleMaskWhite = Picture.template(($={}) => (Object.assign({
 	url: 'assets/circle_mask_white_120x120.png', aspect: 'stretch',
+}, $)));
+
+/**
+ * Creates a bookmark shaped tag, default height and width can be overridden
+ * $.color {String} - name of the color, e.g. 'red'
+ * $.string {String} - letter in tag
+ * $.style {Style} - Optional, style to use for label
+ */
+export var Tag = Container.template(($={}) => (Object.assign({
+	skin: new Skin({ fill: colorDict[$.color] }),
+	height: 30, width: 20,
+	contents: [
+		new Picture({
+			left: 0, right: 0, top: 0, bottom: 0,
+			aspect: 'stretch', url: 'assets/single_tag_cutout_lineless.png',
+		}),
+		new Label({
+			name: 'char',
+			style: $.style || bodyWhiteStyle, string: $.string,
+		}),
+	]
 }, $)));
 
 /************ 3) Behaviors **********************************************/

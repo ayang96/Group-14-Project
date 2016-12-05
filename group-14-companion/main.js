@@ -403,7 +403,8 @@ class TestApplicationBehavior extends Behavior {
 				new form.FormRow({ contents: [
 					new form.FormLabel({ string: 'Label' }),
 					new form.LabelSelect({ data: data, formData: formData, name: 'label' }),
-				]})
+				]}),
+				new common.Tag({ color: 'red', string: 'S' }),
 			]
 		});
 		var dispatcher2 = new common.Dispatcher({ menu: new Menu(), screens: screens2, screenParents: screenParents });
