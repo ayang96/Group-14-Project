@@ -1,5 +1,6 @@
 import "src/date.format";
 import { CrossFade, Push, Flip, TimeTravel, Reveal, Hide, ZoomAndSlide } from 'src/transition';
+import { FormField,} from 'forms';
 import { SystemKeyboard } from 'src/keyboard';
 
 /**
@@ -274,7 +275,7 @@ const menuBarHeight = 35;
 // Template for adding a menu bar placeholder above and on top of screen.
 // Instantiate as new screenWithMenubar({screen: [ScreenObject]})
 export var ScreenWithMenuBar = Container.template($ => ({
-	top:0, left:0, bottom:0, right:0,
+	top:0, left:0, bottom:0, right:0, active: true,
 	contents: [
 		new Container({
 			left: 0, right: 0, top: navBarHeight, bottom: 0, contents: [ $.screen ]
@@ -282,7 +283,7 @@ export var ScreenWithMenuBar = Container.template($ => ({
 		new NavBar({
 			contents: [
 				new NavMenuButton(),
-				new NavSearch(),
+				new NavSearch($.data),
 				new NavSelectButton({ Behavior: ButtonBehavior }),
 			]
 		}),
@@ -352,16 +353,47 @@ export var NavTitleCenter = Label.template($ => ({
 }));
 
 export var NavSearch = Container.template($ => ({
-	left: navPadding, right: navPadding, width: 120, contents: [
-		new Picture({
-			height: 21, left: 0,
-			url: "assets/SearchIcon.png"
-		}),
-		new Label({
-			left: 30, right: 0, style: bodyLightStyle,
-			string: "Search Documents"
-		}),
-	]
+// <<<<<<< HEAD
+	left: navPadding, right: navPadding, width: 120,  active: true,
+	Behavior: class extends Behavior {
+		onCreate(content) {
+			let formData = {SearchWord: '',};
+			content.empty();
+			content.add(
+				new Picture({
+					height: 21, left: 0, url: "assets/icon_search_glass_20x20.png", active: true,
+					Behavior: class extends ButtonBehavior {
+						onTap(content) {
+							let input = formData.SearchWord;
+							$.search(input);
+							$.setState({folder: 'search'});
+							application.distribute('update');
+							trace(JSON.stringify($) + ' \n');
+						}
+					}
+				})
+			);
+			content.add(
+				new Container({
+					left: 30, right: 0, height: 21,
+					contents:[new FormField({ formData: formData, name: 'SearchWord', hintString:'Search Documents'})],
+				})
+			);
+			//new FormField({ formData: formData, name: 'SearchWord', hintString:'Search Documents'}),);
+		}
+	}
+// =======
+// 	left: navPadding, right: navPadding, width: 120, contents: [
+// 		new Picture({
+// 			height: 21, left: 0,
+// 			url: "assets/SearchIcon.png"
+// 		}),
+// 		new Label({
+// 			left: 30, right: 0, style: bodyLightStyle,
+// 			string: "Search Documents"
+// 		}),
+// 	]
+// >>>>>>> master
 }));
 
 /**
@@ -580,6 +612,7 @@ export class ButtonBehavior extends Behavior {
 /** Date string format to be used through the app **/
 export function formatDate(date) {
 	return date.format("mmm. d yyyy");
+	//return date.format();
 }
 
 /** Returns a string corresponding to a randomly chosen color **/

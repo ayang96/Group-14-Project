@@ -193,7 +193,11 @@ class screenBehavior extends Behavior{
 		screen.active = true;
 		screen.distribute("render");
 	}
+	update(screen) {
+		this.render(screen);
+	}
 	render(screen) {
+		screen.empty()
 		this.currFolderID = this.data.state.folder;
 		this.currFolder = this.data.getFolderData(this.currFolderID);
 		this.directory = this.data.getPath(this.currFolderID); //data.directory;

@@ -346,9 +346,13 @@ data.setState({ folder: 'root' });
 var docs = data.documents;
 
 var screens2 = {
+// <<<<<<< HEAD
+// 	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(screenData)], data: data}),
+// 	"documentsScreen2" : new screenWithMenubar({screen: [new DocumentsScreen(screenData2)], data: data}),
+// =======
 	//"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}),
 	//"documentsScreen2" : new screenWithMenubar({screen: [new DocumentsScreen(screenData2)]}),
-	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(data)]}),
+	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(data)], data: data}),
 
 	"documentHistoryScreen" : sampleDocHis,
 	"documentHistoryScreen2" : sampleDocHis2,
@@ -429,6 +433,8 @@ class TestApplicationBehavior extends Behavior {
 		//application.add(new screenWithMenubar({screen: [new UsersScreen(usersData)]}));
 	}
 }
+
+//application.add(new FileScreenTemplate(data))
 
 /* Actual launch code */
 class ApplicationBehavior extends Behavior {
