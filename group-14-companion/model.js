@@ -213,7 +213,7 @@ export class Data {
 			if (! (data.locker in this.lockers || data.locker === null)) return false;
 		}
 		if ('cabinet' in data) {
-			if (! (data.cabinet in this.lockers || data.cabinet === null)) return false;
+			if (! (data.cabinet in this.cabinets || data.cabinet === null)) return false;
 		}
 		return true;
 	}
@@ -546,9 +546,8 @@ export class Data {
 		let lockerID = this.getEmptyLocker();
 		if (! lockerID) return false;
 		let eventID = this.addEvent({ document: id, action: Data.RETURN });
-		document.history.push(eventID);
+		this.documents[id].history.push(eventID);
 		this.updateDocument(id, {
-			history: document.history,
 			locker: lockerID,
 		});
 		this.useLocker(lockerID);
