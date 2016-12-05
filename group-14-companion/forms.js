@@ -1,29 +1,11 @@
 import * as common from "common";
 import { FieldLabelBehavior, FieldScrollerBehavior } from 'src/field';
 import { VerticalScroller, VerticalScrollbar } from 'src/scroller';
-//form row
-//form label
-//formtextinput]
-//formtextareaInput
-//formselectInput
-//
-//
-//
-//
+
+// To import everything:
+// import { FormRow, FormLabel, FormValue, FormRightButton, FormField, FormSelect, TierSelect, LabelSelect } from 'forms.js'
+
 const FORM_LEFT_COLUMN_WIDTH = 115;
-
-
-class LocalButtonBehavior extends Behavior {
-    onTouchBegan(content) {
-        content.state = 1;
-    }
-    onTouchEnded(content) {
-        content.state = 0;
-        content.delegate("onTap");
-        content.focus();
-    }
-}
-
 
 let formRowSkin = new Skin({
     stroke: common.systemLineColor,
@@ -43,48 +25,12 @@ let formSelectDropDownSkin = new Skin({
     fill: 'white',
     stroke: common.systemLineColor,
     borders: { left: 1, right: 1, top: 1, bottom: 1 },
-})
+});
 
-/*
-onCreate(content, $) {
-            let row = new Line({
-                left: 0, right: 0, top: 15, bottom: 8,
-            });
-            if ($.contents) {
-                if ($.contents.length == 1) {
-                    row.add(new Container({
-                        left: 0, right: 0,
-                        contents: $.contents[0],
-                    }));
-                } else if ($.contents.length == 2) {
-                    row.add(new Container({
-                        left: 0, width: $.leftColumnWidth || FORM_DEFAULT_LEFT_COLUMN_WIDTH,
-                        contents: $.contents[0],
-                    }));
-                    row.add(new Container({
-                        left: 0, right: 0,
-                        contents: $.contents[1],
-                    }));
-                } else if ($.contents.length == 3) {
-                    row.add(new Container({
-                        left: 0, width: $.leftColumnWidth || FORM_DEFAULT_LEFT_COLUMN_WIDTH,
-                        contents: $.contents[0],
-                    }));
-                    row.add(new Container({
-                        left: 0, right: 0,
-                        contents: $.contents[1],
-                    }));
-                    row.add(new Container({
-                        right: 0,
-                        contents: $.contents[2],
-                    }))
-                } else if ($.contents.length > 3) {
-                    $.contents.forEach(item => row.add(item));
-                }
-            }
-        }
+/**
+ * Single row of a form with bottom line
+ * $.contents {Content[]} contents of row, usu. a FormLabel + a FormValue/Field/Select
  */
-
 export var FormRow = Container.template($ => ({
     left: $.left || 0, right: $.right || 0, top: $.top, bottom: $.bottom, width: $.width, height: $.height,
     skin: formRowSkin,
@@ -94,17 +40,30 @@ export var FormRow = Container.template($ => ({
     }),
 }));
 
+/**
+ * Static left part of a form row
+ * $.string {String} the string
+ */
 export var FormLabel = Label.template($ => ({
     left: 0, width: FORM_LEFT_COLUMN_WIDTH, style: common.bodyStyle, string: $.string,
 }));
 
+/**
+ * Static right part of a form row
+ * $.string {String} the string
+ */
 export var FormValue = Label.template($ => ({
     left: 0, right: 0, style: common.bodyStyle, string: $.string,
 }));
 
+/**
+ * Very far right button (e.g. 'Edit') of a form row
+ * $.string {String} String of button
+ * $.Behavior {Behavior} Behavior of button, recommended is to extend common.ButtonBehavior
+ */
 export var FormRightButton = Label.template($ => ({
     right: 0, style: common.bodyLinkStyleRight, string: $.string, active: true,
-    Behavior: ($.Behavior ? $.Behavior : LocalButtonBehavior),
+    Behavior: ($.Behavior ? $.Behavior : common.ButtonBehavior),
 }))
 
 /**
@@ -182,7 +141,7 @@ export var FormSelect = Container.template($ => ({
     Behavior: FormSelectBehavior,
 }));
 
-class FormSelectBehavior extends LocalButtonBehavior {
+class FormSelectBehavior extends common.ButtonBehavior {
     onCreate(content, $) {
         this.formData = $.formData;
         this.name = $.name;
@@ -236,7 +195,7 @@ let FormSelectDropDown = Container.template($ => ({
                         new Label({ left: 0, right: 15, bottom: 8, name: 'label' }),
                         new Picture({ right: 0, width: 10, bottom: 8, url: 'assets/arrow_up.png' }),
                     ],
-                    Behavior: class extends LocalButtonBehavior {
+                    Behavior: class extends common.ButtonBehavior {
                         onTap(content) {
                             content.bubble('onUnfocused');
                         }
@@ -289,7 +248,7 @@ let FormSelectOption = Container.template($ => ({
             new Label({ left: 0, right: 0, style: $.style || common.bodyStyle, string: $.string })
         ]})
     ],
-    Behavior: class extends LocalButtonBehavior {
+    Behavior: class extends common.ButtonBehavior {
         onTap(content) {
             if ($.callback) {
                 $.callback(content);

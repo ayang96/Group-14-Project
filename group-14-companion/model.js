@@ -62,7 +62,8 @@ export class Data {
 			folder: '', // The id of the current folder the user is viewing
 			user: '', // The id of the current user the user is viewing
 			login: '', // The id of the user
-			sort: 'name', // current search criteria ('name', 'dateCreated', 'dateLastAccessed', 'accessTierAsc', 'accessTierDesc', 'labels')
+			documentsSort: 'name', // current sort criteria ('name', 'dateCreated', 'dateLastAccessed', 'accessTierAsc', 'accessTierDesc', 'labels')
+			documentsSearch: '', // current search string
 		};
 
 		/* Our data "tables" */

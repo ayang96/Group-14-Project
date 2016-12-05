@@ -193,6 +193,9 @@ class screenBehavior extends Behavior{
 		screen.active = true;
 		screen.distribute("render");
 	}
+	onDisplaying(screen) {
+		this.render(screen);
+	}
 	update(screen) {
 		this.render(screen);
 	}
@@ -216,6 +219,34 @@ class screenBehavior extends Behavior{
 		//trace('This.documents ' + this.documents + '\n');
 		//trace('This.folders ' + this.folders + '\n');
 		
+		// Add nav bar
+		let navBar = new common.NavBar({ contents: [
+			new common.NavMenuButton(),
+			new common.NavSearch({
+				hintString: 'Search Documents/Folders/Labels...',
+				string: this.data.state.documentsSearch,
+				Behavior: class extends Behavior {
+					onSearch(content, searchString) {
+						applicationData.setState({ documentsSearch: searchString });
+						if (searchString) {
+							applicationData.search(searchString);
+							applicationData.setState({ folder: 'search' });
+						} else {
+							applicationData.setState({ folder: 'root' });
+						}
+						application.distribute('update');
+					}
+				}
+			}),
+			new common.NavSelectButton({
+				Behavior: class extends common.ButtonBehavior {
+					onTap(content) {
+						application.distribute('notify', 'Implementation coming soon!');
+					}
+				}
+			})
+		]});
+
 		// Add directory bar line
 		let directoryHeading = new DirectoryLine(this.directory);
 		
@@ -345,10 +376,10 @@ class screenBehavior extends Behavior{
 			top: 0, left: 0, right: 0, bottom: 0,
 			contents: []
 		});
-		screenColumn.add(new Container({left: 0, right:0, top: 0, height: directoryHeight}));
+		screenColumn.add(navBar);
+		screenColumn.add(directoryHeading);
 		screenColumn.add(mainScroller);
 		screen.add(screenColumn);
-		screen.add(directoryHeading);
 		screen.add(plusButton);
 	}
 };
@@ -752,7 +783,7 @@ let DirectoryLine = Line.template($ => ({
 
 // Scroller template
 let MainScroller = Column.template($ => ({
-    left: 0, right: 0, top: 0, bottom: 0, 
+    left: 0, right: 0, top: 0, bottom: 0, clip: true,
     contents: [
       VerticalScroller($, {
       	active: true,

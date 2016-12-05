@@ -30,127 +30,66 @@ import { CabinetsScreen } from "cabinets";
 import * as common from "common";
 import * as form from "forms";
 
-/***************** 2) ASSETS ********************************************/
-const applicationHeight = 480;
-const menuBarHeight = 35;
-
-/***************** 3) BEHAVIORS ********************************************/
-
-/***************** 4) TEMPLATES ********************************************/
-
-// Template for adding a menu bar placeholder above and on top of screen.
-// Instantiate as new screenWithMenubar({screen: [ScreenObject]})
-let screenWithMenubar = common.ScreenWithMenuBar;
-
 /***************** 5) APPLICATION AND APPLICATION DATA ******************/
 
 
 var data = sampleData;
 data.setState({ folder: 'root' });
 
-var screens2 = {
-// 	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(screenData)], data: data}),
-// 	"documentsScreen2" : new screenWithMenubar({screen: [new DocumentsScreen(screenData2)], data: data}),
-	"documentsScreen" : new screenWithMenubar({screen: [new DocumentsScreen(data)], data: data}),
+var screens = {
+	"documentsScreen" : new DocumentsScreen(data),
 	"documentInfoScreen" : new FileScreenTemplate({ data: data }),
 	"userProfileScreen": new UserProfileScreen({ data: data }),
 	"usersScreen": new UsersScreen({ data: data }),
 	"newUserScreen": new NewUserScreen({ data: data }),
-
-	//"plusDocScreen": addDoc, // Commented out due to merge conflict. Missing addDoc variable
-	"plusDocScreen": new screenWithMenubar({screen: [new AddDocScreen()]}), //is this what was meant??
-	//"newDocScreen": sampleDocNew,  // Commented out due to merge conflict
-	//"TestDocScreen": TestDoc, // Commented out due to merge conflict
-	
-	"cabinetsScreen" : new screenWithMenubar({screen: [new CabinetsScreen(data)]})
+	"cabinetsScreen" : new CabinetsScreen(data),
 }
 
 var screenParents = {
 	"documentsScreen" : "root:documents",
 	"documentHistoryScreen" : "documentInfoScreen",
-	"documentHistoryScreen2" : "documentInfoScreen",
-	"documentHistoryScreen3" : "documentInfoScreen",
 	"documentInfoScreen" : "documentsScreen",
-	"documentInfoScreen2" : "documentsScreen",
-
-	"documentInfoScreen3" : "documentsScreen",
 	"userProfileScreen": "usersScreen",
-	"userProfileScreen2": "usersScreen",
 	"usersScreen": "root:users",
 	"newUserScreen": "usersScreen",
-
-	"plusDocScreen": "documentsScreen",
-	"newDocScreen": "documentsScreen",
-	"TestDocScreen": "documentsScreen2",
-	
-	"cabinetsScreen" : "root:cabinets" //Hopefully works?? Can't access this to check
+	"newDocumentScreen": "documentsScreen",
+	"cabinetsScreen" : "root:cabinets",
 }
 
-/***************** 6) LAUNCH CODE *************************************/
-
-// T minus 3... 2... 1
-
-var USE_TEST_CODE = false
-
-/* All your test code should go in here */
-class TestApplicationBehavior extends Behavior {
-	onLaunch(application) {
-
-
-		let formData = {
-			label: '',
-		}
-		screens2['testFormScreen'] = new Column({
-			skin: common.screenSkin,
-			left: 0, right: 0, top: 0, bottom: 0, contents: [
-				new form.FormRow({ contents: [
-					new form.FormLabel({ string: 'Label' }),
-					new form.LabelSelect({ data: data, formData: formData, name: 'label' }),
-				]}),
-				new common.Tag({ color: 'red', string: 'S' }),
-			]
-		});
-		var dispatcher2 = new common.Dispatcher({ menu: new Menu(), screens: screens2, screenParents: screenParents });
-		application.add(dispatcher2);
-		application.distribute("dispatch", "testFormScreen");
-		application.add(new DocumentHistoryScreen({ document: "3e6f5707", data: data }));
-
-		// DOCUMENTSSCREEN For Display of testing. Comment out if necessary
-
-		// Comment out any below and your screen here to application for testing display
-
-		// DOCUMENTSHISTORYSCREEN
-		//application.add(new DocumentHistoryScreen({ document: "3e6f5707", data: data }));
-
-		// DOCUMENTSSCREEN
-		//application.add(new screenWithMenubar({screen: [new DocumentsScreen(screenData)]}));
-
-		// USERSSCREEN
-		//application.add(new screenWithMenubar({screen: [new UsersScreen(usersData)]}));
-		
-		
-		// CABINETSSCREEN
-		//application.add(new screenWithMenubar({screen: [new CabinetsScreen(data)]}));
-	}
-}
-
-//application.add(new FileScreenTemplate(data))
-
-/* Actual launch code */
 class ApplicationBehavior extends Behavior {
 	onLaunch(application) {
-		//var dispatcher = new common.Dispatcher({ menu: new Menu(), screens: screens2, screenParents: screenParents });
-		var dispatcher2 = new common.Dispatcher({ menu: new Menu(), screens: screens2, screenParents: screenParents });
-		application.add(dispatcher2);
+		var dispatcher = new common.Dispatcher({
+			menu: new Menu(),
+			screens: screens,
+			screenParents: screenParents
+		});
+		application.add(dispatcher);
 		application.distribute("dispatch", "documentsScreen");
-		// var dispatcher = new common.Dispatcher({ menu: new Menu(), screens: screens, screenParents: screenParents });
-		// application.add(dispatcher);
-		// application.distribute("dispatch", "documentsScreen");
 	}
 }
 
+
+/* TOGGLE THIS true/false TO TEST YOUR OWN CODE */
+let USE_TEST_CODE = false
+
 if (USE_TEST_CODE) {
-	application.behavior = new TestApplicationBehavior();
+
+/***************** BEGIN TESTING AREA *************************************/
+
+
+// put all test code here
+// any code you write will execute if USE_TEST_CODE == true  */
+// example
+// application.add(new Container({ name: 'My Test Screen' }));
+
+
+
+
+
+
+
+/***************** END TESTING AREA *************************************/
+
 } else {
 	application.behavior = new ApplicationBehavior();
 }

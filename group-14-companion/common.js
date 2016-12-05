@@ -1,7 +1,7 @@
 import "src/date.format";
 import { CrossFade, Push, Flip, TimeTravel, Reveal, Hide, ZoomAndSlide } from 'src/transition';
-import { FormField,} from 'forms';
 import { SystemKeyboard } from 'src/keyboard';
+import { FieldLabelBehavior, FieldScrollerBehavior } from 'src/field';
 
 /**
  * This file is for everything that is used universally throughout this project.
@@ -51,7 +51,7 @@ export var colorDict = {
 export var darkerBlue = "#0455C2"; // for second state of buttons and links
 export var systemGrey = "#F2F2F2"; // for backgrounds
 export var systemDarkerGrey = "#CCCCCC"; // for second state of backgrounds
-export var systemLineColor = 'gray'; // for lines seperating things
+export var systemLineColor = 'silver'; // for lines seperating things
 
 // Solid Fill Skins
 export var redSkin = new Skin({ fill: red }); 			// = "red"
@@ -193,7 +193,6 @@ export var Dispatcher = Container.template($ => ({
 			let screen = $.screens[screenName];
 			let currentScreen = content.page.last;
 			if (screen && screen != currentScreen) {
-				screen.distribute("render"); // delegate does not work
 				switch (transition) {
 					case 'push':
 					case 'pushLeft':
@@ -283,8 +282,6 @@ export var ScreenWithMenuBar = Container.template($ => ({
 		new NavBar({
 			contents: [
 				new NavMenuButton(),
-				new NavSearch($.data),
-				new NavSelectButton({ Behavior: ButtonBehavior }),
 			]
 		}),
 	]
@@ -306,7 +303,7 @@ export var NavMenuButton = Picture.template($ => ({
 }));
 
 export var NavBackButton = Line.template($ => ({
-	left: navPadding, right: navPadding, active: true,
+	left: navPadding, active: true,
 	contents: [
 		new Picture({
 			left: 0, width: 8, aspect: 'fit',
@@ -325,22 +322,22 @@ export var NavBackButton = Line.template($ => ({
 }));
 
 export var NavSelectButton = Label.template($ => ({
-	left: navPadding, right: navPadding, style: bodyLinkStyleRight, active: true,
+	right: navPadding, style: bodyLinkStyleRight, active: true,
 	string: "Select", Behavior: $.Behavior
 }));
 
 export var NavSelectAllButton = Label.template($ => ({
-	left: navPadding, right: navPadding, style: bodyLinkStyleLeft, active: true,
+	right: navPadding, style: bodyLinkStyleLeft, active: true,
 	string: "Select All", Behavior: $.Behavior
 }));
 
 export var NavCancelButton = Label.template($ => ({
-	left: navPadding, right: navPadding, style: bodyLinkBoldStyleRight, active: true,
+	right: navPadding, style: bodyLinkBoldStyleRight, active: true,
 	string: "Cancel", Behavior: $.Behavior
 }));
 
 export var NavEditButton = Label.template($ => ({
-	left: navPadding, right: navPadding, style: bodyLinkStyleRight, active: true,
+	right: navPadding, style: bodyLinkStyleRight, active: true,
 	string: "Edit", Behavior: $.Behavior
 }))
 
@@ -352,49 +349,73 @@ export var NavTitleCenter = Label.template($ => ({
 	left: navPadding, right: navPadding, style: bodyStyleCenter, string: $.string,
 }));
 
-export var NavSearch = Container.template($ => ({
-// <<<<<<< HEAD
-	left: navPadding, right: navPadding, width: 120,  active: true,
-	Behavior: class extends Behavior {
-		onCreate(content) {
-			let formData = {SearchWord: '',};
-			content.empty();
-			content.add(
-				new Picture({
-					height: 21, left: 0, url: "assets/icon_search_glass_20x20.png", active: true,
-					Behavior: class extends ButtonBehavior {
-						onTap(content) {
-							let input = formData.SearchWord;
-							$.search(input);
-							$.setState({folder: 'search'});
-							application.distribute('update');
-							trace(JSON.stringify($) + ' \n');
-						}
-					}
-				})
-			);
-			content.add(
-				new Container({
-					left: 30, right: 0, height: 21,
-					contents:[new FormField({ formData: formData, name: 'SearchWord', hintString:'Search Documents'})],
-				})
-			);
-			//new FormField({ formData: formData, name: 'SearchWord', hintString:'Search Documents'}),);
-		}
-	}
-// =======
-// 	left: navPadding, right: navPadding, width: 120, contents: [
-// 		new Picture({
-// 			height: 21, left: 0,
-// 			url: "assets/SearchIcon.png"
-// 		}),
-// 		new Label({
-// 			left: 30, right: 0, style: bodyLightStyle,
-// 			string: "Search Documents"
-// 		}),
-// 	]
-// >>>>>>> master
+/**
+ * Use for nav bar search, only creates the UI, actual updating of
+ * application state should be done in the behavior passed in
+ * @params
+ * $.hintString {String} -hint string to display
+ * $.string {String} -current search string in field
+ * $.Behavior {Behavior} -should implement one method:
+ * 		onSearch(content, searchString)
+ * 			-content: this content, not important
+ * 			-searchString: String that user will type in
+ * 		onSearch will be call every time the user hits search
+ *
+ * Usage:
+ * class mySearchBehavior extends Behavior {
+ * 		onSearch(content, searchString) {
+ * 			globalData.search(searchString);
+ * 			globalData.setState({ folder: 'search' });
+ * 			application.distribute('update');
+ * 		}
+ * }
+ * let mySearchField = new NavSearch({
+ * 		hintString: 'Search Documents/Folders/Labels...',
+ * 		string: '',
+ * 		Behavior: mySearchBehavior,
+ * })
+ */
+export var NavSearch = Line.template($ => ({
+	left: navPadding, right: navPadding, active: true,
+	contents: [
+		new Picture({
+			height: 21, left: 0, url: "assets/icon_search_glass_20x20.png", active: true,
+			Behavior: class extends ButtonBehavior {
+				onTap(content) {
+					content.container.field.distribute('_search');
+				}
+			}
+		}),
+		new Container({
+		    name: 'field', left: 0, right: 0, clip: true,
+		    contents: [
+		        new Scroller({
+		            left: 2, right: 2, active: true,
+		            Behavior: FieldScrollerBehavior,
+		            contents: [
+		                new Label({
+		                    left: 0,
+		                    style: bodyStyle,
+		                    editable: true, string: $.string,
+		                    Behavior: class extends FieldLabelBehavior {
+		                        _search(content) {
+		                        	content.bubble('onSearch', content.string);
+		                        }
+		                    },
+		                }),
+		                new Label({
+		                    left: 0, right: 0, style: bodyLightStyle,
+		                    visible: (! $.string),
+		                    string: $.hintString || '', name: "hint",
+		                }),
+		            ]
+		        })
+		    ]
+		}),
+	],
+	Behavior: $.Behavior,
 }));
+
 
 /**
 Use for the big blue buttons at the bottom of a lot of our screens
