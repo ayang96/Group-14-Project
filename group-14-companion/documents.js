@@ -68,6 +68,12 @@ let lineSkin = new Skin({							//stroked skin of a document listing
 		stroke: 'silver',
 		borders: {left: 0, right: 0, top: 1, bottom: 1}
 });	
+
+let addDocumentFolderSkin = new Skin({
+	width: 90, height: 90, aspect: 'fit',
+	texture: new Texture('assets/icon_add_folder_document_45x45.png'),
+	states: 90, variants: 90,
+});
 		
 // Source Images
 let docInIcon = Picture.template($ => ({			// icon for a in document
@@ -211,7 +217,67 @@ class screenBehavior extends Behavior {
 		let mainScroller = new MainScroller({contentToScrollVertically});
 		
 		// Add plus button
-		let plusButton = common.PlusButton();
+		let plusButton = common.PlusButton({
+			Behavior: class extends common.ButtonBehavior {
+				onTap(content) {
+					application.add(new common.ScreenCover({
+						contents: [
+							new Column({
+								left: 0, right: 0, bottom: 0,
+								contents: [
+									new Line({
+										left: 0, right: 0, bottom: 0,
+										contents: [
+											new Label({
+												left: 0, right: 10, style: common.smallWhiteStyleRight,
+												string: 'New Folder'
+											}),
+											new Container({
+												right: 20, width: 45, height: 45, active: true,
+												skin: addDocumentFolderSkin, variant: 0, state: 0,
+												Behavior: class extends common.ButtonBehavior {
+													onTap(content) {
+														content.bubble('exit');
+														application.distribute('dispatch', 'newFolderScreen', 'new');
+													}
+												}
+											}),
+											new Container({
+												left: 20, width: 45, height: 45, active: true,
+												skin: addDocumentFolderSkin, variant: 1, state: 0,
+												Behavior: class extends common.ButtonBehavior {
+													onTap(content) {
+														content.bubble('exit');
+														application.distribute('dispatch', 'newDocScreen', 'new');
+													}
+												}
+											}),
+											new Label({
+												left: 10, right: 0, style: common.smallWhiteStyle,
+												string: 'New Document'
+											}),
+										]
+									}),
+									new common.CancelButton({
+										Behavior: class extends common.ButtonBehavior {
+											onTap(content) {
+												content.bubble('exit');
+											}
+										}
+									}),
+								]
+							})
+						],
+						Behavior: class extends Behavior {
+							exit(content) {
+								application.remove(content);
+								return true;
+							}
+						}
+					}));
+				}
+			}
+		});
 		
 		// Add to screen
 		let screenColumn = new Column({
