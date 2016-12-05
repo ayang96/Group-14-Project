@@ -184,7 +184,7 @@ class screenBehavior extends Behavior {
       }
 
       this.Description = data.description;
-      this.DateCreated = data.dateCreated;
+      this.DateCreated = common.formatDate(data.dateCreated);
       this.InOut = data.out;
       var iconPIC;
       
