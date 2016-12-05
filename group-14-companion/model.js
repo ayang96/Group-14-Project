@@ -318,6 +318,8 @@ export class Data {
 			let eventID = this.addEvent({ user: this.state.login, document: id, action: Data.CREATE });
 			this.updateDocument(id, { history: [eventID] });
 		}
+
+		this.addDocumentToFolder(id, document.folder);
 		return id;
 	}
 
@@ -536,7 +538,13 @@ export class Data {
 			documents: [],		// {String[]} ids of child documents
 		}
 		Object.assign(folder, data);
-		return this.addEntry(this.folders, folder);
+		let folderID = this.addEntry(this.folders, folder);
+		if (folderID) {
+			this.addFolderToFolder(folderID, folder.parent);
+			return folderID;
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -614,7 +622,7 @@ export class Data {
 		for (let id of folder.folders) {
 			let child = this.folders[id];
 			if (child) {
-				this._getFolderTiers(child, tiers);
+				this._findFolderTiers(child, tiers);
 			}
 		}
 	}
@@ -649,6 +657,25 @@ export class Data {
 		}
 	}
 
+	addDocumentToFolder(documentID, folderID) {
+		let folder = this.folders[folderID];
+		let document = this.documents[documentID];
+		if (folder && document) {
+			let folderDocuments = new Set(folder.documents);
+			folderDocuments.add(documentID);
+			this.updateFolder(folderID, { documents: Array.from(folderDocuments) });
+		}
+	}
+
+	addFolderToFolder(childID, parentID) {
+		let parent = this.folders[parentID];
+		let child = this.folders[childID];
+		if (parent && child) {
+			let parentFolders = new Set(parent.folders);
+			parentFolders.add(childID);
+			this.updateFolder(parentID, { folders: Array.from(parentFolders) });
+		}
+	}
 
 	/**
 	 * 
