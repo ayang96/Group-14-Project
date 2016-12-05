@@ -27,6 +27,7 @@ export var FileScreenTemplate = Column.template($ => ({
 /*========================*/
 
 import * as common from "common";
+import { Data, sampleData } from "model";
 
 /*========================*/
 /*Skins and Styles*/
@@ -137,13 +138,40 @@ let Intro = Line.template($ => ({
 class screenBehavior extends Behavior {
    onCreate(screen, data) {
       this.data = data;
-      this.docName = data.docName;
-      this.Tag = data.Tag;
-      this.LastUsed = data.LastUsed;
-      this.DateCreated = data.DateCreated;
-      this.Description = data.Description;
-      this.AccessTier = data.AccessTier;
-      this.InOut = data.InOut;
+      //OLD
+      // this.docName = data.docName;
+      // this.Tag = data.Tag;
+      // this.LastUsed = data.LastUsed;
+      // this.DateCreated = data.DateCreated;
+      // this.Description = data.Description;
+      // this.AccessTier = data.AccessTier;
+      // this.InOut = data.InOut;
+
+      this.docName = data.name;
+      if (data.labels != null) {
+         this.Tag = data.labels[0].abbreviation + ' ';
+         for (let i = 0; i < data.labels.length; i++) {
+            this.Tag += data.labels[i].abbreviation + ' ';
+         }
+      } else {
+         this.Tag = '';
+      }
+
+      if (data.history != null) {
+         this.LastUsed = 'by ' + data.history[0].user.fullName + ' ' + data.history[0].date;
+      } else {
+         this.LastUsed = '';
+      }
+
+      if (data.tier != null) {
+         this.AccessTier = data.tier.name;
+      } else {
+         this.AccessTier = '';
+      }
+
+      this.Description = data.description;
+      this.DateCreated = data.dateCreated;
+      this.InOut = data.out;
       var iconPIC;
       
 

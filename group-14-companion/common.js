@@ -521,6 +521,7 @@ export class plusButtonBehavior extends Behavior {
 /** Date string format to be used through the app **/
 export function formatDate(date) {
 	return date.format("mmm. d yyyy");
+	//return date.format();
 }
 
 /** Returns a string corresponding to a randomly chosen color **/
