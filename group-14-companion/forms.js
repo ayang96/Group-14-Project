@@ -287,7 +287,13 @@ let FormSelectOption = Container.template($ => ({
     }
 }));
 
-
+/**
+ * Form drop down for selecting a tier
+ * @params:
+ * $.data {Data} - database
+ * $.formData {Object} - form data dictionary, one of its keys should be $.name
+ * $.name {String} - key in form data
+ */
 export var TierSelect = FormSelect.template($ => ({
     Behavior: TierSelectBehavior,
 }));
@@ -301,7 +307,7 @@ class TierSelectBehavior extends FormSelectBehavior {
             string: '+ Create Tier',
             style: common.bodyLightStyle,
             callback: function(content) {
-                application.distribute('dispatch', 'newTierScreen', 'zoom');
+                application.distribute('dispatch', 'newTierScreen', 'new');
             }
         });
         this.hintString = 'Select Tier';
@@ -312,5 +318,39 @@ class TierSelectBehavior extends FormSelectBehavior {
         let tierOptions = tierDatas.map(tier => ({ value: tier.id, string: tier.name }));
         tierOptions.sort((a, b) => a.string.localeCompare(b.string));
         return tierOptions;
+    }
+}
+
+/**
+ * Form drop down for selecting a label
+ * @params:
+ * $.data {Data} - database
+ * $.formData {Object} - form data dictionary, one of its keys should be $.name
+ * $.name {String} - key in form data
+ */
+export var LabelSelect = FormSelect.template($ => ({
+    Behavior: LabelSelectBehavior,
+}));
+
+class LabelSelectBehavior extends FormSelectBehavior {
+    onCreate(content, $) {
+        this.formData = $.formData;
+        this.name = $.name;
+        this.options = this.getAllLabels($.data);
+        this.options.push({
+            string: '+ Create Label',
+            style: common.bodyLightStyle,
+            callback: function(content) {
+                application.distribute('dispatch', 'newLabelScreen', 'new');
+            }
+        });
+        this.hintString = 'Select Label';
+    }
+    getAllLabels(data) {
+        let labelIDs = Object.keys(data.labels);
+        let labelDatas = data.getLabelListData(labelIDs);
+        let labelOptions = labelDatas.map(label => ({ value: label.id, string: label.name }));
+        labelOptions.sort((a, b) => a.string.localeCompare(b.string));
+        return labelOptions;
     }
 }

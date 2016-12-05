@@ -1,6 +1,7 @@
 import "src/date.format";
 import { CrossFade, Push, Flip, TimeTravel, Reveal, Hide, ZoomAndSlide } from 'src/transition';
 import { SystemKeyboard } from 'src/keyboard';
+import { FormField } from 'forms';
 
 /**
  * This file is for everything that is used universally throughout this project.

@@ -24,6 +24,7 @@ import { AddDocScreen } from "AddDoc";
 import { NewFileTemplate } from "new_document";
 import { NewUserScreen } from "new_user";
 import * as common from "common";
+import * as form from "forms";
 
 /***************** 2) ASSETS ********************************************/
 const applicationHeight = 480;
@@ -386,14 +387,28 @@ var screenParents = {
 
 // T minus 3... 2... 1
 
-var USE_TEST_CODE = false
+var USE_TEST_CODE = true
 
 /* All your test code should go in here */
 class TestApplicationBehavior extends Behavior {
 	onLaunch(application) {
 
-		data.search('docu 2');
-		trace(JSON.stringify(data.getFolderData('search'))+'\n');
+
+		let formData = {
+			label: '',
+		}
+		screens2['testFormScreen'] = new Column({
+			skin: common.screenSkin,
+			left: 0, right: 0, top: 0, bottom: 0, contents: [
+				new form.FormRow({ contents: [
+					new form.FormLabel({ string: 'Label' }),
+					new form.LabelSelect({ data: data, formData: formData, name: 'label' }),
+				]})
+			]
+		});
+		var dispatcher2 = new common.Dispatcher({ menu: new Menu(), screens: screens2, screenParents: screenParents });
+		application.add(dispatcher2);
+		application.distribute("dispatch", "testFormScreen");
 		//application.add(new DocumentHistoryScreen({ document: "3e6f5707", data: data }));
 
 		// DOCUMENTSSCREEN For Display of testing. Comment out if necessary
