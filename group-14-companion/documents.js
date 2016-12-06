@@ -179,7 +179,12 @@ let docTierLabel = Label.template($ => ({			// for a document's tier
 	string: $.string
 }));
 
-
+let docDateLabel = Label.template($ => ({			// for a document's tier
+	height: headingTextHeight,
+	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
+	style: common.smallLightStyle,
+	string: $.string
+}));
 
 /************* 4) BEHAVIORS ****************************************************/
 
@@ -294,12 +299,13 @@ class screenBehavior extends Behavior{
 				//trace("addingDoc keys " + Object.keys(addingDoc) + '\n');
 				
 				contentToScrollVertically.add(new DocumentLine(
-						{name: addingDocName,
-						tier: addingDocTier,
-						labels: addingDocLabels,
-						out: addingDocOut,
-						id: addingDocID
-						}
+					addingDoc
+						// {name: addingDocName,
+						// tier: addingDocTier,
+						// labels: addingDocLabels,
+						// out: addingDocOut,
+						// id: addingDocID
+						// }
 						//{name: data.documents[i].name,
 						//tier: data.documents[i].tier,
 						//labels: data.documents[i].labels,
@@ -476,24 +482,24 @@ class documentBehavior extends Behavior {
 		}
 		if (!validOut) docLine.add(new docOutOtherIcon({left: sideMargin})); // Assume other
 		
-		// Add document name and tier
-		if (this.out != 'other') {
-			docLine.add(new Column({
-				width: docNameWidth, left: spacing,
-				contents: [
-					new docNameLabel({string: this.name, color: "black"}),
-					new docTierLabel({string: this.tierName, color: "black"})
-				]
-			}));
-		} else {
-			docLine.add(new Column({
-				width: docNameWidth, left: spacing,
-				contents: [
-					new docNameLabel({string: this.name, color: "gray"}),
-					new docTierLabel({string: this.tierName, color: "gray"})
-				]
-			}));
+		let docBottomLine = new Line({ left: 0, width: 100});
+		docBottomLine.add(new docTierLabel({string: this.tierName, color: ((this.out != 'other') ? "black" : "gray"), left: 0, right: 0}))
+		if (applicationData.state.documentsSort === "dateCreated") {
+			let dateString = common.formatDate(data.history[0].date);
+			docBottomLine.add(new docDateLabel({ string: dateString }));
+		} else if (applicationData.state.documentsSort === "dateLastAccessed") {
+			let dateString = common.formatDate(data.history[data.history.length - 1].date);
+			docBottomLine.add(new docDateLabel({ string: dateString }));
 		}
+
+		// Add document name and tier
+		docLine.add(new Column({
+			width: docNameWidth, left: spacing,
+			contents: [
+				new docNameLabel({string: this.name, color: ((this.out != 'other') ? "black" : "gray")}),
+				docBottomLine,
+			]
+		}));
 		
 		let labelsList = Object.keys(this.labels);
 		

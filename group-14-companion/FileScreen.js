@@ -181,15 +181,15 @@ class screenBehavior extends Behavior {
                   onTap(content) {
                      // IMPLEMENT OPENING LOCKER
                      application.distribute("alert", {
-                     title: "Returning Document",
-                     message: "IMPORTANT: Please notice that this document is NOT originally taken out by YOU! \n \nLocker 05 of Cabinet A has been opened. You may now return the document. Your access will be logged.",
+                     title: "Returning Item",
+                     message: "IMPORTANT: Please notice that this item is NOT originally taken out by YOU! \n \nLocker 05 of Cabinet A has been opened. You may now return the item. Your access will be logged.",
                      options: [{ string: "OK", callback: function(){} }],
                      });
 
                      //trace(JSON.stringify(db) + '\n');
-                     trace(JSON.stringify(db.state.document) + '\n');
+                     //trace(JSON.stringify(db.state.document) + '\n');
                      let boo = db.returnDocument(db.state.document);
-                     trace(JSON.stringify(boo) + '\n');
+                     //trace(JSON.stringify(boo) + '\n');
                      application.distribute("update");
                   }},
          });
@@ -203,12 +203,15 @@ class screenBehavior extends Behavior {
                   onTap(content) {
                      // IMPLEMENT OPENING LOCKER
                      application.distribute("alert", {
-                     title: "Returning Document",
-                     message: "Locker 01 of Cabinet A has been opened. You may now return the document. Your access will be logged.",
+                     title: "Returning Item",
+                     message: "Locker 01 of Cabinet A has been opened. You may now return the item. Your access will be logged.",
                      options: [{ string: "OK", callback: function(){} }],
                      });
-                     // this.db.returnDocument(this.db.state.document);
-                     // application.distribute("dispatch", "documentInfoScreen");
+
+                     //trace(JSON.stringify(db.state.document) + '\n');
+                     let boo = db.returnDocument(db.state.document);
+                     //trace(JSON.stringify(boo) + '\n');
+                     application.distribute("update");
                   }},
          });
       } else {
@@ -219,11 +222,16 @@ class screenBehavior extends Behavior {
                   onTap(content) {
                      // IMPLEMENT OPENING LOCKER
                      application.distribute("alert", {
-                     title: "Retrieving Document",
-                     message: "Locker 03 of Cabinet A has been opened. You may now retrieve the document. Your access will be logged.",
+                     title: "Retrieving Item",
+                     message: "Locker 03 of Cabinet A has been opened. You may now retrieve the item. Your access will be logged.",
                      options: [{ string: "OK", callback: function(){} }],
-                     })}}
-                  });
+                     });
+
+                     let boo = db.retrieveDocument(db.state.document);
+                     trace(JSON.stringify(boo) + '\n');
+                     application.distribute("update");                    
+                  }},
+         });
       }
 
 
@@ -252,11 +260,10 @@ class screenBehavior extends Behavior {
             new Line({contents: [
                //OPEN BUTTON
                open_return,
-
                //FILE HISTORY BUTTON
                new common.NormalButton({
                   left: 20,
-                  string: "FILE HISTORY",
+                  string: "HISTORY",
                   Behavior: class extends common.ButtonBehavior {
                      onTap(content) {
                         application.distribute("dispatch", "documentHistoryScreen");

@@ -113,7 +113,7 @@ var DocumentHistoryItem = Container.template($ => ({
       }),
       new Label({
          right: 10, bottom: 10, style: common.smallLightStyle,
-         string: "Document " + $.eventData.action,
+         string: "Item " + $.eventData.action,
       }),
    ]
 }));
@@ -152,7 +152,7 @@ class screenBehavior extends Behavior {
          contents:[]
       });
 
-      let Des = new LabelTemp([new LeftTitle('File History'), 
+      let Des = new LabelTemp([new LeftTitle('History'), 
                                     new RightTitle('')]);
 
       if (this.InOut == "other"){

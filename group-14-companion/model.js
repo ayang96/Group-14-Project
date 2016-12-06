@@ -31,10 +31,10 @@ export class Data {
 	/**
 	 * Standard strings for actions that happen to a document.
 	 */
-	static get CREATE() { return 'created' }
+	static get CREATE() { return 'stored' }
 	static get RETRIEVE() { return 'retrieved' }
 	static get RETURN() { return 'returned' }
-	static get DELETE() { return 'deleted' }
+	static get DELETE() { return 'removed' }
 
 	/**
 	 * Generates a guaranteed unique "hash" ID as a string.
@@ -213,7 +213,7 @@ export class Data {
 			if (! (data.locker in this.lockers || data.locker === null)) return false;
 		}
 		if ('cabinet' in data) {
-			if (! (data.cabinet in this.lockers || data.cabinet === null)) return false;
+			if (! (data.cabinet in this.cabinets || data.cabinet === null)) return false;
 		}
 		return true;
 	}
@@ -530,9 +530,8 @@ export class Data {
 		if (document === null) return false;
 		if (document.out != Data.IN) return false;
 		let eventID = this.addEvent({ document: id, action: Data.RETRIEVE });
-		document.history.push(eventID);
+		this.documents[id].history.push(eventID);
 		this.updateDocument(id, {
-			history: document.history,
 			locker: null
 		});
 		this.freeLocker(document.locker);
@@ -542,16 +541,12 @@ export class Data {
 	returnDocument(id) {
 		let document = this.getDocumentData(id);
 		if (document === null) return false;
-		//trace('document ' + JSON.stringify(document) + '\n');
 		if (document.out === Data.IN) return false;
-		//trace('document OUT' + JSON.stringify(document.out) + '\n');
 		let lockerID = this.getEmptyLocker();
-		//trace('Locker: ' + JSON.stringify(lockerID) + '\n');
 		if (! lockerID) return false;
 		let eventID = this.addEvent({ document: id, action: Data.RETURN });
-		document.history.push(eventID);
+		this.documents[id].history.push(eventID);
 		this.updateDocument(id, {
-			history: document.history,
 			locker: lockerID,
 		});
 		this.useLocker(lockerID);
@@ -1166,8 +1161,6 @@ for (let i = 0; i < 30; i++) {
 		index: i,
 	});
 }
-
-let tier1 = sampleData.addTier({ name: 'Tier 1', color: 'blue', rank: -1 });
 let tier2 = sampleData.addTier({ name: 'Tier 2', color: 'green', rank: -2 });
 let tier3 = sampleData.addTier({ name: 'Tier 3', color: 'purple', rank: -3 });
 
@@ -1185,7 +1178,7 @@ sampleData.setState({
 let user2 = sampleData.addUser({
 	firstName: 'brian',
 	lastName: 'chen',
-	tier: tier1,
+	tier: tier3,
 	email: 'bchen@gmail.com',
 });
 let user3 = sampleData.addUser({
@@ -1195,21 +1188,32 @@ let user3 = sampleData.addUser({
 	email: 'dyano@gmail.com',
 });
 
-let label1 = sampleData.addLabel({ name: 'Started' });
-let label2 = sampleData.addLabel({ name: 'Completed' });
+let labelP = sampleData.addLabel({ name: 'P', color: "yellow" });
+let labelC = sampleData.addLabel({ name: 'C', color:"green" });
+let labelF = sampleData.addLabel({ name: 'F', color:"red"});
 
 let folder1 = sampleData.addFolder({
-	name: 'Folder 1',
-	labels: [label1],
+	name: 'Citizenship apps',
+	labels: [],
+	parent: 'root',
+});
+let folder2 = sampleData.addFolder({
+	name: 'Green Card apps',
+	labels: [],
+	parent: 'root',
+});
+let folder3 = sampleData.addFolder({
+	name: 'Asylum apps',
+	labels: [],
 	parent: 'root',
 });
 
 let document1 = sampleData.addDocument({
-	name: 'Document 1',
-	labels: [label1, label2],
-	tier: tier1,
+	name: 'Andrew Wiggin',
+	labels: [labelP],
+	tier: tier3,
 	description: 'Document 1 description',
-	folder: 'root',
+	folder: folder1,
 });
 sampleData.returnDocument(document1);
 sampleData.documents[document1].history.push(sampleData.addEvent({ user: user2, document: document1, action: Data.RETRIEVE }));
@@ -1217,12 +1221,26 @@ sampleData.documents[document1].history.push(sampleData.addEvent({ user: user2, 
 sampleData.documents[document1].history.push(sampleData.addEvent({ user: user3, document: document1, action: Data.RETRIEVE }));
 sampleData.documents[document1].history.push(sampleData.addEvent({ user: user3, document: document1, action: Data.RETURN }));
 
+
+let document11 = sampleData.addDocument({
+	name: 'Taiko Berceyte ',
+	labels: [labelF],
+	tier: tier3,
+	description: 'Document 11 description',
+	folder: folder1,
+});
+sampleData.returnDocument(document11);
+sampleData.documents[document11].history.push(sampleData.addEvent({ user: user2, document: document11, action: Data.RETRIEVE }));
+sampleData.documents[document11].history.push(sampleData.addEvent({ user: user2, document: document11, action: Data.RETURN }));
+sampleData.documents[document11].history.push(sampleData.addEvent({ user: user3, document: document11, action: Data.RETRIEVE }));
+sampleData.documents[document11].history.push(sampleData.addEvent({ user: user3, document: document11, action: Data.RETURN }));
+
 let document2 = sampleData.addDocument({
-	name: 'Document 2',
-	labels: [label2],
+	name: 'Peter Hurst',
+	labels: [labelF],
 	tier: tier2,
 	description: 'Document 2 description',
-	folder: 'root',
+	folder: folder1,
 });
 sampleData.returnDocument(document2);
 sampleData.documents[document2].history.push(sampleData.addEvent({ user: user2, document: document2, action: Data.RETRIEVE }));
@@ -1230,8 +1248,8 @@ sampleData.documents[document2].history.push(sampleData.addEvent({ user: user2, 
 sampleData.documents[document2].history.push(sampleData.addEvent({ user: user3, document: document2, action: Data.RETRIEVE }));
 
 let document3 = sampleData.addDocument({
-	name: 'Document 3',
-	labels: [],
+	name: 'Sebastian Vasquez',
+	labels: [labelP],
 	tier: 'admin',
 	description: 'Document 3 description',
 	folder: folder1,
@@ -1243,20 +1261,23 @@ sampleData.documents[document3].history.push(sampleData.addEvent({ user: user3, 
 sampleData.documents[document3].history.push(sampleData.addEvent({ user: user3, document: document3, action: Data.RETURN }));
 
 let document4 = sampleData.addDocument({
-	name: 'Document 4',
-	labels: [label1],
-	tier: tier1,
+	name: 'Bretton Miller',
+	labels: [labelC],
+	tier: tier3,
 	description: 'Document 4 description',
-	folder: folder1,
+	folder: folder1
 });
 sampleData.returnDocument(document4);
-sampleData.documents[document4].history.push(sampleData.addEvent({ user: user2, document: document4, action: Data.RETRIEVE }));
-sampleData.documents[document4].history.push(sampleData.addEvent({ user: user2, document: document4, action: Data.RETURN }));
-sampleData.documents[document4].history.push(sampleData.addEvent({ user: user1, document: document4, action: Data.RETRIEVE }));
+let doc4his = [];
+doc4his.push(sampleData.addEvent({ user: user2, document: document4, action: Data.CREATE, date: new Date("2015-03-24") }));
+doc4his.push(sampleData.addEvent({ user: user2, document: document4, action: Data.RETRIEVE, date: new Date("2015-03-25") }));
+doc4his.push(sampleData.addEvent({ user: user2, document: document4, action: Data.RETURN, date:new Date("2015-03-27") }));
+doc4his.push(sampleData.addEvent({ user: user3, document: document4, action: Data.RETRIEVE, date: new Date("2016-10-01")}));
+sampleData.updateDocument(document4, {history:doc4his});
 
 let document5 = sampleData.addDocument({
-	name: 'Document 5',
-	labels: [label1, label2],
+	name: 'Nico Martinez',
+	labels: [labelC],
 	tier: tier2,
 	description: 'Document 5 description',
 	folder: folder1,
@@ -1265,5 +1286,68 @@ sampleData.returnDocument(document5);
 sampleData.documents[document5].history.push(sampleData.addEvent({ user: user2, document: document5, action: Data.RETRIEVE }));
 sampleData.documents[document5].history.push(sampleData.addEvent({ user: user2, document: document5, action: Data.RETURN }));
 sampleData.documents[document5].history.push(sampleData.addEvent({ user: user3, document: document5, action: Data.RETRIEVE }));
+
+let document6 = sampleData.addDocument({
+	name: 'Frederick Big',
+	labels: [labelP],
+	tier: tier3,
+	description: 'Document 6 description',
+	folder: folder2,
+});
+sampleData.returnDocument(document6);
+sampleData.documents[document6].history.push(sampleData.addEvent({ user: user2, document: document6, action: Data.RETRIEVE }));
+sampleData.documents[document6].history.push(sampleData.addEvent({ user: user2, document: document6, action: Data.RETURN }));
+sampleData.documents[document6].history.push(sampleData.addEvent({ user: user3, document: document6, action: Data.RETRIEVE }));
+sampleData.documents[document6].history.push(sampleData.addEvent({ user: user3, document: document6, action: Data.RETURN }));
+
+let document7 = sampleData.addDocument({
+	name: 'Petrach Hurst',
+	labels: [labelF],
+	tier: tier2,
+	description: 'Document 7 description',
+	folder: folder2,
+});
+sampleData.returnDocument(document7);
+sampleData.documents[document7].history.push(sampleData.addEvent({ user: user2, document: document7, action: Data.RETRIEVE }));
+sampleData.documents[document7].history.push(sampleData.addEvent({ user: user2, document: document7, action: Data.RETURN }));
+sampleData.documents[document7].history.push(sampleData.addEvent({ user: user3, document: document7, action: Data.RETRIEVE }));
+
+let document8 = sampleData.addDocument({
+	name: 'Lasinius Quinn',
+	labels: [labelP],
+	tier: 'admin',
+	description: 'Document 8 description',
+	folder: folder2,
+});
+sampleData.returnDocument(document8);
+sampleData.documents[document8].history.push(sampleData.addEvent({ user: user2, document: document8, action: Data.RETRIEVE }));
+sampleData.documents[document8].history.push(sampleData.addEvent({ user: user2, document: document8, action: Data.RETURN }));
+sampleData.documents[document8].history.push(sampleData.addEvent({ user: user3, document: document8, action: Data.RETRIEVE }));
+sampleData.documents[document8].history.push(sampleData.addEvent({ user: user3, document: document8, action: Data.RETURN }));
+
+let document9 = sampleData.addDocument({
+	name: 'Darquitus Miller',
+	labels: [labelC],
+	tier: tier3,
+	description: 'Document 9 description',
+	folder: folder3,
+});
+sampleData.returnDocument(document9);
+sampleData.documents[document9].history.push(sampleData.addEvent({ user: user2, document: document9, action: Data.RETRIEVE }));
+sampleData.documents[document9].history.push(sampleData.addEvent({ user: user2, document: document9, action: Data.RETURN }));
+sampleData.documents[document9].history.push(sampleData.addEvent({ user: user3, document: document9, action: Data.RETRIEVE }));
+sampleData.documents[document9].history.push(sampleData.addEvent({ user: user3, document: document9, action: Data.RETURN }));
+
+let document10 = sampleData.addDocument({
+	name: 'Larson Chung',
+	labels: [labelP],
+	tier: tier2,
+	description: 'Document 10 description',
+	folder: folder3,
+});
+sampleData.returnDocument(document10);
+sampleData.documents[document10].history.push(sampleData.addEvent({ user: user2, document: document10, action: Data.RETRIEVE }));
+sampleData.documents[document10].history.push(sampleData.addEvent({ user: user2, document: document10, action: Data.RETURN }));
+sampleData.documents[document10].history.push(sampleData.addEvent({ user: user3, document: document10, action: Data.RETRIEVE }));
 
 
