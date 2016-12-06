@@ -530,8 +530,9 @@ export class Data {
 		if (document === null) return false;
 		if (document.out != Data.IN) return false;
 		let eventID = this.addEvent({ document: id, action: Data.RETRIEVE });
-		this.documents[id].history.push(eventID);
+		document.history.push(eventID);
 		this.updateDocument(id, {
+			history: document.history,
 			locker: null
 		});
 		this.freeLocker(document.locker);
@@ -1068,6 +1069,9 @@ export class Data {
 		// 	-labels in matchLabels
 		let matchFolders = [];
 		for (let id of Object.keys(this.folders)) {
+			if (id === 'root' || id === 'search') {
+				continue;
+			}
 			let folder = this.folders[id];
 			if (this._match(folder.name, tests)) {
 				matchFolders.push(id);
