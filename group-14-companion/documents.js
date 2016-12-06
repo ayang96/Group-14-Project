@@ -229,7 +229,7 @@ class screenBehavior extends Behavior{
 			new common.NavMenuButton(),
 			new common.NavSearch({
 				hintString: 'Search Documents/Folders/Labels...',
-				string: this.data.state.documentsSearch,
+				string: (this.data.state.folder === 'search' ? this.data.state.documentsSearch : ''),
 				Behavior: class extends Behavior {
 					onSearch(content, searchString) {
 						applicationData.setState({ documentsSearch: searchString });
