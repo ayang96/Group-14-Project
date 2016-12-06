@@ -744,7 +744,7 @@ let sortButton = Container.template($ => ({
 				{ value: 'dateLastAccessed', string: 'Date Last Accessed', callback: callbackGen('dateLastAccessed')},
 				{ value: 'accessTierAsc', string: 'Access Tier Asc', callback: callbackGen('accessTierAsc')},
 				{ value: 'accessTierDesc', string: 'Access Tier Desc', callback: callbackGen('accessTierDesc')},
-				{ value: 'labels', string: 'Labels', callback: callbackGen('labels')},
+				{ value: 'labels', string: 'Tags', callback: callbackGen('labels')},
 			]
 		})
 	]
