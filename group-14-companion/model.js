@@ -530,9 +530,8 @@ export class Data {
 		if (document === null) return false;
 		if (document.out != Data.IN) return false;
 		let eventID = this.addEvent({ document: id, action: Data.RETRIEVE });
-		document.history.push(eventID);
+		this.documents[id].history.push(eventID);
 		this.updateDocument(id, {
-			history: document.history,
 			locker: null
 		});
 		this.freeLocker(document.locker);

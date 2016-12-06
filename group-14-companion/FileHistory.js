@@ -142,6 +142,8 @@ class screenBehavior extends Behavior {
       screen.empty();
       this.data = data;
       this.docName = data.name;
+      this.InOut = data.out;
+      var iconPIC;
 
       let findingDoc = data;
 
@@ -150,13 +152,24 @@ class screenBehavior extends Behavior {
          contents:[]
       });
 
-      let Des = new LabelTemp([new LeftTitle('File History'), 
+      let Des = new LabelTemp([new LeftTitle('History'), 
                                     new RightTitle('')]);
+
+      if (this.InOut == "other"){
+         iconPIC = new Picture({height: 50, width: 80, align:'middle', url:'./assets/icon_document_out_other_ring_70x70.png'});
+      } else if (this.InOut == "you"){
+         trace(JSON.stringify("TRUE") + '\n');
+         iconPIC = new Picture({height: 50, width: 80, align:'middle', url:'./assets/icon_document_out_you_ring_70x70.png'});
+      } else {
+         iconPIC = new Picture({height: 50, width: 80, align:'middle', url:'./assets/icon_document_in_ring_70x70_2.png'});
+      }
+
 
       let DocIcon = new Line({
          height: 80, width: 320, skin: whiteSkin,
          contents:[
-            new Picture({height: 50, width: 80, align:'middle', url:'./assets/icon_document_out_other_ring_70x70.png'}),
+            //new Picture({height: 50, width: 80, align:'middle', url:'./assets/icon_document_out_other_ring_70x70.png'}),
+            iconPIC,
             new Column({height: 80, width: 240, 
                contents:[
                   //Label($, {height: 29, top: 25, width: 240, string: $[0], style: textStyle, skin:whiteSkin}),
