@@ -34,6 +34,8 @@ export var black = 'black';
 export var colorNames = ['red', 'orange', 'yellow', 'green', 'sky',
 							'blue', 'purple', 'grey', 'black'];
 
+export var offWhite = '#EEEEEE'; // For second state of white buttons
+
 /* use this to "lookup" the value from a string
   	i.e. colorDict['red'] ==> '#EB5757' */
 export var colorDict = {
@@ -171,7 +173,7 @@ export var Dispatcher = Container.template($ => ({
 			left: 0, right: 0, top: 0, bottom: 0,
 			name: "page", contents: [ new Container() ],
 		}),
-		this.menuHolder,
+		new MenuHolder({ menu: $.menu }),
 	],
 	Behavior: class extends Behavior {
 		onTouchEnded(content) {
@@ -179,11 +181,7 @@ export var Dispatcher = Container.template($ => ({
 			content.focus();
 		}
 		onCreate(content, data) {
-			this.menuHolder = new MenuHolder({ menu: $.menu });
 			this.currentScreenName = "";
-		}
-		onDisplayed(content) {
-			this.hideMenu(content);
 		}
 		dispatch(content, screenName, transition) {
 			if (screenName === "back") {
@@ -218,30 +216,25 @@ export var Dispatcher = Container.template($ => ({
 						break;
 				}
 				this.currentScreenName = screenName;
-				this.updateMenu();
+				this.updateMenu(content);
 			}
 			this.hideMenu(content);
 		}
 		showMenu(content) {
-			// Can change how this works
-			this.updateMenu();
-			if (! content.holder) {
-				content.add(this.menuHolder);
-			}
+			content.holder.visible = true;
+			this.updateMenu(content);
 		}
 		hideMenu(content) {
-			if (content.holder) {
-				content.remove(this.menuHolder);
-			}
+			content.holder.visible = false;
 		}
-		updateMenu() {
+		updateMenu(content) {
 			let name = this.currentScreenName;
 			while (name in $.screenParents) {
 				name = $.screenParents[name];
 			}
-			if (name.length > 5 && name.substring(0, 6) === "root:") {
-				let category = name.substring(6);
-				this.menuHolder.first.delegate("update", category);
+			if (name.length > 5 && name.substring(0, 5) === "root:") {
+				let category = name.substring(5);
+				content.holder.distribute("updateCategory", category);
 			}
 		}
 		notify(content, message) {
@@ -260,6 +253,7 @@ export var Dispatcher = Container.template($ => ({
 
 let MenuHolder = Container.template($ => ({
 	left: 0, right: 0, top: 0, bottom: 0, active: true,
+	visible: false,
 	name: "holder",
 	contents: [ $.menu ],
 	Behavior: class extends ButtonBehavior {
@@ -289,7 +283,7 @@ export var ScreenWithMenuBar = Container.template($ => ({
 
 export var NavBar = Line.template($ => ({
 	left: 0, right: 0, top: 0, height: navBarHeight,
-	name: "nav", skin: navBarSkin, active: true, contents: $.contents,
+	name: "nav", skin: navBarSkin, contents: $.contents,
 }));
 
 export var NavMenuButton = Picture.template($ => ({
@@ -583,11 +577,11 @@ export var CircleMaskWhite = Picture.template(($={}) => (Object.assign({
  */
 export var Tag = Container.template(($={}) => (Object.assign({
 	skin: new Skin({ fill: colorDict[$.color] }),
-	height: 30, width: 20,
+	height: 30, width: 25,
 	contents: [
 		new Picture({
 			left: 0, right: 0, top: 0, bottom: 0,
-			aspect: 'stretch', url: 'assets/single_tag_cutout_lineless.png',
+			aspect: 'stretch', url: 'assets/single_tag_cutout_shadow.png',
 		}),
 		new Label({
 			name: 'char',

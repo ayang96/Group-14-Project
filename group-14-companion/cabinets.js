@@ -32,9 +32,9 @@ import {
 /************ 3) ASSETS ******************************************************/
 
 let figmaScreen = Picture.template($ => ({		// prototype image of locker manager screen
-	left: $.left, right: $.right, top: $.top,
+	left: $.left, right: $.right, top: $.top, bottom: $.bottom,
 	url: 'assets/figma_cabinetsScreen.png',
-	aspect: 'fit'
+	aspect: 'fit',
 }));
 
 let lineSkin = new Skin({							//stroked skin of a document listing
@@ -72,9 +72,8 @@ class screenBehavior extends Behavior{
 		]});
 
 		// Add scroller 
-		let contentToScrollVertically = new Column({
-			top: 0, left: 0, right: 0,
-			skin: common.skySkin, 
+		let contentToScrollVertically = new Container({
+			left: 0, right: 0, top: 0,
 			contents: []});
 		
 		// Add figma image simulation of lockers screen
@@ -109,6 +108,12 @@ class screenBehavior extends Behavior{
 														//application.distribute('dispatch', 'newLockerScreen', 'new');
 													}
 												}
+											}),
+											new Container({ // empty spacer
+												left: 20, width: 45, height: 45,
+											}),
+											new Label({ // empty spacer
+												left: 10, right: 0,
 											}),
 										]
 									}),
@@ -153,7 +158,7 @@ let MainScroller = Column.template($ => ({
     contents: [
       VerticalScroller($, {
       	active: true,
-      	top: 0, left: 0, right: 0,
+      	top: 0, left: 0, right: 0, bottom: 0,
       	contents: [ $.contentToScrollVertically,
       		VerticalScrollbar(), TopScrollerShadow(), BottomScrollerShadow(),
       	]

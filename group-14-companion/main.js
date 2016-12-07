@@ -23,8 +23,7 @@ import { UserProfileScreen } from "user_profile";
 import { FileHistoryTemplate } from "FileHistory";
 import { Menu } from "Menu";
 import { Data, sampleData } from "model";
-import { AddDocScreen } from "AddDoc";
-import { NewFileTemplate } from "new_document";
+import { NewDocumentScreen } from "new_document";
 import { NewUserScreen } from "new_user";
 import { CabinetsScreen } from "cabinets";
 import * as common from "common";
@@ -40,7 +39,7 @@ var screens = {
 	"documentsScreen" : new DocumentsScreen(data),
 	"documentInfoScreen" : new FileScreenTemplate({ data: data }),
 	"documentHistoryScreen" : new FileHistoryTemplate({ data: data}),
-
+	"newDocumentScreen" : new NewDocumentScreen({ data: data }),
 	"userProfileScreen": new UserProfileScreen({ data: data }),
 	"usersScreen": new UsersScreen({ data: data }),
 	"newUserScreen": new NewUserScreen({ data: data }),
@@ -61,7 +60,7 @@ var screenParents = {
 class ApplicationBehavior extends Behavior {
 	onLaunch(application) {
 		var dispatcher = new common.Dispatcher({
-			menu: new Menu(),
+			menu: new Menu({ data: data }),
 			screens: screens,
 			screenParents: screenParents
 		});

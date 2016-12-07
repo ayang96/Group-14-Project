@@ -3,7 +3,7 @@ import { FieldLabelBehavior, FieldScrollerBehavior } from 'src/field';
 import { VerticalScroller, VerticalScrollbar } from 'src/scroller';
 
 // To import everything:
-// import { FormRow, FormLabel, FormValue, FormRightButton, FormField, FormSelect, TierSelect, LabelSelect } from 'forms.js'
+// import { FormRow, FormLabel, FormValue, FormRightButton, FormField, FormSelect, TierSelect, LabelSelect, FormTextValue } from 'forms'
 
 const FORM_LEFT_COLUMN_WIDTH = 115;
 
@@ -23,6 +23,11 @@ let formSelectTopOptionSkin = new Skin({
 
 let formSelectDropDownSkin = new Skin({
     fill: 'white',
+    stroke: common.systemLineColor,
+    borders: { left: 1, right: 1, top: 1, bottom: 1 },
+});
+
+let formTextSkin = new Skin({
     stroke: common.systemLineColor,
     borders: { left: 1, right: 1, top: 1, bottom: 1 },
 });
@@ -147,6 +152,19 @@ class FormSelectBehavior extends common.ButtonBehavior {
         this.name = $.name;
         this.options = $.options;
         this.hintString = $.hintString;
+        this.createDropDown(content, $)
+    }
+    createDropDown(content, $) {
+        if ($.dropDown) {
+            this.dropDown = $.dropDown
+        } else {
+            this.dropDown = new FormSelectDropDown({
+                formData: this.formData,
+                name: this.name,
+                options: this.options,
+                hintString: this.hintString,
+            });
+        }
     }
     onDisplayed(content) {
         this.select(content, this.formData[this.name]);
@@ -161,23 +179,45 @@ class FormSelectBehavior extends common.ButtonBehavior {
             content.label.string = this.hintString;
             content.label.style = common.bodyLightStyle;
         }
-        if (content.dropDown) {
-            content.remove(content.dropDown);
-        }
         return true;
     }
+    displayDropDown(content) {
+        let found = false;
+        let current = content.first
+        while (current) {
+            if (current == this.dropDown) {
+                found = true;
+                break;
+            }
+            current = current.next;
+        }
+        if (! found) {
+            content.add(this.dropDown);
+        }
+    }
+    hideDropDown(content) {
+        let found = false;
+        let current = content.first
+        while (current) {
+            if (current == this.dropDown) {
+                found = true;
+                break;
+            }
+            current = current.next;
+        }
+        if (found) {
+            content.remove(this.dropDown);
+        }
+    }
     onTap(content) {
-        content.add(new FormSelectDropDown({
-            formData: this.formData,
-            name: this.name,
-            options: this.options,
-            hintString: this.hintString,
-        }));
+        if (this.isDisplayed) {
+            this.hideDropDown(content);
+        } else {
+            this.displayDropDown(content);
+        }
     }
     onUnfocused(content) {
-        if (content.dropDown) {
-            content.remove(content.dropDown);
-        }
+        this.hideDropDown(content);
     }
 }
 
@@ -225,9 +265,9 @@ let FormSelectDropDown = Container.template($ => ({
                     options.add(new FormSelectOption(opt));
                 }
             }
-            if (length > 4) {
+            if (length > 5) {
                 options = VerticalScroller({}, {
-                    left: 0, right: 0, top: 0, bottom: 0, height: 115,
+                    left: 0, right: 0, top: 0, bottom: 0, height: 125,
                     active: true,
                     contents: [
                         options,
@@ -283,6 +323,7 @@ class TierSelectBehavior extends FormSelectBehavior {
             }
         });
         this.hintString = 'Select Tier';
+        this.createDropDown(content, {});
     }
     getAllTiers(data) {
         let tierIDs = Object.keys(data.tiers);
@@ -310,13 +351,14 @@ class LabelSelectBehavior extends FormSelectBehavior {
         this.name = $.name;
         this.options = this.getAllLabels($.data);
         this.options.push({
-            string: '+ Create Label',
+            string: '+ Create Tag',
             style: common.bodyLightStyle,
             callback: function(content) {
                 application.distribute('dispatch', 'newLabelScreen', 'new');
             }
         });
-        this.hintString = 'Select Label';
+        this.hintString = 'Select Tag';
+        this.createDropDown(content, {});
     }
     getAllLabels(data) {
         let labelIDs = Object.keys(data.labels);
@@ -326,3 +368,21 @@ class LabelSelectBehavior extends FormSelectBehavior {
         return labelOptions;
     }
 }
+
+/**
+ * Large text box displaying a static value
+ * @params
+ * $.string {String} display value
+ * $.top, $.height -optional
+ */
+export var FormTextValue = Container.template($ => ({
+    left: 0, right: 0, height: $.height || 80,
+    skin: formTextSkin,
+    contents: [
+        new Text({
+            left: 8, right: 8, top: 8, bottom: 8,
+            style: common.bodyStyle,
+            string: $.string,
+        })
+    ]
+}))

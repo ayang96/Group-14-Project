@@ -15,7 +15,6 @@ export var DocumentsScreen = Container.template($ => ({
 	top: 0, left: 0, right: 0, bottom: 0,
 	skin: lineSkin,
 	contents: [],
-	active: true,
 	Behavior: screenBehavior
 }));
 
@@ -67,7 +66,7 @@ let purpleSkin = new Skin({ fill: '#9B51E0'});		// = "purple"
 let greySkin = new Skin({ fill: '#828282'});		// = "grey"
 
 let lineSkin = new Skin({							//stroked skin of a document listing
-		fill: 'white', 			
+		fill: ['white', common.offWhite],
 		stroke: common.systemLineColor,
 		borders: {left: 0, right: 0, top: 0, bottom: 1}
 });	
@@ -228,7 +227,7 @@ class screenBehavior extends Behavior{
 		let navBar = new common.NavBar({ contents: [
 			new common.NavMenuButton(),
 			new common.NavSearch({
-				hintString: 'Search Documents/Folders/Labels...',
+				hintString: 'Search Items',
 				string: (this.data.state.folder === 'search' ? this.data.state.documentsSearch : ''),
 				Behavior: class extends Behavior {
 					onSearch(content, searchString) {
@@ -346,13 +345,13 @@ class screenBehavior extends Behavior{
 												Behavior: class extends common.ButtonBehavior {
 													onTap(content) {
 														content.bubble('exit');
-														application.distribute('dispatch', 'newDocScreen', 'new');
+														application.distribute('dispatch', 'newDocumentScreen', 'new');
 													}
 												}
 											}),
 											new Label({
 												left: 10, right: 0, style: common.smallWhiteStyle,
-												string: 'New Document'
+												string: 'Store New Item'
 											}),
 										]
 									}),
@@ -450,7 +449,7 @@ class labelBehavior extends Behavior {
 };
 
 // Auto-generates icon, name, label, and tier of a document
-class documentBehavior extends Behavior {
+class documentBehavior extends common.ButtonBehavior {
 	onCreate(document, data) {
 		// Extract given data
 		this.name = data.name;
@@ -483,7 +482,7 @@ class documentBehavior extends Behavior {
 		if (!validOut) docLine.add(new docOutOtherIcon({left: sideMargin})); // Assume other
 		
 		let docBottomLine = new Line({ left: 0, width: 100});
-		docBottomLine.add(new docTierLabel({string: this.tierName, color: ((this.out != 'other') ? "black" : "gray"), left: 0, right: 0}))
+		docBottomLine.add(new docTierLabel({string: this.tierName, color: ((this.out === 'in') ? "black" : "gray"), left: 0, right: 0}))
 		if (applicationData.state.documentsSort === "dateCreated") {
 			let dateString = common.formatDate(data.history[0].date);
 			docBottomLine.add(new docDateLabel({ string: dateString }));
@@ -496,70 +495,39 @@ class documentBehavior extends Behavior {
 		docLine.add(new Column({
 			width: docNameWidth, left: spacing,
 			contents: [
-				new docNameLabel({string: this.name, color: ((this.out != 'other') ? "black" : "gray")}),
+				new docNameLabel({string: this.name, color: ((this.out === 'in') ? "black" : "gray")}),
 				docBottomLine,
 			]
 		}));
-		
-		let labelsList = Object.keys(this.labels);
-		
-		// Add empty label slots
-		for (let i = labelsList.length; i < 4; i++) {
-			docLine.add(new emptyTagIcon({right:0, top: 0}));
-		}
-		
+				
 		// Add document labels
-		for (let i = 0; i < Math.min(4, labelsList.length); i++) {
+		let tagLine = new Line({
+			right: sideMargin, top: 0, bottom: 0
+		});
+
+		for (let i = 0; i < Math.min(4, this.labels.length); i++) {
 			let label = this.labels[i]; //this.labels[i];
 			let addingLabelText = label.abbreviation;
 			let addingLabelColor = label.color;
 			//let addingLabelText = this.labels[i][0];
 			//let addingLabelColor = this.labels[i][1];
-			docLine.add(new LabelTag({text: addingLabelText, color: addingLabelColor,
-										right: 0, top: 0}));
-		}	
-		
-		// Add right margin
-		docLine.add(new Container({width: sideMargin, right: 0}));
-		
+			tagLine.add(new common.Tag({
+				left: 2, top: 0, width: 25, height: 35,
+				string: addingLabelText, color: addingLabelColor,
+			}));
+		}
 		
 		document.add(docLine);
-		switch (labelsList.length) {
-			case 0:
-				document.add(new tagWhiteout0({top: 0, left: 0, right: 0, bottom: 0}));
-				break;
-			case 1:
-				document.add(new tagWhiteout1({top: 0, left: 0, right: 0, bottom: 0}));
-				break;
-			case 2:
-				document.add(new tagWhiteout2({top: 0, left: 0, right: 0, bottom: 0}));
-				break;
-			case 3:
-				document.add(new tagWhiteout3({top: 0, left: 0, right: 0, bottom: 0}));
-				break;
-			case 4:
-				document.add(new tagWhiteout4({top: 0, left: 0, right: 0, bottom: 0}));
-				break;
-		}
+		document.add(tagLine);
+
 	}
-	onTouchEnded(document, x, y, ticks) {
+	onTap(document) {
 		applicationData.setState({document: this.id});
 		application.distribute("dispatch", "documentInfoScreen", "push");
-		//switch (this.name) {
-		//	case "Document#1":
-		//		application.distribute("dispatch", "documentInfoScreen", "push");
-		//		break;
-		//	case "Document#2":
-		//		application.distribute("dispatch", "documentInfoScreen2", "push");
-		//		break;
-		//	case "Document#3":
-		//		application.distribute("dispatch", "documentInfoScreen3", "push");
-		//		break;
-		//}
 	}
 };
 
-class folderBehavior extends Behavior {
+class folderBehavior extends common.ButtonBehavior {
 	onCreate(folder, data) {
 		// Extract given data
 		this.name = data.name;
@@ -597,54 +565,35 @@ class folderBehavior extends Behavior {
 		folderName.add(new docTierLabel({string: tierString, color: "black"}));
 		folderLine.add(folderName);
 		
-		let labelsList = Object.keys(this.labels);
-		
-		// Add empty label slots
-		for (let i = labelsList.length; i < 4; i++) {
-			folderLine.add(new emptyTagIcon({right:0, top: 0}));
-		}
-		
 		// Add folder labels
-		for (let i = 0; i < Math.min(4, labelsList.length); i++) {
-			let label = this.labels[i];
+		let tagLine = new Line({
+			right: sideMargin, top: 0, bottom: 0
+		});
+
+		for (let i = 0; i < Math.min(4, this.labels.length); i++) {
+			let label = this.labels[i]; //this.labels[i];
 			let addingLabelText = label.abbreviation;
 			let addingLabelColor = label.color;
-		//	let addingLabelText = this.labels[i][0];
-		//	let addingLabelColor = this.labels[i][1];
-			folderLine.add(new LabelTag({text: addingLabelText, color: addingLabelColor, 
-										right: 0, top: 0}));
-		}	
-		
-		// Add right margin
-		folderLine.add(new Container({width: sideMargin, right: 0}));
-		
+			//let addingLabelText = this.labels[i][0];
+			//let addingLabelColor = this.labels[i][1];
+			tagLine.add(new common.Tag({
+				left: 2, top: 0, width: 25, height: 35,
+				string: addingLabelText, color: addingLabelColor,
+			}));
+		}
+
 		folder.add(folderLine);
-		switch (labelsList.length) {
-			case 0:
-				folder.add(new tagWhiteout0({top: 0, left: 0, right: 0, bottom: 0}));
-				break;
-			case 1:
-				folder.add(new tagWhiteout1({top: 0, left: 0, right: 0, bottom: 0}));
-				break;
-			case 2:
-				folder.add(new tagWhiteout2({top: 0, left: 0, right: 0, bottom: 0}));
-				break;
-			case 3:
-				folder.add(new tagWhiteout3({top: 0, left: 0, right: 0, bottom: 0}));
-				break;
-			case 4:
-				folder.add(new tagWhiteout4({top: 0, left: 0, right: 0, bottom: 0}));
-				break;
-		}	
+		folder.add(tagLine)
+	
 	}
-	onTouchEnded(folder, x, y, ticks) {
+	onTap(folder) {
 		applicationData.setState({folder: this.id});
 		application.distribute("dispatch", "documentsScreen", "pushLeft"); // Going to child level
 		application.distribute("render");
 	}
 };
 
-class directoryLevelBehavior extends Behavior {
+class directoryLevelBehavior extends common.ButtonBehavior {
 	onCreate(level, data) {
 		this.folder = data.string.split("\\")[0];
 		level.string = this.folder;
@@ -657,10 +606,9 @@ class directoryLevelBehavior extends Behavior {
 		this.clickable = data.clickable;
 		if (!data.clickable) { level.style = nonClickableStyle; }
 	}
-	onTouchEnded(level, x, y, ticks) {
+	onTap(level) {
 		applicationData.setState({folder: this.folderID});
-		application.distribute("dispatch", "documentsScreen", "pushRight"); // Going to ancestor level
-		application.distribute("render");
+		application.distribute("update");
 	}
 };
 
@@ -771,7 +719,7 @@ let LabelTag = Container.template($ => ({
 //									out = 'in', 'other', or 'you'}
 // When instantiating, call new DocumentLine(data)
 let DocumentLine = Container.template($ => ({
-	top: 0, left: 0, right: 0, height: lineHeight, width: screenWidth,
+	top: 0, left: 0, right: 0, height: lineHeight,
 	active: true,
 	skin: lineSkin,
 	Behavior: documentBehavior,
@@ -794,7 +742,6 @@ let DirectoryLine = Container.template($ => ({
 	height: directoryHeight,
 	top: 0, left: 0, right: 0,
 	skin: new Skin({fill:"#e6e6e6", stroke: common.systemLineColor, borders: { bottom: 1 }}),
-	active: true,
 	Behavior: directoryLineBehavior,
 	contents: []
 }));
@@ -806,12 +753,11 @@ let MainScroller = Column.template($ => ({
     left: 0, right: 0, top: 0, bottom: 0, clip: true,
     contents: [
       VerticalScroller($, {
-      	active: true,
       	top: 0, left: 0, right: 0,
       	contents: [ $.contentToScrollVertically,
       		VerticalScrollbar(), TopScrollerShadow(), BottomScrollerShadow(),
       	]
-      }),  
+      }),
     ]
 }));
 
