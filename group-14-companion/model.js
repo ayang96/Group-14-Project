@@ -1219,7 +1219,7 @@ let labelC = sampleData.addLabel({ name: 'C', color:"green" });
 let labelF = sampleData.addLabel({ name: 'F', color:"red"});
 
 let folder1 = sampleData.addFolder({
-	name: 'Citizenship apps',
+	name: 'Work Permit apps',
 	labels: [],
 	parent: 'root',
 });
