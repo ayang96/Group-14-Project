@@ -328,7 +328,7 @@ export class Data {
 	 */
 	addDocument(data) {
 		let document = { // default values
-			name: 'New Document',	// {String}
+			name: 'New Item',		// {String}
 			labels: [],				// {String[]} ids of labels
 			tier: this.users[this.state.login].tier,	// {String} id of tier
 			description: '',		// {String}
@@ -510,6 +510,9 @@ export class Data {
 	getDocumentState(id) {
 		if (id in this.documents) {
 			let document = this.documents[id];
+			if (document.history.length == 0) {
+				return Data.OTHER;
+			}
 			let lastEvent = this.events[document.history[document.history.length - 1]];
 			if (lastEvent.action === Data.RETURN) {
 				return Data.IN;
@@ -525,26 +528,41 @@ export class Data {
 		}
 	}
 
-	retrieveDocument(id) {
+	canRetrieveDocument(id) {
 		let document = this.getDocumentData(id);
-		if (document === null) return false;
-		if (document.out != Data.IN) return false;
+		if (document === null) return { status: false, message: 'Not a valid item.'};
+		if (document.out !== Data.IN) return { status: false, message: 'Item currently out.'};
+		if (! document.locker) return { status: false, message: 'Item locker unknown - check history for possible misplacement.'}
+		return { status: true };
+	}
+
+	retrieveDocument(id) {
+		if (! this.canRetrieveDocument(id).status) {
+			return false;
+		}
 		let eventID = this.addEvent({ document: id, action: Data.RETRIEVE });
-		document.history.push(eventID);
+		this.documents[id].history.push(eventID);
+		let lockerID = this.documents[id].locker;
 		this.updateDocument(id, {
-			history: document.history,
 			locker: null
 		});
-		this.freeLocker(document.locker);
+		this.freeLocker(lockerID);
 		return true;
 	}
 
-	returnDocument(id) {
+	canReturnDocument(id) {
 		let document = this.getDocumentData(id);
-		if (document === null) return false;
-		if (document.out === Data.IN) return false;
-		let lockerID = this.getEmptyLocker();
-		if (! lockerID) return false;
+		if (document === null) return { status: false, message: 'Not a valid item.'};
+		if (document.out === Data.IN) return { status: false, message: 'Item already in.'};
+		if (! this.getEmptyLocker()) return { status: false, message: 'No available empty lockers.'};
+		return { status: true };
+	}
+
+	returnDocument(id, lockerID=null) {
+		if (! this.canReturnDocument(id).status) {
+			return false;
+		}
+		lockerID = lockerID || this.getEmptyLocker();
 		let eventID = this.addEvent({ document: id, action: Data.RETURN });
 		this.documents[id].history.push(eventID);
 		this.updateDocument(id, {
@@ -953,7 +971,7 @@ export class Data {
 		if (locker === null) return null;
 
 		locker.id = id;
-		locker.cabinet = this.getCabinetData(id);
+		locker.cabinet = this.getCabinetData(locker.cabinet);
 
 		return locker;
 	}
@@ -997,6 +1015,10 @@ export class Data {
 		cabinet.id = id;
 
 		return cabinet;
+	}
+
+	updateCabinet(id, data) {
+		return this.updateEntry(this.cabinets, id, data);
 	}
 
 	/**
@@ -1155,11 +1177,11 @@ export var sampleData = new Data();
 
 let cabinet1 = sampleData.addCabinet({
 	name: 'Cabinet 01',
-	url: 'http://127.0.0.1',
-	capacity: '30',
+	url: '',
+	capacity: 17,
 });
 
-for (let i = 0; i < 30; i++) {
+for (let i = 1; i <= sampleData.getCabinetData(cabinet1).capacity; i++) {
 	sampleData.addLocker({
 		cabinet: cabinet1,
 		index: i,

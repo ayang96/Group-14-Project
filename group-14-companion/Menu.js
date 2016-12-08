@@ -78,9 +78,9 @@ var Screen1Template = Column.template($ => ({
        new selectionbox({offset:1,icon:whiteUsersIcon,left:45,name:"users",string: "Users", screenName: "usersScreen",color:menuboxSkin}),
        new selectionbox({offset:1,icon:whiteCabinetIcon,left:45,name:"cabinets",string: "Locker Manager", screenName: "cabinetsScreen", color:menuboxSkin}),
 	     new subtitlebox({height:22,string: "Other"}),
-       new selectionbox({offset:1,left:20,name:"settings",string: "Password Settings",color:menuboxSkin}),
-       new selectionbox({offset:1,left:20,name:"help",string: "Help",color:menuboxSkin}),
-       new selectionbox({offset:1,left:20,name:"logout",string: "Log Out",color:menuboxSkin}),
+       new selectionbox({offset:1,left:20,name:"settings",string: "Account Settings", screenName: "settingsScreen", color:menuboxSkin}),
+       new selectionbox({offset:1,left:20,name:"help",string: "Help", screenName: "helpScreen", color:menuboxSkin}),
+       new selectionbox({offset:1,left:20,name:"logout",string: "Log Out", screenName: "loginScreen", color:menuboxSkin}),
        new Container({top:1,height:200,left:0,right:0,skin:menuboxSkin})
             
     ],

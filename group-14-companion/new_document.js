@@ -52,7 +52,7 @@ export var NewDocumentScreen = Container.template($ => ({
 
 									let newData = {
 										name: formData.name,
-										labels: [formData.label],
+										labels: (formData.label ? [formData.label] : []),
 										tier: formData.tier,
 										description: formData.description,
 										folder: $.data.state.folder,
@@ -71,6 +71,18 @@ export var NewDocumentScreen = Container.template($ => ({
 					]
 				})
 			);
+			
+			// Kinoma is the dumbest framework I've ever seen.
+			// Who thought it was a good idea to use object order for z index??
+			// How am I supposed to add things to a Column
+			// or Line with the correct ordering, but having
+			// custom z indexes, without doing something
+			// as contrived as this?
+			
+			let pseudoColumn = new Container({
+				left: 0, right: 0, top: 0,
+			});
+
 			content.add(
 				new Column({
 					left: common.screenPadding, right: common.screenPadding,
@@ -82,25 +94,54 @@ export var NewDocumentScreen = Container.template($ => ({
 							height: 50, width: 50, aspect: 'fit',
 							url:'./assets/icon_document_in_ring_70x70_2.png',
 						}),
-						new FormRow({ contents: [
-							new FormLabel({ string: 'Name' }),
-							new FormField({ formData: formData, name: 'name', hintString: 'Enter Name' }),
-						]}),
-						new FormRow({ contents: [
-							new FormLabel({ string: 'Tag' }),
-							new LabelSelect({ data: $.data, formData: formData, name: 'label' }),
-						]}),
-						new FormRow({ contents: [
-							new FormLabel({ string: 'Access Tier' }),
-							new TierSelect({ data: $.data, formData: formData, name: 'tier' }),
-						]}),
-						new FormRow({ contents: [
-							new FormLabel({ string: 'Description' }),
-							new FormField({ formData: formData, name: 'description', hintString: 'Enter Description' }),
-						]}),
+						pseudoColumn,
 					]
 				}),
 			);
+
+			let forcefully_imposed_height = 40;
+
+			pseudoColumn.add(
+				new FormRow({
+					top: forcefully_imposed_height * 3,
+					contents: [
+						new FormLabel({ string: 'Description' }),
+						new FormField({ formData: formData, name: 'description', hintString: 'Enter Description' }),
+					]
+				}),
+			);
+
+			pseudoColumn.add(
+				new FormRow({
+					top: forcefully_imposed_height * 2,
+					contents: [
+						new FormLabel({ string: 'Access Tier' }),
+						new TierSelect({ data: $.data, formData: formData, name: 'tier' }),
+					]
+				})
+			);
+
+			pseudoColumn.add(
+				new FormRow({
+					top: forcefully_imposed_height * 1,
+					contents: [
+						new FormLabel({ string: 'Tag' }),
+						new LabelSelect({ data: $.data, formData: formData, name: 'label' }),
+					]
+				})
+			);
+
+			pseudoColumn.add(
+				new FormRow({
+					top: forcefully_imposed_height * 0,
+					contents: [
+						new FormLabel({ string: 'Name' }),
+						new FormField({ formData: formData, name: 'name', hintString: 'Enter Name' }),
+					]
+				})
+			);
+
+
 		}
 	}
 }));

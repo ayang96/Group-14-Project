@@ -24,48 +24,70 @@ import { FileHistoryTemplate } from "FileHistory";
 import { Menu } from "Menu";
 import { Data, sampleData } from "model";
 import { NewDocumentScreen } from "new_document";
+import { NewFolderScreen } from "new_folder";
 import { NewUserScreen } from "new_user";
 import { CabinetsScreen } from "cabinets";
+import { TagCustomizerScreen } from "TagCustomizer";
+import { SettingsScreen } from "settings";
+import { HelpScreen } from "help";
+import { LogInTemplate } from "LogIn";
+import { NetworkManager } from "network";
 import * as common from "common";
 import * as form from "forms";
 
 /***************** 5) APPLICATION AND APPLICATION DATA ******************/
 
 
-var data = sampleData;
+let data = sampleData;
 data.setState({ folder: 'root' });
 
-var screens = {
+let net = new NetworkManager(data);
+
+let screens = {
 	"documentsScreen" : new DocumentsScreen(data),
-	"documentInfoScreen" : new FileScreenTemplate({ data: data }),
+	"documentInfoScreen" : new FileScreenTemplate({ data: data, net: net }),
 	"documentHistoryScreen" : new FileHistoryTemplate({ data: data}),
 	"newDocumentScreen" : new NewDocumentScreen({ data: data }),
+	"newFolderScreen" : new NewFolderScreen({ data: data }),
 	"userProfileScreen": new UserProfileScreen({ data: data }),
 	"usersScreen": new UsersScreen({ data: data }),
 	"newUserScreen": new NewUserScreen({ data: data }),
 	"cabinetsScreen" : new CabinetsScreen(data),
+	"newLabelScreen" : new TagCustomizerScreen({ data: data }),
+	"settingsScreen" : new SettingsScreen({ data: data }),
+	"helpScreen" : new HelpScreen({ data: data }),
+	"loginScreen" : new LogInTemplate({ data: data }),
 }
 
-var screenParents = {
+let screenParents = {
 	"documentsScreen" : "root:documents",
-	"documentHistoryScreen" : "documentInfoScreen",
 	"documentInfoScreen" : "documentsScreen",
+	"documentHistoryScreen" : "documentInfoScreen",
+	"newDocumentScreen" : "documentsScreen",
+	"newFolderScreen" : "documentsScreen",
 	"userProfileScreen": "usersScreen",
 	"usersScreen": "root:users",
 	"newUserScreen": "usersScreen",
-	"newDocumentScreen": "documentsScreen",
 	"cabinetsScreen" : "root:cabinets",
+	"newLabelScreen" : "newDocumentScreen",
+	"settingsScreen" : "root:settings",
+	"helpScreen" : "root:help",
+	"loginScreen" : "root:logout",
 }
 
 class ApplicationBehavior extends Behavior {
 	onLaunch(application) {
-		var dispatcher = new common.Dispatcher({
+		let dispatcher = new common.Dispatcher({
 			menu: new Menu({ data: data }),
 			screens: screens,
 			screenParents: screenParents
 		});
 		application.add(dispatcher);
-		application.distribute("dispatch", "documentsScreen");
+		application.distribute("dispatch", "loginScreen");
+		net.start();
+	}
+	onQuit(application) {
+		net.end();
 	}
 }
 

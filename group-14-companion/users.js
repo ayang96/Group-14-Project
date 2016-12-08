@@ -50,7 +50,7 @@ let purpleSkin = new Skin({ fill: '#9B51E0'});		// = "purple"
 let greySkin = new Skin({ fill: '#828282'});		// = "grey"
 
 let lineSkin = new Skin({							//stroked skin of a user listing
-		fill: 'white', 			
+		fill: ['white', common.offWhite],			
 		stroke: 'silver',
 		borders: {left: 0, right: 0, top: 0, bottom: 1}
 });	
@@ -108,7 +108,7 @@ class screenBehavior extends Behavior {
 			new common.NavSelectButton({
 				Behavior: class extends common.ButtonBehavior {
 					onTap(content) {
-						// implement select
+						application.distribute('notify', 'Implementation coming soon!');
 					}
 				}
 			})
@@ -225,7 +225,8 @@ class sortBarBehavior extends Behavior {
 		let top = new Container({
 			left: 0, right: 0, top: 0, height: sortBarHeight,
 			contents: [
-				new sortButton(),
+				/* Removing from demo */
+				// new sortButton(),
 			]
 		});
 		col.add(top);

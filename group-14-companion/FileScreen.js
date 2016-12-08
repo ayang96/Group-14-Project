@@ -42,7 +42,20 @@ let textStyle = common.bodyStyle;
 let buttonStyle = common.buttonStyleWhite;
 let WbuttonStyle = common.buttonStyleBlue;
 
+let OutYouIcon = Picture.template($ => ({
+	height: 50, width: 50, aspect: 'fit',
+	url:'./assets/icon_document_out_you_ring_70x70.png',
+}));
 
+let OutOtherIcon = Picture.template($ => ({
+	height: 50, width: 50, aspect: 'fit',
+	url:'./assets/icon_document_out_other_ring_70x70.png',
+}));
+
+let InIcon = Picture.template($ => ({
+	height: 50, width: 50, aspect: 'fit',
+	url:'./assets/icon_document_in_ring_70x70_2.png',
+}));
 
 /*========================*/
 /*Behavior*/
@@ -51,6 +64,7 @@ class screenBehavior extends Behavior {
 
 	onCreate(screen, data) {
 		this.db = data.data;
+		this.net = data.net;
 	}
 	onDisplaying(screen) {
 		this.render(screen);
@@ -139,64 +153,27 @@ class screenBehavior extends Behavior {
 		});
 
 		if (this.InOut == "other"){
-			iconPIC = new Picture({height: 50, width: 80, align:'middle', url:'./assets/icon_document_out_other_ring_70x70.png'});
-			this.docName += '  [OUT]';
+			iconPIC = new OutOtherIcon();
+			this.docName += ' [OUT]';
 			open_return = new common.NormalButton({
 						string: "RETURN",
-						Behavior: class extends common.ButtonBehavior {
-						onTap(content) {
-							// IMPLEMENT OPENING LOCKER
-							application.distribute("alert", {
-							title: "Returning Item",
-							message: "IMPORTANT: Please notice that this item is NOT originally taken out by YOU! \n \nLocker 05 of Cabinet A has been opened. You may now return the item. Your access will be logged.",
-							options: [{ string: "OK", callback: function(){} }],
-							});
-
-							//trace(JSON.stringify(db) + '\n');
-							//trace(JSON.stringify(db.state.document) + '\n');
-							let boo = db.returnDocument(db.state.document);
-							//trace(JSON.stringify(boo) + '\n');
-							application.distribute("update");
-						}},
+						Behavior: ReturnRetrieveButtonBehavior,
+						document: data, data: db, net: this.net,
 			});
 		} else if (this.InOut == "you"){
-			//trace(JSON.stringify("TRUE") + '\n');
 			this.docName += ' [OUT]';
-			iconPIC = new Picture({height: 50, width: 50, align:'middle', url:'./assets/icon_document_out_you_ring_70x70.png'});
+			iconPIC = new OutYouIcon();
 			open_return = new common.NormalButton({
 						string: "RETURN",
-						Behavior: class extends common.ButtonBehavior {
-						onTap(content) {
-							// IMPLEMENT OPENING LOCKER
-							application.distribute("alert", {
-							title: "Returning Item",
-							message: "Locker 01 of Cabinet A has been opened. You may now return the item. Your access will be logged.",
-							options: [{ string: "OK", callback: function(){} }],
-							});
-
-							//trace(JSON.stringify(db.state.document) + '\n');
-							let boo = db.returnDocument(db.state.document);
-							//trace(JSON.stringify(boo) + '\n');
-							application.distribute("update");
-						}},
+						Behavior: ReturnRetrieveButtonBehavior,
+						document: data, data: db, net: this.net,
 			});
 		} else {
-			iconPIC = new Picture({height: 50, width: 50, align:'middle', url:'./assets/icon_document_in_ring_70x70_2.png'});
+			iconPIC = new InIcon();
 			open_return = new common.NormalButton({
 						string: "RETRIEVE",
-						Behavior: class extends common.ButtonBehavior {
-						onTap(content) {
-							// IMPLEMENT OPENING LOCKER
-							application.distribute("alert", {
-							title: "Retrieving Item",
-							message: "Locker 03 of Cabinet A has been opened. You may now retrieve the item. Your access will be logged.",
-							options: [{ string: "OK", callback: function(){} }],
-							});
-
-							let boo = db.retrieveDocument(db.state.document);
-							//trace(JSON.stringify(boo) + '\n');
-							application.distribute("update");                    
-						}},
+						Behavior: ReturnRetrieveButtonBehavior,
+						document: data, data: db, net: this.net,
 			});
 		}
 
@@ -249,5 +226,80 @@ class screenBehavior extends Behavior {
 		padding.add(FileContent);
 		padding.add(buttons);
 	}
+
 };
 
+class ReturnRetrieveButtonBehavior extends common.ButtonBehavior {
+	onCreate(content, $) {
+		this.document = $.document;
+		this.data = $.data;
+		this.net = $.net;
+	}
+	onTap(content) {
+		let data = this.data;
+		let document = this.document;
+		let net = this.net;
+		if (document.out === 'in') {
+			let ability = data.canRetrieveDocument(document.id);
+			if (ability.status) {
+				let locker = data.getLockerData(document.locker);
+				openLocker(locker.id, net, function() {
+					data.retrieveDocument(document.id);
+					application.distribute("update");
+					application.distribute("alert", {
+						title: "Retrieving Item",
+						message: "Locker " + locker.index + " of " + locker.cabinet.name +
+							" has been opened. You may now retrieve the item. Your access will be logged.",
+						options: [{ string: "OK", callback: function(){} }],
+					});
+				})
+			} else {
+				errorMessage(ability.message);
+			}
+		} else if (document.out === 'you' || document.out === 'other') {
+			let ability = data.canReturnDocument(document.id);
+			if (ability.status) {
+				let locker = data.getLockerData(data.getEmptyLocker());
+				data.useLocker(locker.id);
+				openLocker(locker.id, net, function() {
+					data.returnDocument(document.id, locker.id);
+					application.distribute("update");
+					application.distribute("alert", {
+						title: "Returning Item",
+						message: (document.out === 'you' ? '' : "IMPORTANT: Please notice that this item is NOT originally taken out by YOU! \n \n") +
+							"Locker " + locker.index + " of " + locker.cabinet.name +
+							" has been opened. You may now return the item. Your access will be logged.",
+						options: [{ string: "OK", callback: function(){} }],
+					});
+				}, function() {
+					data.freeLocker(locker.id);
+				});
+			} else {
+				errorMessage(ability.message);
+			}
+		} else {
+			errorMessage("Item status unknown.");
+		}
+
+	}
+
+}
+
+function errorMessage(message) {
+	application.distribute("alert", {
+		title: "Error",
+		message: message,
+		options: [{ string: "OK", callback: function(){} }],
+	})
+}
+
+function openLocker(lockerID, net, callback, fail=function(){}) {
+	net.openLocker(lockerID, function(ability) {
+		if (ability.status) {
+			callback();
+		} else {
+			errorMessage(ability.message);
+			fail();
+		}
+	});
+}
