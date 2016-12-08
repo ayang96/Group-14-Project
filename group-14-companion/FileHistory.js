@@ -88,7 +88,7 @@ var DocumentHistoryList = Container.template(($={}) => Object.assign({
 		update(content) {
 			let column = content.first.first;
 			column.empty();
-			for (let event of $.documentData.history) {
+			for (let event of $.documentData.history.slice().reverse()) {
 				let userData = event.user;
 				column.add(new DocumentHistoryItem({ eventData: event, userData: userData, data: $.data }));
 			}
