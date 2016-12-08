@@ -71,7 +71,7 @@ class screenBehavior extends Behavior {
 		this.docName = data.name;
 		
 		if (data.history != null) {
-			this.LastUsed = data.history[0].user.fullName;
+			this.LastUsed = data.history[data.history.length - 1].user.fullName;
 		} else {
 			this.LastUsed = '';
 		}
