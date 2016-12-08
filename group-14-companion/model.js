@@ -1212,7 +1212,7 @@ let document1 = sampleData.addDocument({
 	name: 'Andrew Wiggin',
 	labels: [labelP],
 	tier: tier3,
-	description: 'Document 1 description',
+	description: 'Mr. Wiggin is qualified for this program. \nBut may need more document to support the final decision.',
 	folder: folder1,
 });
 sampleData.returnDocument(document1);
@@ -1226,7 +1226,7 @@ let document11 = sampleData.addDocument({
 	name: 'Taiko Berceyte ',
 	labels: [labelF],
 	tier: tier3,
-	description: 'Document 11 description',
+	description: 'Mr. Berceyte needs the copy of ID.',
 	folder: folder1,
 });
 sampleData.returnDocument(document11);
@@ -1239,7 +1239,7 @@ let document2 = sampleData.addDocument({
 	name: 'Peter Hurst',
 	labels: [labelF],
 	tier: tier2,
-	description: 'Document 2 description',
+	description: 'Mr. Hurst is rejected by the program twice.',
 	folder: folder1,
 });
 sampleData.returnDocument(document2);
@@ -1251,7 +1251,7 @@ let document3 = sampleData.addDocument({
 	name: 'Sebastian Vasquez',
 	labels: [labelP],
 	tier: 'admin',
-	description: 'Document 3 description',
+	description: 'Mr. Vasquez is qualified.',
 	folder: folder1,
 });
 sampleData.returnDocument(document3);
@@ -1264,7 +1264,7 @@ let document4 = sampleData.addDocument({
 	name: 'Bretton Miller',
 	labels: [labelC],
 	tier: tier3,
-	description: 'Document 4 description',
+	description: 'Mr. Miller is qualified.',
 	folder: folder1
 });
 sampleData.returnDocument(document4);
@@ -1279,7 +1279,7 @@ let document5 = sampleData.addDocument({
 	name: 'Nico Martinez',
 	labels: [labelC],
 	tier: tier2,
-	description: 'Document 5 description',
+	description: 'Mr. Martinez is qualified.',
 	folder: folder1,
 });
 sampleData.returnDocument(document5);
@@ -1291,7 +1291,7 @@ let document6 = sampleData.addDocument({
 	name: 'Frederick Big',
 	labels: [labelP],
 	tier: tier3,
-	description: 'Document 6 description',
+	description: 'Mr. Big is rejected last time.',
 	folder: folder2,
 });
 sampleData.returnDocument(document6);
@@ -1304,7 +1304,7 @@ let document7 = sampleData.addDocument({
 	name: 'Petrach Hurst',
 	labels: [labelF],
 	tier: tier2,
-	description: 'Document 7 description',
+	description: 'Mr. Hurst need',
 	folder: folder2,
 });
 sampleData.returnDocument(document7);
