@@ -1239,7 +1239,7 @@ let document1 = sampleData.addDocument({
 	labels: [labelP],
 	tier: tier3,
 	description: 'Document 1 description',
-	folder: folder1,
+	folder: 'root',
 });
 sampleData.returnDocument(document1);
 sampleData.documents[document1].history.push(sampleData.addEvent({ user: user2, document: document1, action: Data.RETRIEVE }));
@@ -1253,7 +1253,7 @@ let document11 = sampleData.addDocument({
 	labels: [labelF],
 	tier: tier3,
 	description: 'Document 11 description',
-	folder: folder1,
+	folder: 'root',
 });
 sampleData.returnDocument(document11);
 sampleData.documents[document11].history.push(sampleData.addEvent({ user: user2, document: document11, action: Data.RETRIEVE }));
