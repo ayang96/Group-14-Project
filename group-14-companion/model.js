@@ -1273,6 +1273,20 @@ sampleData.documents[document2].history.push(sampleData.addEvent({ user: user2, 
 sampleData.documents[document2].history.push(sampleData.addEvent({ user: user2, document: document2, action: Data.RETURN }));
 sampleData.documents[document2].history.push(sampleData.addEvent({ user: user3, document: document2, action: Data.RETRIEVE }));
 
+
+let documentNew = sampleData.addDocument({
+	name: 'Eric Miller',
+	labels: [labelP],
+	tier: tier2,
+	description: 'New Applicant',
+	folder: folder1,
+});
+let docNewhis = [];
+docNewhis.push(sampleData.addEvent({ user: user3, document: documentNew, action: Data.CREATE, date: new Date("2016-12-24") }));
+docNewhis.push(sampleData.addEvent({ user: user3, document: documentNew, action: Data.RETRIEVE, date: new Date("2016-12-25") }));
+docNewhis.push(sampleData.addEvent({ user: user3, document: documentNew, action: Data.RETURN, date:new Date("2016-12-26") }));
+docNewhis.push(sampleData.addEvent({ user: user2, document: documentNew, action: Data.RETRIEVE, date: new Date("2016-12-27")}));
+sampleData.updateDocument(documentNew, {history:docNewhis});
 let document3 = sampleData.addDocument({
 	name: 'Sebastian Vasquez',
 	labels: [labelP],
@@ -1314,7 +1328,7 @@ sampleData.documents[document5].history.push(sampleData.addEvent({ user: user2, 
 sampleData.documents[document5].history.push(sampleData.addEvent({ user: user3, document: document5, action: Data.RETRIEVE }));
 
 let document6 = sampleData.addDocument({
-	name: 'Frederick Big',
+	name: 'Frederick Miller',
 	labels: [labelP],
 	tier: tier3,
 	description: 'Document 6 description',
@@ -1327,7 +1341,7 @@ sampleData.documents[document6].history.push(sampleData.addEvent({ user: user3, 
 sampleData.documents[document6].history.push(sampleData.addEvent({ user: user3, document: document6, action: Data.RETURN }));
 
 let document7 = sampleData.addDocument({
-	name: 'Petrach Hurst',
+	name: 'Petrach Miller',
 	labels: [labelF],
 	tier: tier2,
 	description: 'Document 7 description',
@@ -1339,7 +1353,7 @@ sampleData.documents[document7].history.push(sampleData.addEvent({ user: user2, 
 sampleData.documents[document7].history.push(sampleData.addEvent({ user: user3, document: document7, action: Data.RETRIEVE }));
 
 let document8 = sampleData.addDocument({
-	name: 'Lasinius Quinn',
+	name: 'Lasinius Miller',
 	labels: [labelP],
 	tier: 'admin',
 	description: 'Document 8 description',
