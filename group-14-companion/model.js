@@ -1152,11 +1152,11 @@ function documentTierComparator(a, b) {
 }
 
 function documentDateCreatedComparator(a, b) {
-	return a.history[0].date.getTime() - b.history[0].date.getTime();
+	return b.history[0].date.getTime() - a.history[0].date.getTime();
 }
 
 function documentDateLastAccessedComparator(a, b) {
-	return a.history[a.history.length - 1].date.getTime() - b.history[b.history.length - 1].date.getTime();
+	return b.history[b.history.length - 1].date.getTime() - a.history[a.history.length - 1].date.getTime();
 }
 
 function labelNameComparator(a, b) {
